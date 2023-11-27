@@ -1,0 +1,78 @@
+package vault
+
+import (
+	"context"
+	"log"
+
+	"github.com/hashicorp/vault/api"
+)
+
+type Client interface {
+	Address() string
+}
+
+type Vault struct {
+	vault   *api.Client
+	Client  Client
+	KV2     KV2
+	Sys     Sys
+	Logical Logical
+	Secret  Secret
+	Logger  *log.Logger
+}
+
+type Logical interface {
+	List(path string) (*api.Secret, error)
+}
+
+type Secret interface {
+	//ListSecrets(string) (*api.Secret, error)
+}
+
+type Sys interface {
+	ListMounts() (map[string]*api.MountOutput, error)
+	ListPolicies() ([]string, error)
+	GetPolicy(name string) (string, error)
+	//ListMounts() ([]*api.Sys, error)
+}
+
+type KV2 interface {
+	Get(context.Context, string) (*api.KVSecret, error)
+	GetMetadata(context.Context, string) (*api.KVMetadata, error)
+	// GetVersion(context.Context, string, int) (*api.KVSecret, error)
+	// GetVersionsAsList(context.Context, string) ([]*api.KVVersionMetadata, error)
+}
+
+func New(opts ...func(*Vault) error) (*Vault, error) {
+	vault := Vault{}
+	for _, opt := range opts {
+		err := opt(&vault)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return &vault, nil
+}
+
+func Default(v *Vault, log *log.Logger) error {
+	//ctx := context.Background()
+	client, err := api.NewClient(api.DefaultConfig())
+	if err != nil {
+		return err
+	}
+
+	v.vault = client
+	v.Client = client
+	//KV1 is not setup as its adviced against
+	v.KV2 = client.KVv2("credentials")
+	v.Sys = client.Sys()
+	v.Logical = client.Logical()
+	v.Logger = log
+
+	return nil
+}
+
+func (v *Vault) Address() string {
+	return v.Client.Address()
+}

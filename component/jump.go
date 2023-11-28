@@ -6,6 +6,8 @@ import (
 	"github.com/rivo/tview"
 )
 
+// Not currently used. Might need modification to reuse this for both paths and policies.
+
 const jumpToPlaceholder = "(hit enter or esc to leave)"
 
 type SetDoneFunc func(key tcell.Key)

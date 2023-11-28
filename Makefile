@@ -6,7 +6,7 @@ setup-test-data:
 
 .PHONY: install-osx
 install-osx:
-	cp ./bin/vaul7y /usr/local/bin/vaul7y
+	cp ./bin/vaul7y/vaul7y /usr/local/bin/vaul7y
 
 .PHONY: dev
 dev: ## Build for the current development version

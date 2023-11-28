@@ -20,12 +20,13 @@ func (v *View) SecretObject(mount, path string) {
 	v.components.SecretObjTable.Props.ObscureSecrets = true
 
 	update := func() {
-		v.logger.Println("Current focused table is: ", v.state.Elements.TableMain.GetTitle())
+
+		v.logger.Debug().Msgf("Selected path is: %v", v.state.SelectedPath)
 		if !v.components.SecretObjTable.Editable {
 			v.components.SecretObjTable.Render()
 
 			v.components.SecretObjTable.Props.Data = v.state.SelectedSecret
-			v.logger.Println("Updated secret object ", v.components.SecretObjTable.Props.UpdatedData)
+			v.logger.Debug().Msgf("Updated secret object is: %v", v.components.SecretObjTable.Props.UpdatedData)
 			v.Draw()
 		}
 	}

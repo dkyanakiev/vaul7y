@@ -43,7 +43,7 @@ func (v *View) InputMainCommands(event *tcell.EventKey) *tcell.EventKey {
 		// 	v.SecretObject()
 	}
 	if event.Key() == tcell.KeyEnter {
-		v.logger.Println("Enter pressed")
+		v.logger.Debug().Msg("Enter pressed")
 		v.Layout.Container.SetFocus(v.state.Elements.TableMain)
 	}
 

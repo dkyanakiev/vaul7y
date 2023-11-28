@@ -1,12 +1,12 @@
 package watcher
 
 import (
-	"log"
 	"time"
 
 	"github.com/dkyanakiev/vaulty/models"
 	"github.com/dkyanakiev/vaulty/state"
 	"github.com/hashicorp/vault/api"
+	"github.com/rs/zerolog"
 )
 
 type Activities interface {
@@ -31,7 +31,7 @@ type Watcher struct {
 	state    *state.State
 	handlers map[models.Handler]func(msg string, args ...interface{})
 	vault    Vault
-	logger   *log.Logger
+	logger   *zerolog.Logger
 
 	activities Activities
 	interval   time.Duration
@@ -44,7 +44,7 @@ type subscriber struct {
 	notify func()
 }
 
-func NewWatcher(state *state.State, vault Vault, interval time.Duration, logger *log.Logger) *Watcher {
+func NewWatcher(state *state.State, vault Vault, interval time.Duration, logger *zerolog.Logger) *Watcher {
 	return &Watcher{
 		state:      state,
 		vault:      vault,

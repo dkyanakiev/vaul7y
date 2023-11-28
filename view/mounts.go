@@ -22,9 +22,9 @@ func (v *View) Mounts() {
 		v.components.MountsTable.Props.Data = v.state.Mounts
 		v.components.MountsTable.Render()
 		v.Draw()
-		v.logger.Println("Updated mounts table")
-		v.logger.Println("Selected mount is: ", v.state.SelectedMount)
-		v.logger.Println("Selected path is: ", v.state.SelectedPath)
+		v.logger.Debug().Msg("Updated mounts table")
+		v.logger.Debug().Msgf("Selected mount is: %v", v.state.SelectedMount)
+		v.logger.Debug().Msgf("Selected path is: %v", v.state.SelectedPath)
 	}
 
 	//v.Watcher.SubscribeToMounts(update)

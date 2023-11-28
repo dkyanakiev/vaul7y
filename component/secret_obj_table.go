@@ -3,7 +3,6 @@ package component
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"sort"
 
 	"github.com/dkyanakiev/vaulty/models"
@@ -12,6 +11,7 @@ import (
 	"github.com/gdamore/tcell/v2"
 	"github.com/hashicorp/vault/api"
 	"github.com/rivo/tview"
+	"github.com/rs/zerolog"
 )
 
 const (
@@ -36,7 +36,7 @@ type SecretObjTable struct {
 	Form     Form
 
 	Props    *SecretObjTableProps
-	Logger   *log.Logger
+	Logger   *zerolog.Logger
 	slot     *tview.Flex
 	ShowJson bool
 	Editable bool
@@ -173,7 +173,7 @@ func (s *SecretObjTable) renderJson() {
 	data := s.Props.Data.Data["data"].(map[string]interface{})
 	jsonData, err := json.MarshalIndent(data, "", "  ")
 	if err != nil {
-		s.Logger.Println("error:", err)
+		s.Logger.Err(err).Msgf("error: %s", err)
 	}
 	s.TextView.SetText(string(jsonData))
 }
@@ -182,7 +182,7 @@ func (s *SecretObjTable) renderEditField() {
 	data := s.Props.UpdatedData
 	jsonData, err := json.MarshalIndent(data, "", "  ")
 	if err != nil {
-		s.Logger.Println("error:", err)
+		s.Logger.Err(err).Msgf("error: %s", err)
 	}
 	s.TextView.SetText(string(jsonData))
 
@@ -191,12 +191,12 @@ func (s *SecretObjTable) renderEditField() {
 func (s *SecretObjTable) SaveData(text string) string {
 	var data map[string]interface{}
 
-	s.Logger.Println("Saving data")
-	s.Logger.Println(text)
+	s.Logger.Debug().Msg("Saving data")
+	s.Logger.Debug().Msg(text)
 
 	err := json.Unmarshal([]byte(text), &data)
 	if err != nil {
-		s.Logger.Println("Failed to validate json:", err)
+		s.Logger.Err(err).Msgf("Failed to validate json:: %s", err)
 		return "Failed to validate json:"
 	}
 	s.Props.UpdatedData = data

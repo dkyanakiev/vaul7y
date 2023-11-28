@@ -67,21 +67,22 @@ func (v *Vault) ListNestedSecrets(mount, path string) ([]models.SecretPath, erro
 	mountPath := fmt.Sprintf("%s/metadata/%s", mount, path)
 	mountPath = sanitizePath(mountPath)
 	secrets, err := v.vault.Logical().List(mountPath)
-	v.Logger.Println(fmt.Sprintf("Listing secrets for mount: %s", mount))
-	v.Logger.Println(fmt.Sprintf("Listing secrets for path: %s", mountPath))
+
+	v.Logger.Debug().Msg(fmt.Sprintf("Listing secrets for path: %s", mountPath))
+
 	if err != nil {
-		v.Logger.Println(fmt.Sprintf("failed to list secrets: %v", err))
+		v.Logger.Err(err).Msgf("failed to list secrets: %w", err)
 		return nil, fmt.Errorf("failed to list secrets: %w", err)
 	}
 
 	if secrets == nil {
-		v.Logger.Println("no secrets returned from the vault for path: ", mountPath)
+		v.Logger.Err(err).Msgf("no secrets returned from the vault for path: %s", mountPath)
 		return nil, errors.New("no secrets returned from the vault")
 	}
 
 	keys, ok := secrets.Data["keys"].([]interface{})
 	if !ok {
-		v.Logger.Println("unexpected type for keys")
+		v.Logger.Err(err).Msgf("unexpected type for keys")
 		return nil, errors.New("unexpected type for keys")
 	}
 
@@ -107,11 +108,12 @@ func (v *Vault) GetSecretInfo(mount, path string) (*api.Secret, error) {
 	secretPath = sanitizePath(secretPath)
 	secretData, err := v.vault.Logical().Read(secretPath)
 	if err != nil {
-		v.Logger.Println("Failed to read secret: %v", err)
+		v.Logger.Err(err).Msgf("failed to read secret: %w", err)
 		return nil, errors.New(fmt.Sprintf("Failed to read secret: %v", err))
 	}
 
 	if secretData == nil {
+		v.Logger.Err(err).Msgf("no data found at %s", secretPath)
 		return nil, errors.New(fmt.Sprintf("No data found at %s", secretPath))
 	}
 	//TODO: Add logging
@@ -127,23 +129,22 @@ func (v *Vault) UpdateSecretObject(mount string, path string, update bool, data 
 			"cas": 0, // Use 'cas' (Check-And-Set) to patch the secret
 		}
 	}
-	v.Logger.Println(fmt.Sprintf("Writing secret to %s", secretPath))
-
+	v.Logger.Debug().Msg(fmt.Sprintf("Writing secret to %s", secretPath))
 	_, err := v.vault.Logical().Write(secretPath, data)
 	if err != nil {
 		if strings.Contains(err.Error(), "permission denied") {
-			v.Logger.Println("You do not have the necessary permissions to perform this operation")
+			v.Logger.Err(err).Msgf("You do not have the necessary permissions to perform this operation")
 			return errors.New("You do not have the necessary permissions to perform this operation")
 		} else {
-			v.Logger.Println(fmt.Sprintf("Failed to write secret: %v", err))
+			v.Logger.Err(err).Msgf("Failed to write secret: %v", err)
 			return errors.New(fmt.Sprintf("Failed to write secret: %v", err))
 		}
 	}
 
 	if update {
-		v.Logger.Println("Secret updated successfully")
+		v.Logger.Info().Msg("Secret updated successfully")
 	} else {
-		v.Logger.Println("Secret patched successfully")
+		v.Logger.Info().Msg("Secret patched successfully")
 	}
 
 	return nil

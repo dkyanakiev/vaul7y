@@ -16,3 +16,9 @@ $ make setup-test-data
 
 4. Make sure to set    
 `VAULTY_LOG_FILE` env variable and point to a file, to log to a file 
+`VAULTY_LOG_LEVEL` env variable - define the log level you want to use
+
+```
+❯ export VAULTY_LOG_LEVEL=debug
+❯ export VAULTY_LOG_FILE=/tmp/my-vault-log.log
+```

@@ -2,10 +2,10 @@ package main
 
 import (
 	"log"
-	"os"
 	"time"
 
 	"github.com/dkyanakiev/vaulty/component"
+	"github.com/dkyanakiev/vaulty/config"
 	"github.com/dkyanakiev/vaulty/state"
 	"github.com/dkyanakiev/vaulty/vault"
 	"github.com/dkyanakiev/vaulty/view"
@@ -15,28 +15,11 @@ import (
 )
 
 var refreshIntervalDefault = time.Second * 5
-var logger *log.Logger
 
 func main() {
 
-	//
-
-	LOG_FILE, exists := os.LookupEnv("VAULTY_LOG_FILE")
-	if !exists {
-		LOG_FILE = "/tmp/vaulty-errors"
-	} // open log file
-	logFile, err := os.OpenFile(LOG_FILE, os.O_APPEND|os.O_RDWR|os.O_CREATE, 0644)
-	if err != nil {
-		log.Panic(err)
-	}
+	logFile, logger := config.SetupLogger()
 	defer logFile.Close()
-
-	logger = log.New(logFile, "Vaulty ", log.LstdFlags)
-	logger.SetOutput(logFile)
-
-	// optional: log date-time, filename, and line number
-	logger.SetFlags(log.Lshortfile | log.LstdFlags)
-
 	tview.Styles.PrimitiveBackgroundColor = tcell.NewRGBColor(40, 44, 48)
 
 	vaultClient, err := vault.New(func(v *vault.Vault) error {
@@ -86,27 +69,6 @@ func initializeState(client *vault.Vault) *state.State {
 	state.Namespace = "default"
 
 	return state
-}
-
-func initLogger() {
-
-	// TODO Rework later
-	LOG_FILE := "/tmp/vaulty-errors"
-	// open log file
-	logFile, err := os.OpenFile(LOG_FILE, os.O_APPEND|os.O_RDWR|os.O_CREATE, 0644)
-	if err != nil {
-		log.Panic(err)
-	}
-	defer logFile.Close()
-
-	logger = log.New(logFile, "app ", log.LstdFlags)
-
-	// Set log out put and enjoy :)
-	logger.SetOutput(logFile)
-
-	// optional: log date-time, filename, and line number
-	logger.SetFlags(log.Lshortfile | log.LstdFlags)
-
 }
 
 // // LOOK AT LATER

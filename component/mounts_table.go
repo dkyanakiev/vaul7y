@@ -2,7 +2,6 @@ package component
 
 import (
 	"fmt"
-	"log"
 	"sort"
 	"time"
 
@@ -11,6 +10,7 @@ import (
 	"github.com/dkyanakiev/vaulty/styles"
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
+	"github.com/rs/zerolog"
 )
 
 const (
@@ -31,7 +31,7 @@ type SelectMountPathFunc func(mountPath string)
 type MountsTable struct {
 	Table  Table
 	Props  *MountsTableProps
-	Logger *log.Logger
+	Logger *zerolog.Logger
 
 	slot *tview.Flex
 }
@@ -92,7 +92,7 @@ func (m *MountsTable) GetIDForSelection() string {
 func (m *MountsTable) validate() error {
 	// TODO: Revisid validation
 	if m.Props.SelectedMount == "" || m.Props.HandleNoResources == nil {
-		log.Println("Random error: " + ErrComponentPropsNotSet)
+		m.Logger.Err(ErrComponentPropsNotSet).Msgf("Random error: %s", ErrComponentPropsNotSet)
 	}
 
 	if m.slot == nil {

@@ -2,9 +2,9 @@ package vault
 
 import (
 	"context"
-	"log"
 
 	"github.com/hashicorp/vault/api"
+	"github.com/rs/zerolog"
 )
 
 type Client interface {
@@ -18,7 +18,7 @@ type Vault struct {
 	Sys     Sys
 	Logical Logical
 	Secret  Secret
-	Logger  *log.Logger
+	Logger  *zerolog.Logger
 }
 
 type Logical interface {
@@ -55,7 +55,7 @@ func New(opts ...func(*Vault) error) (*Vault, error) {
 	return &vault, nil
 }
 
-func Default(v *Vault, log *log.Logger) error {
+func Default(v *Vault, log *zerolog.Logger) error {
 	//ctx := context.Background()
 	client, err := api.NewClient(api.DefaultConfig())
 	if err != nil {

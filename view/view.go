@@ -1,13 +1,13 @@
 package view
 
 import (
-	"log"
 	"sync"
 
 	"github.com/dkyanakiev/vaulty/component"
 	"github.com/dkyanakiev/vaulty/layout"
 	"github.com/dkyanakiev/vaulty/models"
 	"github.com/dkyanakiev/vaulty/state"
+	"github.com/rs/zerolog"
 )
 
 const (
@@ -35,10 +35,9 @@ type View struct {
 	Watcher Watcher
 	Layout  *layout.Layout
 
-	history *History
-	state   *state.State
-	logger  *log.Logger
-
+	history    *History
+	state      *state.State
+	logger     *zerolog.Logger
 	components *Components
 	mutex      sync.Mutex
 
@@ -64,10 +63,10 @@ type Components struct {
 	Selections   *component.Selections
 	JumpToPolicy *component.JumpToPolicy
 	Logo         *component.Logo
-	Logger       *log.Logger
+	Logger       *zerolog.Logger
 }
 
-func New(components *Components, watcher Watcher, client Client, state *state.State, logger *log.Logger) *View {
+func New(components *Components, watcher Watcher, client Client, state *state.State, logger *zerolog.Logger) *View {
 	components.Search = component.NewSearchField("")
 
 	return &View{

@@ -20,8 +20,8 @@ The tool is in active development and is bug heavy. There are multiple things th
 If anyone decides to use this and wants to request a specific feature or even fix a bug - please open an issue :smile:
 
 ## Short term TODO list:
-1. Change the logger (current one is a mess)
-1. Finish adding tests (wip in another branch)
-2. Finish implementing Update to existing secrets
-    * Bonus: Create net new ones.
-3. Support for namespace changes. 
+1. [x] Change the logger (current one is a mess)
+2. [ ] Finish adding tests (wip in another branch)
+3. [ ] Finish implementing Update to existing secrets
+    - [ ] Bonus: Create net new ones.
+4. [ ] Support for namespace changes. 

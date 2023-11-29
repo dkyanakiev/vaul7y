@@ -102,7 +102,7 @@ func (v *View) Init(version string) {
 	v.components.Info.Bind(v.Layout.Pages)
 	v.components.Info.Props.Done = func(buttonIndex int, buttonLabel string) {
 		v.Layout.Pages.RemovePage(component.PageNameInfo)
-		v.logger.Debug().Msgf("Info page removed, Active page is: ", v.state.Elements.TableMain)
+		v.logger.Debug().Msgf("Info page removed, Active page is: %s", v.state.Elements.TableMain.GetTitle())
 		v.Layout.Container.SetFocus(v.state.Elements.TableMain)
 		// v.GoBack()
 	}

@@ -37,10 +37,10 @@ func (e *Error) Render(msg string) error {
 	if e.pages == nil {
 		return ErrComponentNotBound
 	}
-
+	e.Modal.SetDoneFunc(e.Props.Done)
 	e.Modal.SetText(msg)
 	e.pages.AddPage(PageNameError, e.Modal.Container(), true, true)
-	e.pages.SwitchToPage(PageNameError)
+
 	return nil
 }
 

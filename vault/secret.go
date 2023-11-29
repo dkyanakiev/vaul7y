@@ -10,40 +10,6 @@ import (
 	"github.com/hashicorp/vault/api"
 )
 
-// func (v *Vault) ListSecrets(path string) (*api.Secret, error) {
-//     // Get mount information
-//     mounts, err := v.vault.Sys().ListMounts()
-//     if err != nil {
-//         return nil, fmt.Errorf("unable to list mounts: %w", err)
-//     }
-
-//     // Check if the mount is KV1 or KV2
-//     version := mounts[path+"/"].Options["version"]
-//     if version == "" {
-//         version = "1"
-//     }
-
-//     // List secrets
-//     var secret *api.Secret
-//     if version == "1" {
-//         secret, err = v.vault.Logical().List(path)
-//     } else {
-//         secret, err = v.vault.Logical().List(fmt.Sprintf("%s/metadata", path))
-//     }
-//     if err != nil {
-//         return nil, fmt.Errorf("unable to list secrets for path %s: %w", path, err)
-//     }
-
-//     // If the secret is wrapped, return the wrapped response
-//     if secret != nil && secret.WrapInfo != nil && secret.WrapInfo.TTL != 0 {
-//         // TODO: Handle this use case
-//         fmt.Println("Wrapped")
-//         // return OutputSecret(c.UI, secret)
-//     }
-
-//     return secret, nil
-// }
-
 func (v *Vault) ListSecrets(path string) (*api.Secret, error) {
 
 	secret, err := v.vault.Logical().List(fmt.Sprintf("%s/metadata", path))
@@ -71,8 +37,8 @@ func (v *Vault) ListNestedSecrets(mount, path string) ([]models.SecretPath, erro
 	v.Logger.Debug().Msg(fmt.Sprintf("Listing secrets for path: %s", mountPath))
 
 	if err != nil {
-		v.Logger.Err(err).Msgf("failed to list secrets: %w", err)
-		return nil, fmt.Errorf("failed to list secrets: %w", err)
+		v.Logger.Err(err).Msgf("failed to list secrets: %s", err)
+		return nil, fmt.Errorf("failed to list secrets: %s", err)
 	}
 
 	if secrets == nil {
@@ -108,7 +74,7 @@ func (v *Vault) GetSecretInfo(mount, path string) (*api.Secret, error) {
 	secretPath = sanitizePath(secretPath)
 	secretData, err := v.vault.Logical().Read(secretPath)
 	if err != nil {
-		v.Logger.Err(err).Msgf("failed to read secret: %w", err)
+		v.Logger.Err(err).Msgf("failed to read secret: %s", err)
 		return nil, errors.New(fmt.Sprintf("Failed to read secret: %v", err))
 	}
 

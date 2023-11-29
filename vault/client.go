@@ -12,7 +12,6 @@ type Client interface {
 	Address() string
 }
 
-//go:generate counterfeiter . Vault
 type Vault struct {
 	vault   *api.Client
 	Client  Client

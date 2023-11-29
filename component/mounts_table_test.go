@@ -14,7 +14,7 @@ import (
 
 func TestMountsTable_Pass(t *testing.T) {
 	r := require.New(t)
-	t.Run("When the component is bound", func(t *testing.T) {
+	t.Run("When there is data to render", func(t *testing.T) {
 
 		fakeTable := &componentfakes.FakeTable{}
 		mTable := component.NewMountsTable()

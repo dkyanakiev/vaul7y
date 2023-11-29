@@ -42,10 +42,5 @@ func (v *View) InputMainCommands(event *tcell.EventKey) *tcell.EventKey {
 		// case tcell.KeyCtrlJ:
 		// 	v.SecretObject()
 	}
-	if event.Key() == tcell.KeyEnter {
-		v.logger.Debug().Msg("Enter pressed")
-		v.Layout.Container.SetFocus(v.state.Elements.TableMain)
-	}
-
 	return event
 }

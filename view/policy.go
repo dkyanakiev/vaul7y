@@ -46,6 +46,8 @@ func (v *View) inputPolicy(event *tcell.EventKey) *tcell.EventKey {
 	switch event.Key() {
 	case tcell.KeyEsc:
 		//v.GoBack()
+	case tcell.KeyEnter:
+		return nil
 	case tcell.KeyRune:
 		switch event.Rune() {
 		case '/':

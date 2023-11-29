@@ -18,11 +18,12 @@ func (v *View) Init(version string) {
 		styles.StandardColorTag,
 		styles.HighlightSecondaryTag,
 		styles.StandardColorTag,
-		version,
+		v.state.VaultVersion,
 		styles.HighlightSecondaryTag,
 		v.state.Namespace,
 		styles.StandardColorTag,
 	)
+	v.state.Version = version
 
 	v.components.VaultInfo.Bind(v.Layout.Elements.ClusterInfo)
 	v.components.VaultInfo.Render()

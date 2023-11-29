@@ -2,9 +2,11 @@ package view
 
 import (
 	"fmt"
+	"regexp"
 	"strings"
 
 	"github.com/dkyanakiev/vaulty/component"
+	"github.com/dkyanakiev/vaulty/models"
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 )
@@ -19,6 +21,7 @@ func (v *View) Secrets(path string, secretBool string) {
 	v.Layout.Body.SetTitle(fmt.Sprintf("Secrets: %s", path))
 	v.Layout.Container.SetInputCapture(v.InputSecrets)
 	v.components.Commands.Update(component.SecretsCommands)
+	search := v.components.Search
 
 	v.components.SecretsTable.Props.SelectedMount = v.state.SelectedMount
 	if path != "" {
@@ -26,11 +29,20 @@ func (v *View) Secrets(path string, secretBool string) {
 	}
 
 	update := func() {
-		v.components.SecretsTable.Props.Data = v.state.SecretsData
+		if v.state.Toggle.Search {
+			v.state.Filter.Object = v.FilterText
+		}
+		v.components.SecretsTable.Props.Data = v.filterSecrets()
 		v.components.SecretsTable.Props.SelectedMount = v.state.SelectedMount
 
 		v.components.SecretsTable.Render()
 		v.Draw()
+
+	}
+
+	search.Props.ChangedFunc = func(text string) {
+		v.FilterText = text
+		update()
 	}
 
 	v.Watcher.SubscribeToSecrets(v.components.SecretsTable.Props.SelectedMount,
@@ -75,8 +87,37 @@ func (v *View) inputSecrets(event *tcell.EventKey) *tcell.EventKey {
 				}
 				v.Secrets(v.state.SelectedPath, "false")
 			}
+		case '/':
+			if !v.Layout.Footer.HasFocus() {
+				if !v.state.Toggle.Search {
+					v.state.Toggle.Search = true
+					v.components.Search.InputField.SetText("")
+					v.Search()
+				} else {
+					v.Layout.Container.SetFocus(v.components.Search.InputField.Primitive())
+				}
+				return nil
+			}
 		}
 	}
 
 	return event
+}
+
+func (v *View) filterSecrets() []models.SecretPath {
+	data := v.state.SecretsData
+	filter := v.state.Filter.Object
+	if filter != "" {
+		rx, _ := regexp.Compile(filter)
+		var result []models.SecretPath
+		for _, p := range data {
+			switch true {
+			case rx.MatchString(p.PathName):
+				result = append(result, p)
+			}
+		}
+		return result
+	}
+
+	return data
 }

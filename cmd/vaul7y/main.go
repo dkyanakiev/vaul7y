@@ -14,7 +14,8 @@ import (
 	"github.com/rivo/tview"
 )
 
-var refreshIntervalDefault = time.Second * 5
+var refreshIntervalDefault = time.Second * 30
+var version = "0.0.2"
 
 func main() {
 
@@ -25,6 +26,7 @@ func main() {
 	vaultClient, err := vault.New(func(v *vault.Vault) error {
 		return vault.Default(v, logger)
 	})
+
 	state := initializeState(vaultClient)
 	commands := component.NewCommands()
 	vaultInfo := component.NewVaultInfo()
@@ -33,7 +35,7 @@ func main() {
 	policyAcl := component.NewPolicyAclTable()
 	secrets := component.NewSecretsTable()
 	secretObj := component.NewSecretObjTable()
-	logo := component.NewLogo()
+	logo := component.NewLogo(version)
 	info := component.NewInfo()
 	failure := component.NewInfo()
 	errorComp := component.NewError()
@@ -53,8 +55,9 @@ func main() {
 	}
 	watcher := watcher.NewWatcher(state, vaultClient, refreshIntervalDefault, logger)
 	view := view.New(components, watcher, vaultClient, state, logger)
+	view.Init(version)
 
-	view.Init("0.0.1")
+	//view.Init("0.0.1")
 	err = view.Layout.Container.Run()
 	if err != nil {
 		log.Fatal("cannot initialize view.")
@@ -65,7 +68,9 @@ func main() {
 func initializeState(client *vault.Vault) *state.State {
 	state := state.New()
 	addr := client.Address()
+	version, _ := client.Version()
 	state.VaultAddress = addr
+	state.VaultVersion = version
 	state.Namespace = "default"
 
 	return state

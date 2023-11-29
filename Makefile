@@ -24,3 +24,7 @@ build:
 .PHONY: run
 run:
 	./bin/vaul7y
+
+.PHONY: test
+test:
+	go test ./...

@@ -7,10 +7,12 @@ import (
 	"github.com/rs/zerolog"
 )
 
+//go:generate counterfeiter . Client
 type Client interface {
 	Address() string
 }
 
+//go:generate counterfeiter . Vault
 type Vault struct {
 	vault   *api.Client
 	Client  Client
@@ -21,6 +23,7 @@ type Vault struct {
 	Logger  *zerolog.Logger
 }
 
+//go:generate counterfeiter . Logical
 type Logical interface {
 	List(path string) (*api.Secret, error)
 }
@@ -29,6 +32,7 @@ type Secret interface {
 	//ListSecrets(string) (*api.Secret, error)
 }
 
+//go:generate counterfeiter . Sys
 type Sys interface {
 	ListMounts() (map[string]*api.MountOutput, error)
 	ListPolicies() ([]string, error)
@@ -36,6 +40,7 @@ type Sys interface {
 	//ListMounts() ([]*api.Sys, error)
 }
 
+//go:generate counterfeiter . KV2
 type KV2 interface {
 	Get(context.Context, string) (*api.KVSecret, error)
 	GetMetadata(context.Context, string) (*api.KVMetadata, error)

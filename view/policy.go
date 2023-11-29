@@ -15,7 +15,7 @@ func (v *View) VPolicy() {
 	v.Layout.Container.SetInputCapture(v.InputVaultPolicy)
 	v.components.Commands.Update(component.PolicyCommands)
 	search := v.components.Search
-	//table := v.components.PolicyTable
+	//table := v.components.in
 
 	update := func() {
 		if v.state.Toggle.Search {
@@ -47,6 +47,9 @@ func (v *View) inputPolicy(event *tcell.EventKey) *tcell.EventKey {
 	case tcell.KeyEsc:
 		//v.GoBack()
 	case tcell.KeyEnter:
+		//if v.Layout.Footer.HasFocus() {
+		v.Layout.Footer.Clear()
+		v.Layout.Container.SetFocus(v.components.PolicyTable.Table.Primitive())
 		return nil
 	case tcell.KeyRune:
 		switch event.Rune() {

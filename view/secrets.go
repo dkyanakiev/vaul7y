@@ -22,6 +22,8 @@ func (v *View) Secrets(path string, secretBool string) {
 	v.Layout.Container.SetInputCapture(v.InputSecrets)
 	v.components.Commands.Update(component.SecretsCommands)
 	search := v.components.Search
+	v.state.Toggle.Search = false
+	v.state.Filter.Object = ""
 
 	v.components.SecretsTable.Props.SelectedMount = v.state.SelectedMount
 	if path != "" {
@@ -60,6 +62,21 @@ func (v *View) inputSecrets(event *tcell.EventKey) *tcell.EventKey {
 	}
 
 	switch event.Key() {
+
+	case tcell.KeyEsc:
+		//v.GoBack()
+	case tcell.KeyEnter:
+		v.logger.Info().Msg("Enter pressed")
+		if v.components.SecretsTable.Table.Primitive().HasFocus() {
+			path, secretBool := v.components.SecretsTable.GetIDForSelection()
+			v.state.SelectedPath = fmt.Sprintf("%s%s", v.state.SelectedPath, path)
+			if secretBool == "true" {
+				v.SecretObject(v.state.SelectedMount, v.state.SelectedPath)
+			} else {
+				v.Secrets(path, secretBool)
+			}
+			return nil
+		}
 	case tcell.KeyRune:
 		switch event.Rune() {
 		case 'e':

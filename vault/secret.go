@@ -71,8 +71,8 @@ func (v *Vault) ListNestedSecrets(mount, path string) ([]models.SecretPath, erro
 	v.Logger.Debug().Msg(fmt.Sprintf("Listing secrets for path: %s", mountPath))
 
 	if err != nil {
-		v.Logger.Err(err).Msgf("failed to list secrets: %w", err)
-		return nil, fmt.Errorf("failed to list secrets: %w", err)
+		v.Logger.Err(err).Msgf("failed to list secrets: %s", err)
+		return nil, fmt.Errorf("failed to list secrets: %s", err)
 	}
 
 	if secrets == nil {
@@ -108,7 +108,7 @@ func (v *Vault) GetSecretInfo(mount, path string) (*api.Secret, error) {
 	secretPath = sanitizePath(secretPath)
 	secretData, err := v.vault.Logical().Read(secretPath)
 	if err != nil {
-		v.Logger.Err(err).Msgf("failed to read secret: %w", err)
+		v.Logger.Err(err).Msgf("failed to read secret: %s", err)
 		return nil, errors.New(fmt.Sprintf("Failed to read secret: %v", err))
 	}
 

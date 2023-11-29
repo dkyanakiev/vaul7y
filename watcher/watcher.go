@@ -9,11 +9,13 @@ import (
 	"github.com/rs/zerolog"
 )
 
+//go:generate counterfeiter . Activities
 type Activities interface {
 	Add(chan struct{})
 	DeactivateAll()
 }
 
+//go:generate counterfeiter . Vault
 type Vault interface {
 	Address() string
 	AllPolicies() ([]string, error)

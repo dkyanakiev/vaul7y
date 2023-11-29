@@ -71,18 +71,17 @@ func (p *PolicyAclTable) reset() {
 
 func (p *PolicyAclTable) Render() error {
 	p.reset()
-
-	if p.Props == nil {
-		if p.Props.SelectedPolicyACL == "" {
-			p.Props.HandleNoResources(
-				"%sCant read ACL policy \n%s\\(╯°□°)╯︵ ┻━┻",
-				styles.HighlightPrimaryTag,
-				styles.HighlightSecondaryTag,
-			)
-			return nil
-		}
-	}
 	//p.Table.RenderHeader(PolicyAclTableHeaders)
+
+	if p.Props.SelectedPolicyACL == "" {
+		p.Props.HandleNoResources(
+			"%sCant read ACL policy \n%s\\(╯°□°)╯︵ ┻━┻",
+			styles.HighlightPrimaryTag,
+			styles.HighlightSecondaryTag,
+		)
+		return nil
+	}
+
 	p.renderACL()
 	p.slot.AddItem(p.TextView.Primitive(), 0, 1, false)
 	return nil

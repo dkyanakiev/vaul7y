@@ -21,7 +21,7 @@ If anyone decides to use this and wants to request a specific feature or even fi
 
 ## Short term TODO list:
 1. [x] Change the logger (current one is a mess)
-2. [ ] Finish adding tests (wip in another branch)
+2. [x] Finish adding tests (initial batch of tests)
 3. [ ] Finish implementing Update to existing secrets
     - [ ] Bonus: Create net new ones.
 4. [ ] Support for namespace changes. 

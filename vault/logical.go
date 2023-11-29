@@ -23,7 +23,8 @@ func (v *Vault) ListWithContext(ctx context.Context, path string) (*api.Secret, 
 	r.Method = http.MethodGet
 	r.Params.Set("list", "true")
 
-	resp, err := v.vault.RawRequestWithContext(ctx, r)
+	// resp, err := v.vault.RawRequestWithContext(ctx, r)
+	resp, err := v.vault.Logical().ReadRawWithContext(ctx, path)
 	if resp != nil {
 		defer resp.Body.Close()
 	}

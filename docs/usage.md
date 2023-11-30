@@ -5,7 +5,25 @@
 
 ### Brew
 
---> Not currently supported
+```
+brew install dkyanakiev/tap/vaul7y
+
+# to upgrade
+brew update && brew upgrade vaul7y
+
+```
+
+### Download from GitHub
+
+Download the relevant binary for your operating system (macOS = Darwin) from
+the [latest Github release](https://github.com/dkyanakiev/vaul7y/releases). Unpack it, then move the binary to
+somewhere accessible in your `PATH`, e.g. `mv ./vaul7y /usr/local/bin`.
+
+### > Using [go installed on your machine](https://go.dev/doc/install)
+
+```shell
+go install github.com/dkyanakiev/vaul7y@latest
+```
 
 ### Building from source and Run Vaul7y
 

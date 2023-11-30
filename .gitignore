@@ -22,8 +22,10 @@ go.work
 .idea
 
 .DS_Store
+.vscode
 .vscode/*
 vendor/*
 bin
 bin/*
 pkg/
+dist/

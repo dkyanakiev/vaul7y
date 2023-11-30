@@ -18,7 +18,7 @@ import (
 )
 
 var refreshIntervalDefault = time.Second * 30
-var version = "0.0.4"
+var version = "0.0.5"
 
 type options struct {
 	Version bool `short:"v" long:"version" description:"Show Damon version"`

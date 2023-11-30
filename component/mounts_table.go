@@ -14,7 +14,7 @@ import (
 )
 
 const (
-	TableTitleMounts = "System Mounts"
+	TableTitleMounts = "Secret Engines"
 )
 
 var (

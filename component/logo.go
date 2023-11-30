@@ -1,6 +1,7 @@
 package component
 
 import (
+	"fmt"
 	"strings"
 
 	primitive "github.com/dkyanakiev/vaulty/primitives"
@@ -21,12 +22,20 @@ var LogoASCII = []string{
 type Logo struct {
 	TextView TextView
 	slot     *tview.Flex
+	Props    *LogoProps
 }
 
-func NewLogo() *Logo {
+type LogoProps struct {
+	Version string
+}
+
+func NewLogo(version string) *Logo {
 	t := primitive.NewTextView(tview.AlignRight)
 	return &Logo{
 		TextView: t,
+		Props: &LogoProps{
+			Version: version,
+		},
 	}
 }
 
@@ -35,8 +44,9 @@ func (l *Logo) Render() error {
 		return ErrComponentNotBound
 	}
 
+	versionText := fmt.Sprintf("[#26ffe6]version: %s", l.Props.Version)
 	logo := strings.Join(LogoASCII, "\n")
-
+	logo = fmt.Sprintf("%s\n%s", logo, versionText)
 	l.TextView.SetText(logo)
 	l.slot.AddItem(l.TextView.Primitive(), 0, 1, false)
 	return nil

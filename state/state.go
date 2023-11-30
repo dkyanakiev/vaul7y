@@ -8,6 +8,7 @@ import (
 
 type State struct {
 	VaultAddress       string
+	VaultVersion       string
 	Mounts             map[string]*models.MountOutput
 	SecretsData        []models.SecretPath
 	KV2                []models.KVSecret
@@ -25,6 +26,7 @@ type State struct {
 	Elements *Elements
 	Toggle   *Toggle
 	Filter   *Filter
+	Version  string
 }
 
 type Toggle struct {
@@ -33,6 +35,7 @@ type Toggle struct {
 }
 
 type Filter struct {
+	Object string
 	Policy string
 }
 

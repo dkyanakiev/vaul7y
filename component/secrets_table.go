@@ -76,7 +76,6 @@ func (s *SecretsTable) GetIDForSelection() (string, string) {
 }
 
 func (s *SecretsTable) Render() error {
-
 	s.reset()
 	fullPath := fmt.Sprintf("%s%s", s.Props.SelectedMount, s.Props.SelectedPath)
 	s.Table.SetTitle("%s (%s)", TableTitleMounts, fullPath)

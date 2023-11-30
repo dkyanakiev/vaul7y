@@ -8,11 +8,12 @@ import (
 )
 
 func SetupLogger() (*os.File, *zerolog.Logger) {
-
 	// UNIX Time is faster and smaller than most timestamps
 	zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
 
 	logLevel, debugOn := os.LookupEnv("VAULTY_LOG_LEVEL")
+
+	var logger zerolog.Logger
 
 	// Default level for this example is info, unless debug flag is present
 	if debugOn {
@@ -21,7 +22,12 @@ func SetupLogger() (*os.File, *zerolog.Logger) {
 			log.Fatal().Err(err).Msg("Invalid log level")
 		}
 		zerolog.SetGlobalLevel(level)
+		logger = zerolog.New(os.Stdout).With().Timestamp().Logger()
+	} else {
+		// If debugOn is false, discard all log messages
+		logger = zerolog.Nop()
 	}
+
 	var logFile *os.File
 
 	// Check if file for logging is set
@@ -31,11 +37,8 @@ func SetupLogger() (*os.File, *zerolog.Logger) {
 		if err != nil {
 			log.Panic().Err(err).Msg("Error opening log file")
 		}
-		log.Logger = log.Output(zerolog.ConsoleWriter{Out: logFile, TimeFormat: zerolog.TimeFieldFormat})
-	} else {
-		// If no log file is set, write to stdout
-		log.Logger = zerolog.New(os.Stdout).With().Timestamp().Logger()
+		logger = logger.Output(zerolog.ConsoleWriter{Out: logFile, TimeFormat: zerolog.TimeFieldFormat})
 	}
 
-	return logFile, &log.Logger
+	return logFile, &logger
 }

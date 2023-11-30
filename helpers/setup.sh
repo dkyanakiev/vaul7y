@@ -6,17 +6,17 @@ export VAULT_ADDR='http://127.0.0.1:8200'
 # Login to Vault
 vault login $VAULT_TOKEN
 
-# Create multiple KV v2 stores with random names
-for i in {1..5}
-do
-  kv_store_name="kv$(uuidgen | cut -c1-8)"
-  vault secrets enable -version=2 -path=$kv_store_name kv
-done
+# # Create multiple KV v2 stores with random names
+# for i in {1..10}
+# do
+#   kv_store_name="kv$(uuidgen | cut -c1-8)"
+#   vault secrets enable -version=2 -path=$kv_store_name kv
+# done
 
 # Create random secrets in each KV store
 for kv_store_name in $(vault secrets list -format=json | jq -r 'to_entries[] | select(.value.type == "kv") | .key')
 do
-  for j in {1..5}
+  for j in {1..100}
   do
     # Create a secret at the root of the KV store
     vault kv put $kv_store_name/data/secret$j key1=$(openssl rand -base64 12) key2=$(openssl rand -base64 12)

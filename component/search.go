@@ -7,7 +7,7 @@ import (
 	"github.com/rivo/tview"
 )
 
-const searchPlaceholder = "(hit enter or esc to leave)"
+const searchPlaceholder = "(hit esc to leave the filter)"
 
 type SearchField struct {
 	InputField InputField

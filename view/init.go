@@ -18,11 +18,12 @@ func (v *View) Init(version string) {
 		styles.StandardColorTag,
 		styles.HighlightSecondaryTag,
 		styles.StandardColorTag,
-		version,
+		v.state.VaultVersion,
 		styles.HighlightSecondaryTag,
 		v.state.Namespace,
 		styles.StandardColorTag,
 	)
+	v.state.Version = version
 
 	v.components.VaultInfo.Bind(v.Layout.Elements.ClusterInfo)
 	v.components.VaultInfo.Render()
@@ -104,7 +105,7 @@ func (v *View) Init(version string) {
 		v.Layout.Pages.RemovePage(component.PageNameInfo)
 		v.logger.Debug().Msgf("Info page removed, Active page is: %s", v.state.Elements.TableMain.GetTitle())
 		v.Layout.Container.SetFocus(v.state.Elements.TableMain)
-		// v.GoBack()
+		v.GoBack()
 	}
 
 	// Warn

@@ -25,17 +25,18 @@ var (
 	PolicyCommands = []string{
 		fmt.Sprintf("\n%s ACL Policy Commands:", styles.HighlightSecondaryTag),
 		fmt.Sprintf("%s<i> or <Enter> %s to inspect policy", styles.HighlightPrimaryTag, styles.StandardColorTag),
-		fmt.Sprintf("%s</>%s apply filter", styles.HighlightPrimaryTag, styles.StandardColorTag),
+		fmt.Sprintf("%s</>%s Filter policies ", styles.HighlightPrimaryTag, styles.StandardColorTag),
 	}
 	PolicyACLCommands = []string{
 		fmt.Sprintf("\n%s ACL Policy Commands:", styles.HighlightSecondaryTag),
 		fmt.Sprintf("%s<esc>%s to go back", styles.HighlightPrimaryTag, styles.StandardColorTag),
-		//fmt.Sprintf("%s</>%s apply filter", styles.HighlightPrimaryTag, styles.StandardColorTag),
+		// fmt.Sprintf("%s</>%s apply filter", styles.HighlightPrimaryTag, styles.StandardColorTag),
 	}
 	SecretsCommands = []string{
 		fmt.Sprintf("\n%s Secrets Commands:", styles.HighlightSecondaryTag),
 		fmt.Sprintf("%s<e> or <enter>%s to navigate to selected the path", styles.HighlightPrimaryTag, styles.StandardColorTag),
 		fmt.Sprintf("%s<b> or <esc>%s to go back to the previous path", styles.HighlightPrimaryTag, styles.StandardColorTag),
+		fmt.Sprintf("%s</>%s Filter objects ", styles.HighlightPrimaryTag, styles.StandardColorTag),
 	}
 	SecretObjectCommands = []string{
 		fmt.Sprintf("\n%s Secret Commands:", styles.HighlightSecondaryTag),

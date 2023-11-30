@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.5] - 2023-11-30
+
+
+### Fixed
+- Missing commands for 2 views
+- Version command check would fail if missing `VAULT_TOKEN` or `VAULT_ADDR` is missing
+
 ## [0.0.3] - 2023-11-30
 
 ### Added

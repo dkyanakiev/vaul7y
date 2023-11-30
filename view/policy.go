@@ -47,10 +47,11 @@ func (v *View) inputPolicy(event *tcell.EventKey) *tcell.EventKey {
 	case tcell.KeyEsc:
 		//v.GoBack()
 	case tcell.KeyEnter:
-		//if v.Layout.Footer.HasFocus() {
-		v.Layout.Footer.Clear()
-		v.Layout.Container.SetFocus(v.components.PolicyTable.Table.Primitive())
-		return nil
+		if v.components.PolicyTable.Table.Primitive().HasFocus() {
+			v.PolicyACL(v.components.PolicyTable.GetIDForSelection())
+			v.Watcher.Unsubscribe()
+			return nil
+		}
 	case tcell.KeyRune:
 		switch event.Rune() {
 		case '/':

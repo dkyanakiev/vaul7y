@@ -22,6 +22,18 @@ type FakeSys struct {
 		result1 string
 		result2 error
 	}
+	HealthStub        func() (*api.HealthResponse, error)
+	healthMutex       sync.RWMutex
+	healthArgsForCall []struct {
+	}
+	healthReturns struct {
+		result1 *api.HealthResponse
+		result2 error
+	}
+	healthReturnsOnCall map[int]struct {
+		result1 *api.HealthResponse
+		result2 error
+	}
 	ListMountsStub        func() (map[string]*api.MountOutput, error)
 	listMountsMutex       sync.RWMutex
 	listMountsArgsForCall []struct {
@@ -110,6 +122,62 @@ func (fake *FakeSys) GetPolicyReturnsOnCall(i int, result1 string, result2 error
 	}
 	fake.getPolicyReturnsOnCall[i] = struct {
 		result1 string
+		result2 error
+	}{result1, result2}
+}
+
+func (fake *FakeSys) Health() (*api.HealthResponse, error) {
+	fake.healthMutex.Lock()
+	ret, specificReturn := fake.healthReturnsOnCall[len(fake.healthArgsForCall)]
+	fake.healthArgsForCall = append(fake.healthArgsForCall, struct {
+	}{})
+	stub := fake.HealthStub
+	fakeReturns := fake.healthReturns
+	fake.recordInvocation("Health", []interface{}{})
+	fake.healthMutex.Unlock()
+	if stub != nil {
+		return stub()
+	}
+	if specificReturn {
+		return ret.result1, ret.result2
+	}
+	return fakeReturns.result1, fakeReturns.result2
+}
+
+func (fake *FakeSys) HealthCallCount() int {
+	fake.healthMutex.RLock()
+	defer fake.healthMutex.RUnlock()
+	return len(fake.healthArgsForCall)
+}
+
+func (fake *FakeSys) HealthCalls(stub func() (*api.HealthResponse, error)) {
+	fake.healthMutex.Lock()
+	defer fake.healthMutex.Unlock()
+	fake.HealthStub = stub
+}
+
+func (fake *FakeSys) HealthReturns(result1 *api.HealthResponse, result2 error) {
+	fake.healthMutex.Lock()
+	defer fake.healthMutex.Unlock()
+	fake.HealthStub = nil
+	fake.healthReturns = struct {
+		result1 *api.HealthResponse
+		result2 error
+	}{result1, result2}
+}
+
+func (fake *FakeSys) HealthReturnsOnCall(i int, result1 *api.HealthResponse, result2 error) {
+	fake.healthMutex.Lock()
+	defer fake.healthMutex.Unlock()
+	fake.HealthStub = nil
+	if fake.healthReturnsOnCall == nil {
+		fake.healthReturnsOnCall = make(map[int]struct {
+			result1 *api.HealthResponse
+			result2 error
+		})
+	}
+	fake.healthReturnsOnCall[i] = struct {
+		result1 *api.HealthResponse
 		result2 error
 	}{result1, result2}
 }
@@ -231,6 +299,8 @@ func (fake *FakeSys) Invocations() map[string][][]interface{} {
 	defer fake.invocationsMutex.RUnlock()
 	fake.getPolicyMutex.RLock()
 	defer fake.getPolicyMutex.RUnlock()
+	fake.healthMutex.RLock()
+	defer fake.healthMutex.RUnlock()
 	fake.listMountsMutex.RLock()
 	defer fake.listMountsMutex.RUnlock()
 	fake.listPoliciesMutex.RLock()

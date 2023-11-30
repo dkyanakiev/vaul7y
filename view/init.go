@@ -105,7 +105,7 @@ func (v *View) Init(version string) {
 		v.Layout.Pages.RemovePage(component.PageNameInfo)
 		v.logger.Debug().Msgf("Info page removed, Active page is: %s", v.state.Elements.TableMain.GetTitle())
 		v.Layout.Container.SetFocus(v.state.Elements.TableMain)
-		// v.GoBack()
+		v.GoBack()
 	}
 
 	// Warn

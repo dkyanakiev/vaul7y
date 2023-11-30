@@ -33,7 +33,8 @@ func (v *View) InputMainCommands(event *tcell.EventKey) *tcell.EventKey {
 		return event
 	}
 	switch event.Key() {
-	case tcell.KeyCtrlM:
+	// Bug: CTRL+M key maps to enter and causes conflicts
+	case tcell.KeyCtrlB:
 		v.Watcher.Unsubscribe()
 		v.Mounts()
 	case tcell.KeyCtrlP:
@@ -42,5 +43,6 @@ func (v *View) InputMainCommands(event *tcell.EventKey) *tcell.EventKey {
 		// case tcell.KeyCtrlJ:
 		// 	v.SecretObject()
 	}
+
 	return event
 }

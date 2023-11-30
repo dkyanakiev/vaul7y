@@ -7,6 +7,7 @@ require (
 	github.com/charmbracelet/glamour v0.6.0
 	github.com/gdamore/tcell/v2 v2.6.0
 	github.com/hashicorp/vault/api v1.10.0
+	github.com/jessevdk/go-flags v1.5.0
 	github.com/rivo/tview v0.0.0-20230907083354-a39fe28ba466
 	github.com/rs/zerolog v1.31.0
 	github.com/stretchr/testify v1.8.4

@@ -36,6 +36,7 @@ type Sys interface {
 	ListMounts() (map[string]*api.MountOutput, error)
 	ListPolicies() ([]string, error)
 	GetPolicy(name string) (string, error)
+	Health() (*api.HealthResponse, error)
 	//ListMounts() ([]*api.Sys, error)
 }
 
@@ -79,4 +80,12 @@ func Default(v *Vault, log *zerolog.Logger) error {
 
 func (v *Vault) Address() string {
 	return v.Client.Address()
+}
+
+func (v *Vault) Version() (string, error) {
+	health, err := v.Sys.Health()
+	if err != nil {
+		return "", err
+	}
+	return health.Version, nil
 }

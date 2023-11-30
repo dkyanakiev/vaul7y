@@ -1,3 +1,4 @@
+
 local-vault:
 	vault server -dev
 

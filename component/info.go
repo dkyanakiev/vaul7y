@@ -38,10 +38,6 @@ func (i *Info) Render(msg string) error {
 		return ErrComponentNotBound
 	}
 
-	i.Props.Done = func(buttonIndex int, buttonLabel string) {
-		i.pages.RemovePage(PageNameInfo)
-
-	}
 	i.Modal.SetDoneFunc(i.Props.Done)
 	i.Modal.SetText(msg)
 	i.pages.AddPage(PageNameInfo, i.Modal.Container(), true, true)

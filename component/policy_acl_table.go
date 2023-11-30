@@ -17,10 +17,9 @@ var (
 type SelectPolicyACLFunc func(policyName string)
 
 type PolicyAclTable struct {
-	TextView   TextView
-	InputField InputField
-	Props      *PolicyAclTableProps
-	Flex       *tview.Flex
+	TextView TextView
+	Props    *PolicyAclTableProps
+	Flex     *tview.Flex
 	//Not sure I will use this
 	Renderer *glamour.TermRenderer
 

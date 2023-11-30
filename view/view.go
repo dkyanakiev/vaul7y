@@ -79,6 +79,7 @@ func New(components *Components, watcher Watcher, client Client, state *state.St
 		components: components,
 		history: &History{
 			HistorySize: historySize,
+			Logger:      logger,
 		},
 	}
 }
@@ -107,22 +108,22 @@ func (v *View) GoBack() {
 	v.history.pop()
 }
 
-// func (v *View) addToHistory(ns string, topic string, update func()) {
-// 	v.history.push(func() {
-// 		v.state.SelectedNamespace = ns
-// 		// update()
+func (v *View) addToHistory(ns string, topic string, update func()) {
+	v.history.push(func() {
+		v.state.SelectedNamespace = ns
+		// update()
 
-// 		// v.components.Selections.Props.Rerender = update
-// 		v.components.Selections.Namespace.SetSelectedFunc(func(text string, index int) {
-// 			v.state.SelectedNamespace = text
-// 			update()
-// 		})
-// 		// v.Watcher.Subscribe(topic, update)
+		// v.components.Selections.Props.Rerender = update
+		v.components.Selections.Namespace.SetSelectedFunc(func(text string, index int) {
+			v.state.SelectedNamespace = text
+			update()
+		})
+		// v.Watcher.Subscribe(topic, update)
 
-// 		index := getNamespaceNameIndex(ns, v.state.Namespaces)
-// 		v.state.Elements.DropDownNamespace.SetCurrentOption(index)
-// 	})
-// }
+		//index := getNamespaceNameIndex(ns, v.state.Namespaces)
+		//v.state.Elements.DropDownNamespace.SetCurrentOption(index)
+	})
+}
 
 func (v *View) viewSwitch() {
 	v.resetSearch()

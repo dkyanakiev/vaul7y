@@ -18,16 +18,13 @@ import (
 )
 
 var refreshIntervalDefault = time.Second * 30
-var version = "0.0.3"
+var version = "0.0.4"
 
 type options struct {
 	Version bool `short:"v" long:"version" description:"Show Damon version"`
 }
 
 func main() {
-
-	// Check for required Vault env vars
-	checkForVaultAddress()
 
 	var opts options
 	_, err := flags.ParseArgs(&opts, os.Args)
@@ -39,6 +36,8 @@ func main() {
 		fmt.Println("vaul7y", version)
 		os.Exit(0)
 	}
+	// Check for required Vault env vars
+	checkForVaultAddress()
 
 	logFile, logger := config.SetupLogger()
 	defer logFile.Close()

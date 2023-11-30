@@ -62,8 +62,8 @@ universal_binaries:
   - replace: true
 
 brews:
-  - name: vault7y
-    homepage: https://github.com/dkyanakiev/vault7y
+  - name: vaul7y
+    homepage: https://github.com/dkyanakiev/vaul7y
     description: "A simple terminal application/TUI for interacting with HashiCorp Vault."
     folder: Formula
     commit_author:

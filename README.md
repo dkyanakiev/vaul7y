@@ -4,7 +4,7 @@ Vaulty is a TUI for Hashicorp Vault. The goal is to support as many functionalit
 
 ## Why use Vaul7y 
    
-I started the tool purely for personal use as I love tools like [K9s](https://github.com/derailed/k9s) or [Wander](https://github.com/robinovitch61/wander). I generally prefer the use of CLI tools but when it came to vault and looking up at stuff, sometimes having a UI just speeds things up. I couldn't find something finished, so decided to write my own.
+I started the tool purely for personal use as I love tools like [K9s](https://github.com/derailed/k9s), [Wander](https://github.com/robinovitch61/wander) and [damon](https://github.com/hashicorp/damon). I generally prefer the use of CLI tools but when it came to vault and looking up at stuff, sometimes having a UI just speeds things up. I couldn't find something finished, so decided to write my own.
 
 ## Video
 ![gif](./images/vaulty-min.gif)

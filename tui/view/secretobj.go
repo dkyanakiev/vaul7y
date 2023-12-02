@@ -142,15 +142,16 @@ func (v *View) patchSecret() {
 	}
 	ok := v.components.SecretObjTable.SaveData(v.components.SecretObjTable.TextArea.GetText())
 	if ok != "" {
-		v.handleInfo(ok)
-	}
+		v.handleError(ok)
+	} else {
 
-	v.logger.Debug().Msgf("Updated secret object is: %v", v.components.SecretObjTable.Props.UpdatedData)
-	err := v.Client.UpdateSecretObjectKV2(v.state.SelectedMount, v.components.SecretObjTable.Props.SelectedPath, patch, v.components.SecretObjTable.Props.UpdatedData)
+		v.logger.Debug().Msgf("Updated secret object is: %v", v.components.SecretObjTable.Props.UpdatedData)
+		err := v.Client.UpdateSecretObjectKV2(v.state.SelectedMount, v.components.SecretObjTable.Props.SelectedPath, patch, v.components.SecretObjTable.Props.UpdatedData)
 
-	if err != nil {
-		v.handleError(string(err.Error()))
+		if err != nil {
+			v.handleError(string(err.Error()))
+		}
+		v.components.SecretObjTable.Editable = false
+		v.components.SecretObjTable.ToggleView()
 	}
-	v.components.SecretObjTable.Editable = false
-	v.components.SecretObjTable.ToggleView()
 }

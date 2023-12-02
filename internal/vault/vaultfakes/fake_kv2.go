@@ -38,6 +38,38 @@ type FakeKV2 struct {
 		result1 *api.KVMetadata
 		result2 error
 	}
+	PatchStub        func(context.Context, string, map[string]interface{}, ...vault.KVOption) (*api.KVSecret, error)
+	patchMutex       sync.RWMutex
+	patchArgsForCall []struct {
+		arg1 context.Context
+		arg2 string
+		arg3 map[string]interface{}
+		arg4 []vault.KVOption
+	}
+	patchReturns struct {
+		result1 *api.KVSecret
+		result2 error
+	}
+	patchReturnsOnCall map[int]struct {
+		result1 *api.KVSecret
+		result2 error
+	}
+	PutStub        func(context.Context, string, map[string]interface{}, ...vault.KVOption) (*api.KVSecret, error)
+	putMutex       sync.RWMutex
+	putArgsForCall []struct {
+		arg1 context.Context
+		arg2 string
+		arg3 map[string]interface{}
+		arg4 []vault.KVOption
+	}
+	putReturns struct {
+		result1 *api.KVSecret
+		result2 error
+	}
+	putReturnsOnCall map[int]struct {
+		result1 *api.KVSecret
+		result2 error
+	}
 	invocations      map[string][][]interface{}
 	invocationsMutex sync.RWMutex
 }
@@ -172,6 +204,140 @@ func (fake *FakeKV2) GetMetadataReturnsOnCall(i int, result1 *api.KVMetadata, re
 	}{result1, result2}
 }
 
+func (fake *FakeKV2) Patch(arg1 context.Context, arg2 string, arg3 map[string]interface{}, arg4 ...vault.KVOption) (*api.KVSecret, error) {
+	fake.patchMutex.Lock()
+	ret, specificReturn := fake.patchReturnsOnCall[len(fake.patchArgsForCall)]
+	fake.patchArgsForCall = append(fake.patchArgsForCall, struct {
+		arg1 context.Context
+		arg2 string
+		arg3 map[string]interface{}
+		arg4 []vault.KVOption
+	}{arg1, arg2, arg3, arg4})
+	stub := fake.PatchStub
+	fakeReturns := fake.patchReturns
+	fake.recordInvocation("Patch", []interface{}{arg1, arg2, arg3, arg4})
+	fake.patchMutex.Unlock()
+	if stub != nil {
+		return stub(arg1, arg2, arg3, arg4...)
+	}
+	if specificReturn {
+		return ret.result1, ret.result2
+	}
+	return fakeReturns.result1, fakeReturns.result2
+}
+
+func (fake *FakeKV2) PatchCallCount() int {
+	fake.patchMutex.RLock()
+	defer fake.patchMutex.RUnlock()
+	return len(fake.patchArgsForCall)
+}
+
+func (fake *FakeKV2) PatchCalls(stub func(context.Context, string, map[string]interface{}, ...vault.KVOption) (*api.KVSecret, error)) {
+	fake.patchMutex.Lock()
+	defer fake.patchMutex.Unlock()
+	fake.PatchStub = stub
+}
+
+func (fake *FakeKV2) PatchArgsForCall(i int) (context.Context, string, map[string]interface{}, []vault.KVOption) {
+	fake.patchMutex.RLock()
+	defer fake.patchMutex.RUnlock()
+	argsForCall := fake.patchArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3, argsForCall.arg4
+}
+
+func (fake *FakeKV2) PatchReturns(result1 *api.KVSecret, result2 error) {
+	fake.patchMutex.Lock()
+	defer fake.patchMutex.Unlock()
+	fake.PatchStub = nil
+	fake.patchReturns = struct {
+		result1 *api.KVSecret
+		result2 error
+	}{result1, result2}
+}
+
+func (fake *FakeKV2) PatchReturnsOnCall(i int, result1 *api.KVSecret, result2 error) {
+	fake.patchMutex.Lock()
+	defer fake.patchMutex.Unlock()
+	fake.PatchStub = nil
+	if fake.patchReturnsOnCall == nil {
+		fake.patchReturnsOnCall = make(map[int]struct {
+			result1 *api.KVSecret
+			result2 error
+		})
+	}
+	fake.patchReturnsOnCall[i] = struct {
+		result1 *api.KVSecret
+		result2 error
+	}{result1, result2}
+}
+
+func (fake *FakeKV2) Put(arg1 context.Context, arg2 string, arg3 map[string]interface{}, arg4 ...vault.KVOption) (*api.KVSecret, error) {
+	fake.putMutex.Lock()
+	ret, specificReturn := fake.putReturnsOnCall[len(fake.putArgsForCall)]
+	fake.putArgsForCall = append(fake.putArgsForCall, struct {
+		arg1 context.Context
+		arg2 string
+		arg3 map[string]interface{}
+		arg4 []vault.KVOption
+	}{arg1, arg2, arg3, arg4})
+	stub := fake.PutStub
+	fakeReturns := fake.putReturns
+	fake.recordInvocation("Put", []interface{}{arg1, arg2, arg3, arg4})
+	fake.putMutex.Unlock()
+	if stub != nil {
+		return stub(arg1, arg2, arg3, arg4...)
+	}
+	if specificReturn {
+		return ret.result1, ret.result2
+	}
+	return fakeReturns.result1, fakeReturns.result2
+}
+
+func (fake *FakeKV2) PutCallCount() int {
+	fake.putMutex.RLock()
+	defer fake.putMutex.RUnlock()
+	return len(fake.putArgsForCall)
+}
+
+func (fake *FakeKV2) PutCalls(stub func(context.Context, string, map[string]interface{}, ...vault.KVOption) (*api.KVSecret, error)) {
+	fake.putMutex.Lock()
+	defer fake.putMutex.Unlock()
+	fake.PutStub = stub
+}
+
+func (fake *FakeKV2) PutArgsForCall(i int) (context.Context, string, map[string]interface{}, []vault.KVOption) {
+	fake.putMutex.RLock()
+	defer fake.putMutex.RUnlock()
+	argsForCall := fake.putArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3, argsForCall.arg4
+}
+
+func (fake *FakeKV2) PutReturns(result1 *api.KVSecret, result2 error) {
+	fake.putMutex.Lock()
+	defer fake.putMutex.Unlock()
+	fake.PutStub = nil
+	fake.putReturns = struct {
+		result1 *api.KVSecret
+		result2 error
+	}{result1, result2}
+}
+
+func (fake *FakeKV2) PutReturnsOnCall(i int, result1 *api.KVSecret, result2 error) {
+	fake.putMutex.Lock()
+	defer fake.putMutex.Unlock()
+	fake.PutStub = nil
+	if fake.putReturnsOnCall == nil {
+		fake.putReturnsOnCall = make(map[int]struct {
+			result1 *api.KVSecret
+			result2 error
+		})
+	}
+	fake.putReturnsOnCall[i] = struct {
+		result1 *api.KVSecret
+		result2 error
+	}{result1, result2}
+}
+
 func (fake *FakeKV2) Invocations() map[string][][]interface{} {
 	fake.invocationsMutex.RLock()
 	defer fake.invocationsMutex.RUnlock()
@@ -179,6 +345,10 @@ func (fake *FakeKV2) Invocations() map[string][][]interface{} {
 	defer fake.getMutex.RUnlock()
 	fake.getMetadataMutex.RLock()
 	defer fake.getMetadataMutex.RUnlock()
+	fake.patchMutex.RLock()
+	defer fake.patchMutex.RUnlock()
+	fake.putMutex.RLock()
+	defer fake.putMutex.RUnlock()
 	copiedInvocations := map[string][][]interface{}{}
 	for key, value := range fake.invocations {
 		copiedInvocations[key] = value

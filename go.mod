@@ -8,6 +8,7 @@ require (
 	github.com/gdamore/tcell/v2 v2.6.0
 	github.com/hashicorp/vault/api v1.10.0
 	github.com/jessevdk/go-flags v1.5.0
+	github.com/mitchellh/mapstructure v1.5.0
 	github.com/rivo/tview v0.0.0-20230907083354-a39fe28ba466
 	github.com/rs/zerolog v1.31.0
 	github.com/stretchr/testify v1.8.4
@@ -42,7 +43,6 @@ require (
 	github.com/mattn/go-runewidth v0.0.15 // indirect
 	github.com/microcosm-cc/bluemonday v1.0.21 // indirect
 	github.com/mitchellh/go-homedir v1.1.0 // indirect
-	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/muesli/reflow v0.3.0 // indirect
 	github.com/muesli/termenv v0.15.2 // indirect
 	github.com/olekukonko/tablewriter v0.0.5 // indirect

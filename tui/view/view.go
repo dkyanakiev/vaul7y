@@ -15,7 +15,7 @@ const (
 )
 
 type Client interface {
-	UpdateSecretObject(mount string, path string, update bool, data map[string]interface{}) error
+	UpdateSecretObjectKV2(mount string, path string, update bool, data map[string]interface{}) error
 }
 
 type Watcher interface {
@@ -53,13 +53,13 @@ type Components struct {
 	SecretsTable   *component.SecretsTable
 	SecretObjTable *component.SecretObjTable
 
-	Commands  *component.Commands
-	VaultInfo *component.VaultInfo
-	Search    *component.SearchField
-	Error     *component.Error
-	Info      *component.Info
-	Failure   *component.Info
-
+	Commands     *component.Commands
+	VaultInfo    *component.VaultInfo
+	Search       *component.SearchField
+	Error        *component.Error
+	Info         *component.Info
+	Failure      *component.Info
+	TogglesInfo  *component.TogglesInfo
 	Selections   *component.Selections
 	JumpToPolicy *component.JumpToPolicy
 	Logo         *component.Logo

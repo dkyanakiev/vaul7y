@@ -49,7 +49,7 @@ func Default(l *Layout) {
 	l.Header = &Header{}
 	l.Elements = &Elements{}
 
-	l.Elements.ClusterInfo = tview.NewFlex()
+	l.Elements.ClusterInfo = tview.NewFlex().SetDirection(tview.FlexRow)
 	l.Elements.Dropdowns = tview.NewFlex().SetDirection(tview.FlexRow)
 
 	l.Header.SlotInfo = tview.NewFlex().SetDirection(tview.FlexRow)

@@ -44,9 +44,14 @@ type Sys interface {
 type KV2 interface {
 	Get(context.Context, string) (*api.KVSecret, error)
 	GetMetadata(context.Context, string) (*api.KVMetadata, error)
+	Patch(context.Context, string, map[string]interface{}, ...KVOption) (*api.KVSecret, error)
+	Put(context.Context, string, map[string]interface{}, ...KVOption) (*api.KVSecret, error)
+
 	// GetVersion(context.Context, string, int) (*api.KVSecret, error)
 	// GetVersionsAsList(context.Context, string) ([]*api.KVVersionMetadata, error)
 }
+
+type KVOption func() (key string, value interface{})
 
 func New(opts ...func(*Vault) error) (*Vault, error) {
 	vault := Vault{}
@@ -70,7 +75,6 @@ func Default(v *Vault, log *zerolog.Logger) error {
 	v.vault = client
 	v.Client = client
 	//KV1 is not setup as its adviced against
-	v.KV2 = client.KVv2("credentials")
 	v.Sys = client.Sys()
 	v.Logical = client.Logical()
 	v.Logger = log

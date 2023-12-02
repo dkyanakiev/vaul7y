@@ -11,8 +11,9 @@ import (
 
 // Table is a wrapper of a tview.Table primitive.
 type Table struct {
-	primitive *tview.Table
-	color     tcell.Color
+	primitive  *tview.Table
+	color      tcell.Color
+	tviewTable *tview.Table
 }
 
 func NewTable() *Table {
@@ -73,5 +74,10 @@ func (t *Table) SetInputCapture(capture func(event *tcell.EventKey) *tcell.Event
 }
 
 func (t *Table) Primitive() tview.Primitive {
+	return t.primitive
+}
+
+func (t *Table) ScrollToTop() *tview.Table {
+	t.primitive.ScrollToBeginning()
 	return t.primitive
 }

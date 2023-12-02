@@ -20,7 +20,7 @@ func (v *View) handleNoResources(text string, args ...interface{}) {
 
 func (v *View) err(err error, msg string) {
 	if err != nil {
-		fmt.Sprintf("%s: %s", msg, err.Error())
+		msg := fmt.Sprintf("%s: %s", msg, err.Error())
 		v.handleError(msg)
 	}
 }

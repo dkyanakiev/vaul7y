@@ -43,9 +43,14 @@ var (
 		fmt.Sprintf("%s<h>%s toggle display for secrets", styles.HighlightPrimaryTag, styles.StandardColorTag),
 		fmt.Sprintf("%s<c>%s copy secret to clipboard", styles.HighlightPrimaryTag, styles.StandardColorTag),
 		fmt.Sprintf("%s<j>%s toggle json view for secret", styles.HighlightPrimaryTag, styles.StandardColorTag),
+		fmt.Sprintf("%s<P>%s to PATCH secret", styles.HighlightPrimaryTag, styles.StandardColorTag),
+		fmt.Sprintf("%s<U>%s to UPDATE secret", styles.HighlightPrimaryTag, styles.StandardColorTag),
 		fmt.Sprintf("%s<b> or <esc>%s to go back to the previous path", styles.HighlightPrimaryTag, styles.StandardColorTag),
-		//TODO: Work in progress
-		//fmt.Sprintf("%s<p>%s patch secret", styles.HighlightPrimaryTag, styles.StandardColorTag),
+	}
+	SecretsObjectPatchCommands = []string{
+		fmt.Sprintf("\n%s Secret Commands:", styles.HighlightSecondaryTag),
+		fmt.Sprintf("%s<ctrl-w>%s to submit your PATCH/UPDATE request", styles.HighlightPrimaryTag, styles.StandardColorTag),
+		fmt.Sprintf("%s<esc>%s to go back to the previous path", styles.HighlightPrimaryTag, styles.StandardColorTag),
 	}
 )
 

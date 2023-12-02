@@ -12,7 +12,7 @@ import (
 func (v *View) Init(version string) {
 	// ClusterInfo
 	v.components.VaultInfo.Props.Info = fmt.Sprintf(
-		"%sAddress: %s %s\n%sVersion:%s %s\n%sNamespace: %s %s",
+		"%sAddress: %s %s\n%sVersion:%s %s\n%sNamespace: %s %s\n",
 		styles.HighlightSecondaryTag,
 		v.state.VaultAddress,
 		styles.StandardColorTag,
@@ -27,6 +27,10 @@ func (v *View) Init(version string) {
 
 	v.components.VaultInfo.Bind(v.Layout.Elements.ClusterInfo)
 	v.components.VaultInfo.Render()
+	// TogglesInfo
+	v.components.TogglesInfo.Bind(v.Layout.Elements.ClusterInfo)
+	v.components.TogglesInfo.InitialRender()
+
 	// Logo
 	v.components.Logo.Bind(v.Layout.Header.SlotLogo)
 	v.components.Logo.Render()
@@ -80,6 +84,7 @@ func (v *View) Init(version string) {
 		v.Layout.MainPage.ResizeItem(v.Layout.Footer, 0, 0)
 		v.Layout.Footer.RemoveItem(v.components.Search.InputField.Primitive())
 		v.Layout.Container.SetFocus(v.state.Elements.TableMain)
+		v.components.TogglesInfo.Render()
 	}
 
 	v.components.Search.Props.ChangedFunc = func(text string) {

@@ -36,13 +36,14 @@ func (v *View) Secrets(path string, secretBool string) {
 	update := func() {
 		if v.state.Toggle.Search {
 			v.state.Filter.Object = v.FilterText
+			v.components.TogglesInfo.Props.FilterText = v.FilterText
 		}
 		v.components.SecretsTable.Props.Data = v.filterSecrets()
 		v.components.SecretsTable.Props.SelectedMount = v.state.SelectedMount
 
 		v.components.SecretsTable.Render()
 		v.Draw()
-
+		v.components.SecretsTable.Table.ScrollToTop()
 	}
 
 	search.Props.ChangedFunc = func(text string) {

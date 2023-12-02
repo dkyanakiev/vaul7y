@@ -24,6 +24,7 @@ func (v *View) VPolicy() {
 		v.components.PolicyTable.Props.Data = v.filterPolicies()
 		v.components.PolicyTable.Render()
 		v.Draw()
+		v.components.PolicyTable.Table.ScrollToTop()
 	}
 
 	search.Props.ChangedFunc = func(text string) {

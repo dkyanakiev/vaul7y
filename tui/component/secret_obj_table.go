@@ -15,7 +15,7 @@ import (
 )
 
 const (
-	SecretObjTableTitle = "JSON Explorer"
+	SecretObjTableTitle = "Secret: "
 )
 
 var (
@@ -31,21 +31,22 @@ var (
 type SelectSecretPathFunc func(jsonPath string)
 
 type SecretObjTable struct {
-	Table    Table
-	TextView TextView
-	Form     Form
-
-	Props    *SecretObjTableProps
-	Logger   *zerolog.Logger
-	slot     *tview.Flex
-	ShowJson bool
-	Editable bool
+	Table          Table
+	TextView       TextView
+	TextArea       TextArea
+	Props          *SecretObjTableProps
+	Logger         *zerolog.Logger
+	ShowJson       bool
+	Editable       bool
+	CursorPosition int
+	slot           *tview.Flex
 }
 
 type SecretObjTableProps struct {
 	SelectedKey       string
 	SelectedValue     string
 	SelectedPath      string
+	MissingSecret     bool
 	SelectPath        SelectSecretPathFunc
 	HandleNoResources models.HandlerFunc
 
@@ -53,6 +54,7 @@ type SecretObjTableProps struct {
 	Data           *api.Secret
 	UpdatedData    map[string]interface{}
 	ObscureSecrets bool
+	Update         string
 	ChangedFunc    func(text string)
 }
 
@@ -65,10 +67,12 @@ func NewSecretObjTable() *SecretObjTable {
 	tv.SetRegions(true)
 	tv.SetBorderPadding(0, 0, 1, 1)
 	tv.SetBorderColor(styles.TcellColorStandard)
+	ta := primitive.NewTextArea()
 
 	jt := &SecretObjTable{
 		Table:    t,
 		TextView: tv,
+		TextArea: ta,
 		Props:    &SecretObjTableProps{},
 		ShowJson: false,
 		Editable: false,
@@ -100,9 +104,14 @@ func (s *SecretObjTable) ToggleView() {
 			s.renderRows()
 		}
 	} else {
-		s.Props.UpdatedData = s.Props.Data.Data["data"].(map[string]interface{})
-		s.slot.AddItem(s.TextView.Primitive(), 0, 1, true)
-		s.renderEditField()
+		if !s.Props.MissingSecret {
+			s.Props.UpdatedData = s.Props.Data.Data["data"].(map[string]interface{})
+		} else {
+			s.Props.UpdatedData = make(map[string]interface{})
+		}
+		s.TextView.SetText(s.TextArea.GetText())
+		s.slot.AddItem(s.TextArea.Primitive(), 0, 1, true)
+		s.renderEditArea()
 	}
 }
 
@@ -119,27 +128,38 @@ func (s *SecretObjTable) GetIDForSelection() (string, string) {
 }
 
 func (s *SecretObjTable) Render() error {
-
+	missingSecret := false
 	s.reset()
+	s.Table.SetTitle("%s %s", SecretObjTableTitle, s.Props.SelectedPath)
+	if s.Props.Data != nil && s.Props.Data.Data != nil && len(s.Props.Data.Data) > 0 {
+		data, ok := s.Props.Data.Data["data"]
+		if ok && data != nil {
+			missingSecret = false
+		} else {
+			missingSecret = true
+		}
+	} else {
+		s.Logger.Debug().Msg("Secret data is nil or empty")
+		missingSecret = true
+	}
 
-	s.Table.SetTitle("%s (%s)", SecretObjTableTitle, s.Props.SelectedPath)
-
-	if s.Props.Data == nil {
+	if missingSecret {
 		s.Props.HandleNoResources(
 			"%sno Secret Object data available\n¯%s\\_( ͡• ͜ʖ ͡•)_/¯",
 			styles.HighlightPrimaryTag,
 			styles.HighlightSecondaryTag,
 		)
-
+		s.Props.MissingSecret = missingSecret
 		return nil
 	}
 
 	s.Table.SetSelectedFunc(s.pathSelected)
 	s.Table.RenderHeader(SecretObjTableHeaderJobs)
 
-	s.ToggleView()
-	// s.renderRows()
-	// s.slot.AddItem(s.Table.Primitive(), 0, 1, false)
+	if !missingSecret {
+		s.Props.MissingSecret = missingSecret
+		s.ToggleView()
+	}
 	return nil
 }
 
@@ -157,10 +177,16 @@ func (s *SecretObjTable) renderRows() {
 		if s.Props.ObscureSecrets {
 			value = "********"
 		}
+		var strValue string
+		if value != nil {
+			strValue = value.(string)
+		} else {
+			strValue = ""
+		}
 
 		row := []string{
 			key,
-			value.(string),
+			strValue,
 		}
 		index := i + 1
 		c := tcell.ColorYellow
@@ -178,13 +204,13 @@ func (s *SecretObjTable) renderJson() {
 	s.TextView.SetText(string(jsonData))
 }
 
-func (s *SecretObjTable) renderEditField() {
+func (s *SecretObjTable) renderEditArea() {
 	data := s.Props.UpdatedData
 	jsonData, err := json.MarshalIndent(data, "", "  ")
 	if err != nil {
 		s.Logger.Err(err).Msgf("error: %s", err)
 	}
-	s.TextView.SetText(string(jsonData))
+	s.TextArea.SetText(string(jsonData), true)
 
 }
 
@@ -197,8 +223,10 @@ func (s *SecretObjTable) SaveData(text string) string {
 	err := json.Unmarshal([]byte(text), &data)
 	if err != nil {
 		s.Logger.Err(err).Msgf("Failed to validate json:: %s", err)
+		s.Props.UpdatedData = nil
 		return "Failed to validate json:"
+	} else {
+		s.Props.UpdatedData = data
 	}
-	s.Props.UpdatedData = data
 	return ""
 }

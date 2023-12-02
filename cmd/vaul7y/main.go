@@ -48,6 +48,7 @@ func main() {
 	})
 
 	state := initializeState(vaultClient)
+	toggles := component.NewTogglesInfo()
 	commands := component.NewCommands()
 	vaultInfo := component.NewVaultInfo()
 	mounts := component.NewMountsTable()
@@ -72,6 +73,7 @@ func main() {
 		Failure:        failure,
 		Logo:           logo,
 		Logger:         logger,
+		TogglesInfo:    toggles,
 	}
 	watcher := watcher.NewWatcher(state, vaultClient, refreshIntervalDefault, logger)
 	view := view.New(components, watcher, vaultClient, state, logger)

@@ -31,6 +31,7 @@ type Table interface {
 	RenderRow(data []string, index int, c tcell.Color)
 	SetSelectedFunc(fn func(row, column int))
 	SetInputCapture(capture func(event *tcell.EventKey) *tcell.EventKey)
+	ScrollToTop() *tview.Table
 }
 
 //go:generate counterfeiter . TextView
@@ -42,6 +43,8 @@ type TextView interface {
 	Highlight(regionIDs ...string) *tview.TextView
 	Clear() *tview.TextView
 	ModifyPrimitive(f func(t *tview.TextView))
+	ScrollToBeginning() *tview.TextView
+	ScrollToEnd() *tview.TextView
 }
 
 //go:generate counterfeiter . Modal
@@ -81,4 +84,21 @@ type Selector interface {
 	Primitive
 	GetTable() *primitives.Table
 	Container() tview.Primitive
+}
+
+//go:generate counterfeiter . TextArea
+type TextArea interface {
+	Primitive
+	SetWrap(bool) *tview.TextArea
+	SetText(string, bool) *tview.TextArea
+	GetCursor() (int, int, int, int)
+	SetMovedFunc(handler func()) *tview.TextArea
+	GetText() string
+}
+
+//go:generate counterfeiter . Box
+type Box interface {
+	Primitive
+	SetBorder(bool) *tview.Box
+	SetBorderColor(tcell.Color) *tview.Box
 }

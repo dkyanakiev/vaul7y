@@ -60,6 +60,16 @@ type FakeTable struct {
 		arg2 int
 		arg3 tcell.Color
 	}
+	ScrollToTopStub        func() *tview.Table
+	scrollToTopMutex       sync.RWMutex
+	scrollToTopArgsForCall []struct {
+	}
+	scrollToTopReturns struct {
+		result1 *tview.Table
+	}
+	scrollToTopReturnsOnCall map[int]struct {
+		result1 *tview.Table
+	}
 	SetInputCaptureStub        func(func(event *tcell.EventKey) *tcell.EventKey)
 	setInputCaptureMutex       sync.RWMutex
 	setInputCaptureArgsForCall []struct {
@@ -351,6 +361,59 @@ func (fake *FakeTable) RenderRowArgsForCall(i int) ([]string, int, tcell.Color) 
 	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
 }
 
+func (fake *FakeTable) ScrollToTop() *tview.Table {
+	fake.scrollToTopMutex.Lock()
+	ret, specificReturn := fake.scrollToTopReturnsOnCall[len(fake.scrollToTopArgsForCall)]
+	fake.scrollToTopArgsForCall = append(fake.scrollToTopArgsForCall, struct {
+	}{})
+	stub := fake.ScrollToTopStub
+	fakeReturns := fake.scrollToTopReturns
+	fake.recordInvocation("ScrollToTop", []interface{}{})
+	fake.scrollToTopMutex.Unlock()
+	if stub != nil {
+		return stub()
+	}
+	if specificReturn {
+		return ret.result1
+	}
+	return fakeReturns.result1
+}
+
+func (fake *FakeTable) ScrollToTopCallCount() int {
+	fake.scrollToTopMutex.RLock()
+	defer fake.scrollToTopMutex.RUnlock()
+	return len(fake.scrollToTopArgsForCall)
+}
+
+func (fake *FakeTable) ScrollToTopCalls(stub func() *tview.Table) {
+	fake.scrollToTopMutex.Lock()
+	defer fake.scrollToTopMutex.Unlock()
+	fake.ScrollToTopStub = stub
+}
+
+func (fake *FakeTable) ScrollToTopReturns(result1 *tview.Table) {
+	fake.scrollToTopMutex.Lock()
+	defer fake.scrollToTopMutex.Unlock()
+	fake.ScrollToTopStub = nil
+	fake.scrollToTopReturns = struct {
+		result1 *tview.Table
+	}{result1}
+}
+
+func (fake *FakeTable) ScrollToTopReturnsOnCall(i int, result1 *tview.Table) {
+	fake.scrollToTopMutex.Lock()
+	defer fake.scrollToTopMutex.Unlock()
+	fake.ScrollToTopStub = nil
+	if fake.scrollToTopReturnsOnCall == nil {
+		fake.scrollToTopReturnsOnCall = make(map[int]struct {
+			result1 *tview.Table
+		})
+	}
+	fake.scrollToTopReturnsOnCall[i] = struct {
+		result1 *tview.Table
+	}{result1}
+}
+
 func (fake *FakeTable) SetInputCapture(arg1 func(event *tcell.EventKey) *tcell.EventKey) {
 	fake.setInputCaptureMutex.Lock()
 	fake.setInputCaptureArgsForCall = append(fake.setInputCaptureArgsForCall, struct {
@@ -463,6 +526,8 @@ func (fake *FakeTable) Invocations() map[string][][]interface{} {
 	defer fake.renderHeaderMutex.RUnlock()
 	fake.renderRowMutex.RLock()
 	defer fake.renderRowMutex.RUnlock()
+	fake.scrollToTopMutex.RLock()
+	defer fake.scrollToTopMutex.RUnlock()
 	fake.setInputCaptureMutex.RLock()
 	defer fake.setInputCaptureMutex.RUnlock()
 	fake.setSelectedFuncMutex.RLock()

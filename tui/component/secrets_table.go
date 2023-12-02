@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	SecretsTableMount = "Secrets Explorer"
+	SecretsTableMount = "Secrets "
 )
 
 var (
@@ -78,7 +78,7 @@ func (s *SecretsTable) GetIDForSelection() (string, string) {
 func (s *SecretsTable) Render() error {
 	s.reset()
 	fullPath := fmt.Sprintf("%s%s", s.Props.SelectedMount, s.Props.SelectedPath)
-	s.Table.SetTitle("%s (%s)", TableTitleMounts, fullPath)
+	s.Table.SetTitle("%s (%s)", SecretsTableMount, fullPath)
 
 	if len(s.Props.Data) == 0 {
 		s.Props.HandleNoResources(

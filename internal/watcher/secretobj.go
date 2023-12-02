@@ -13,7 +13,7 @@ func (w *Watcher) SubscribeToSecret(selectedMount, selectedPath string, notify f
 
 	stop := make(chan struct{})
 	w.activities.Add(stop)
-	ticker := time.NewTicker(w.interval)
+	ticker := time.NewTicker(5 * time.Second)
 	go func() {
 		for {
 			select {

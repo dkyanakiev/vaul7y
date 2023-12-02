@@ -56,6 +56,26 @@ type FakeTextView struct {
 	primitiveReturnsOnCall map[int]struct {
 		result1 tview.Primitive
 	}
+	ScrollToBeginningStub        func() *tview.TextView
+	scrollToBeginningMutex       sync.RWMutex
+	scrollToBeginningArgsForCall []struct {
+	}
+	scrollToBeginningReturns struct {
+		result1 *tview.TextView
+	}
+	scrollToBeginningReturnsOnCall map[int]struct {
+		result1 *tview.TextView
+	}
+	ScrollToEndStub        func() *tview.TextView
+	scrollToEndMutex       sync.RWMutex
+	scrollToEndArgsForCall []struct {
+	}
+	scrollToEndReturns struct {
+		result1 *tview.TextView
+	}
+	scrollToEndReturnsOnCall map[int]struct {
+		result1 *tview.TextView
+	}
 	SetTextStub        func(string) *tview.TextView
 	setTextMutex       sync.RWMutex
 	setTextArgsForCall []struct {
@@ -344,6 +364,112 @@ func (fake *FakeTextView) PrimitiveReturnsOnCall(i int, result1 tview.Primitive)
 	}{result1}
 }
 
+func (fake *FakeTextView) ScrollToBeginning() *tview.TextView {
+	fake.scrollToBeginningMutex.Lock()
+	ret, specificReturn := fake.scrollToBeginningReturnsOnCall[len(fake.scrollToBeginningArgsForCall)]
+	fake.scrollToBeginningArgsForCall = append(fake.scrollToBeginningArgsForCall, struct {
+	}{})
+	stub := fake.ScrollToBeginningStub
+	fakeReturns := fake.scrollToBeginningReturns
+	fake.recordInvocation("ScrollToBeginning", []interface{}{})
+	fake.scrollToBeginningMutex.Unlock()
+	if stub != nil {
+		return stub()
+	}
+	if specificReturn {
+		return ret.result1
+	}
+	return fakeReturns.result1
+}
+
+func (fake *FakeTextView) ScrollToBeginningCallCount() int {
+	fake.scrollToBeginningMutex.RLock()
+	defer fake.scrollToBeginningMutex.RUnlock()
+	return len(fake.scrollToBeginningArgsForCall)
+}
+
+func (fake *FakeTextView) ScrollToBeginningCalls(stub func() *tview.TextView) {
+	fake.scrollToBeginningMutex.Lock()
+	defer fake.scrollToBeginningMutex.Unlock()
+	fake.ScrollToBeginningStub = stub
+}
+
+func (fake *FakeTextView) ScrollToBeginningReturns(result1 *tview.TextView) {
+	fake.scrollToBeginningMutex.Lock()
+	defer fake.scrollToBeginningMutex.Unlock()
+	fake.ScrollToBeginningStub = nil
+	fake.scrollToBeginningReturns = struct {
+		result1 *tview.TextView
+	}{result1}
+}
+
+func (fake *FakeTextView) ScrollToBeginningReturnsOnCall(i int, result1 *tview.TextView) {
+	fake.scrollToBeginningMutex.Lock()
+	defer fake.scrollToBeginningMutex.Unlock()
+	fake.ScrollToBeginningStub = nil
+	if fake.scrollToBeginningReturnsOnCall == nil {
+		fake.scrollToBeginningReturnsOnCall = make(map[int]struct {
+			result1 *tview.TextView
+		})
+	}
+	fake.scrollToBeginningReturnsOnCall[i] = struct {
+		result1 *tview.TextView
+	}{result1}
+}
+
+func (fake *FakeTextView) ScrollToEnd() *tview.TextView {
+	fake.scrollToEndMutex.Lock()
+	ret, specificReturn := fake.scrollToEndReturnsOnCall[len(fake.scrollToEndArgsForCall)]
+	fake.scrollToEndArgsForCall = append(fake.scrollToEndArgsForCall, struct {
+	}{})
+	stub := fake.ScrollToEndStub
+	fakeReturns := fake.scrollToEndReturns
+	fake.recordInvocation("ScrollToEnd", []interface{}{})
+	fake.scrollToEndMutex.Unlock()
+	if stub != nil {
+		return stub()
+	}
+	if specificReturn {
+		return ret.result1
+	}
+	return fakeReturns.result1
+}
+
+func (fake *FakeTextView) ScrollToEndCallCount() int {
+	fake.scrollToEndMutex.RLock()
+	defer fake.scrollToEndMutex.RUnlock()
+	return len(fake.scrollToEndArgsForCall)
+}
+
+func (fake *FakeTextView) ScrollToEndCalls(stub func() *tview.TextView) {
+	fake.scrollToEndMutex.Lock()
+	defer fake.scrollToEndMutex.Unlock()
+	fake.ScrollToEndStub = stub
+}
+
+func (fake *FakeTextView) ScrollToEndReturns(result1 *tview.TextView) {
+	fake.scrollToEndMutex.Lock()
+	defer fake.scrollToEndMutex.Unlock()
+	fake.ScrollToEndStub = nil
+	fake.scrollToEndReturns = struct {
+		result1 *tview.TextView
+	}{result1}
+}
+
+func (fake *FakeTextView) ScrollToEndReturnsOnCall(i int, result1 *tview.TextView) {
+	fake.scrollToEndMutex.Lock()
+	defer fake.scrollToEndMutex.Unlock()
+	fake.ScrollToEndStub = nil
+	if fake.scrollToEndReturnsOnCall == nil {
+		fake.scrollToEndReturnsOnCall = make(map[int]struct {
+			result1 *tview.TextView
+		})
+	}
+	fake.scrollToEndReturnsOnCall[i] = struct {
+		result1 *tview.TextView
+	}{result1}
+}
+
 func (fake *FakeTextView) SetText(arg1 string) *tview.TextView {
 	fake.setTextMutex.Lock()
 	ret, specificReturn := fake.setTextReturnsOnCall[len(fake.setTextArgsForCall)]
@@ -487,6 +613,10 @@ func (fake *FakeTextView) Invocations() map[string][][]interface{} {
 	defer fake.modifyPrimitiveMutex.RUnlock()
 	fake.primitiveMutex.RLock()
 	defer fake.primitiveMutex.RUnlock()
+	fake.scrollToBeginningMutex.RLock()
+	defer fake.scrollToBeginningMutex.RUnlock()
+	fake.scrollToEndMutex.RLock()
+	defer fake.scrollToEndMutex.RUnlock()
 	fake.setTextMutex.RLock()
 	defer fake.setTextMutex.RUnlock()
 	fake.writeMutex.RLock()

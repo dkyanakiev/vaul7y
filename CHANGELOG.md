@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.0.7] - 2023-12-03
+
+## Added
+- Creation of new secrets and paths
+
+## Fixed
+- Formatting and layout for different views around secrets when editing and displaying json
+
+## Changes
+- Commands layout has `<` and `>` removed to improve readability
+
+
 ## [0.0.6] - 2023-12-03
 
 ## Added

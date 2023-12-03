@@ -29,3 +29,5 @@ bin
 bin/*
 pkg/
 dist/
+*.token
+*_token

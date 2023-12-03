@@ -47,6 +47,7 @@ type SecretObjTableProps struct {
 	SelectedValue     string
 	SelectedPath      string
 	MissingSecret     bool
+	JsonOnly          bool
 	SelectPath        SelectSecretPathFunc
 	HandleNoResources models.HandlerFunc
 
@@ -96,12 +97,18 @@ func (s *SecretObjTable) reset() {
 func (s *SecretObjTable) ToggleView() {
 	s.slot.Clear()
 	if !s.Editable {
-		if s.ShowJson {
+		if s.Props.JsonOnly {
 			s.slot.AddItem(s.TextView.Primitive(), 0, 1, true)
 			s.renderJson()
 		} else {
-			s.slot.AddItem(s.Table.Primitive(), 0, 1, true)
-			s.renderRows()
+
+			if s.ShowJson {
+				s.slot.AddItem(s.TextView.Primitive(), 0, 1, true)
+				s.renderJson()
+			} else {
+				s.slot.AddItem(s.Table.Primitive(), 0, 1, true)
+				s.renderRows()
+			}
 		}
 	} else {
 		if !s.Props.MissingSecret {
@@ -129,12 +136,15 @@ func (s *SecretObjTable) GetIDForSelection() (string, string) {
 
 func (s *SecretObjTable) Render() error {
 	missingSecret := false
+	s.Props.JsonOnly = false
 	s.reset()
 	s.Table.SetTitle("%s %s", SecretObjTableTitle, s.Props.SelectedPath)
 	if s.Props.Data != nil && s.Props.Data.Data != nil && len(s.Props.Data.Data) > 0 {
 		data, ok := s.Props.Data.Data["data"]
 		if ok && data != nil {
 			missingSecret = false
+			s.Props.JsonOnly = isJSONFlat(data.(map[string]interface{}))
+			s.Logger.Info().Msgf("Secret data is not flat json, disabing table view: %v", s.Props.JsonOnly)
 		} else {
 			missingSecret = true
 		}
@@ -229,4 +239,15 @@ func (s *SecretObjTable) SaveData(text string) string {
 		s.Props.UpdatedData = data
 	}
 	return ""
+}
+
+func isJSONFlat(objmap map[string]interface{}) bool {
+	for _, value := range objmap {
+		_, ok := value.(map[string]interface{})
+		if ok {
+			return true
+		}
+	}
+
+	return false
 }

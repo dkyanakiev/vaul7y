@@ -53,6 +53,17 @@ type FakeBox struct {
 	setTitleReturnsOnCall map[int]struct {
 		result1 *tview.Box
 	}
+	SetTitleColorStub        func(tcell.Color) *tview.Box
+	setTitleColorMutex       sync.RWMutex
+	setTitleColorArgsForCall []struct {
+		arg1 tcell.Color
+	}
+	setTitleColorReturns struct {
+		result1 *tview.Box
+	}
+	setTitleColorReturnsOnCall map[int]struct {
+		result1 *tview.Box
+	}
 	invocations      map[string][][]interface{}
 	invocationsMutex sync.RWMutex
 }
@@ -293,6 +304,67 @@ func (fake *FakeBox) SetTitleReturnsOnCall(i int, result1 *tview.Box) {
 	}{result1}
 }
 
+func (fake *FakeBox) SetTitleColor(arg1 tcell.Color) *tview.Box {
+	fake.setTitleColorMutex.Lock()
+	ret, specificReturn := fake.setTitleColorReturnsOnCall[len(fake.setTitleColorArgsForCall)]
+	fake.setTitleColorArgsForCall = append(fake.setTitleColorArgsForCall, struct {
+		arg1 tcell.Color
+	}{arg1})
+	stub := fake.SetTitleColorStub
+	fakeReturns := fake.setTitleColorReturns
+	fake.recordInvocation("SetTitleColor", []interface{}{arg1})
+	fake.setTitleColorMutex.Unlock()
+	if stub != nil {
+		return stub(arg1)
+	}
+	if specificReturn {
+		return ret.result1
+	}
+	return fakeReturns.result1
+}
+
+func (fake *FakeBox) SetTitleColorCallCount() int {
+	fake.setTitleColorMutex.RLock()
+	defer fake.setTitleColorMutex.RUnlock()
+	return len(fake.setTitleColorArgsForCall)
+}
+
+func (fake *FakeBox) SetTitleColorCalls(stub func(tcell.Color) *tview.Box) {
+	fake.setTitleColorMutex.Lock()
+	defer fake.setTitleColorMutex.Unlock()
+	fake.SetTitleColorStub = stub
+}
+
+func (fake *FakeBox) SetTitleColorArgsForCall(i int) tcell.Color {
+	fake.setTitleColorMutex.RLock()
+	defer fake.setTitleColorMutex.RUnlock()
+	argsForCall := fake.setTitleColorArgsForCall[i]
+	return argsForCall.arg1
+}
+
+func (fake *FakeBox) SetTitleColorReturns(result1 *tview.Box) {
+	fake.setTitleColorMutex.Lock()
+	defer fake.setTitleColorMutex.Unlock()
+	fake.SetTitleColorStub = nil
+	fake.setTitleColorReturns = struct {
+		result1 *tview.Box
+	}{result1}
+}
+
+func (fake *FakeBox) SetTitleColorReturnsOnCall(i int, result1 *tview.Box) {
+	fake.setTitleColorMutex.Lock()
+	defer fake.setTitleColorMutex.Unlock()
+	fake.SetTitleColorStub = nil
+	if fake.setTitleColorReturnsOnCall == nil {
+		fake.setTitleColorReturnsOnCall = make(map[int]struct {
+			result1 *tview.Box
+		})
+	}
+	fake.setTitleColorReturnsOnCall[i] = struct {
+		result1 *tview.Box
+	}{result1}
+}
+
 func (fake *FakeBox) Invocations() map[string][][]interface{} {
 	fake.invocationsMutex.RLock()
 	defer fake.invocationsMutex.RUnlock()
@@ -304,6 +376,8 @@ func (fake *FakeBox) Invocations() map[string][][]interface{} {
 	defer fake.setBorderColorMutex.RUnlock()
 	fake.setTitleMutex.RLock()
 	defer fake.setTitleMutex.RUnlock()
+	fake.setTitleColorMutex.RLock()
+	defer fake.setTitleColorMutex.RUnlock()
 	copiedInvocations := map[string][][]interface{}{}
 	for key, value := range fake.invocations {
 		copiedInvocations[key] = value

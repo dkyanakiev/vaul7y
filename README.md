@@ -21,6 +21,7 @@ If anyone decides to use this and wants to request a specific feature or even fi
 
 ## Short term TODO list:
 1. [x] Finish implementing PUT/Patch to existing secrets
-    - [ ] Bonus: Create net new ones.
+1. [ ] Create new secret objects and paths.
+1. [ ] Version select and rollback for secrets
 2. [ ] Work on PKI and Certs 
 3. [ ] Support for namespace changes. (Requires enterprise license)

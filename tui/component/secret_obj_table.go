@@ -63,10 +63,6 @@ func NewSecretObjTable() *SecretObjTable {
 	t := primitive.NewTable()
 	tv := primitive.NewTextView(1)
 	tv.SetTextAlign(tview.AlignLeft)
-	tv.SetBorder(true)
-	tv.SetDynamicColors(true)
-	tv.SetRegions(true)
-	tv.SetBorderPadding(0, 0, 1, 1)
 	tv.SetBorderColor(styles.TcellColorStandard)
 	ta := primitive.NewTextArea()
 
@@ -211,6 +207,8 @@ func (s *SecretObjTable) renderJson() {
 	if err != nil {
 		s.Logger.Err(err).Msgf("error: %s", err)
 	}
+	s.TextView.SetBorder(true)
+	s.TextView.SetTitle(fmt.Sprintf("%s %s", SecretObjTableTitle, s.Props.SelectedPath))
 	s.TextView.SetText(string(jsonData))
 }
 
@@ -220,8 +218,8 @@ func (s *SecretObjTable) renderEditArea() {
 	if err != nil {
 		s.Logger.Err(err).Msgf("error: %s", err)
 	}
+	s.TextArea.SetTitle(fmt.Sprintf("%s %s", SecretObjTableTitle, s.Props.SelectedPath))
 	s.TextArea.SetText(string(jsonData), true)
-
 }
 
 func (s *SecretObjTable) SaveData(text string) string {

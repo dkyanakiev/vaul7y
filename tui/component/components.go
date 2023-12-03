@@ -38,13 +38,16 @@ type Table interface {
 type TextView interface {
 	Primitive
 	GetText(bool) string
+	SetBorder(bool)
 	SetText(text string) *tview.TextView
-	Write(data []byte) (int, error)
+	SetTitle(string)
+	//Write(data []byte) (int, error)
 	Highlight(regionIDs ...string) *tview.TextView
 	Clear() *tview.TextView
 	ModifyPrimitive(f func(t *tview.TextView))
 	ScrollToBeginning() *tview.TextView
 	ScrollToEnd() *tview.TextView
+	SetTextAlign(int) *tview.TextView
 }
 
 //go:generate counterfeiter . Modal
@@ -89,16 +92,18 @@ type Selector interface {
 //go:generate counterfeiter . TextArea
 type TextArea interface {
 	Primitive
-	SetWrap(bool) *tview.TextArea
 	SetText(string, bool) *tview.TextArea
-	GetCursor() (int, int, int, int)
-	SetMovedFunc(handler func()) *tview.TextArea
 	GetText() string
+	SetBorder(bool)
+	SetTitle(string)
+	SetBorderColor(tcell.Color)
 }
 
 //go:generate counterfeiter . Box
 type Box interface {
 	Primitive
 	SetBorder(bool) *tview.Box
+	SetTitle(string) *tview.Box
 	SetBorderColor(tcell.Color) *tview.Box
+	SetTitleColor(tcell.Color) *tview.Box
 }

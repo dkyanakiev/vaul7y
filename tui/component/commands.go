@@ -36,6 +36,7 @@ var (
 		fmt.Sprintf("\n%s Secrets Commands:", styles.HighlightSecondaryTag),
 		fmt.Sprintf("%s<e> or <enter>%s to navigate to selected the path", styles.HighlightPrimaryTag, styles.StandardColorTag),
 		fmt.Sprintf("%s<b> or <esc>%s to go back to the previous path", styles.HighlightPrimaryTag, styles.StandardColorTag),
+		fmt.Sprintf("%s<ctrl-n>%s to Create a new secret ", styles.HighlightPrimaryTag, styles.StandardColorTag),
 		fmt.Sprintf("%s</>%s Filter objects ", styles.HighlightPrimaryTag, styles.StandardColorTag),
 	}
 	SecretObjectCommands = []string{

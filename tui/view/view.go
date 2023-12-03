@@ -16,6 +16,7 @@ const (
 
 type Client interface {
 	UpdateSecretObjectKV2(mount string, path string, update bool, data map[string]interface{}) error
+	CreateNewSecret(mount string, path string) error
 }
 
 type Watcher interface {
@@ -53,21 +54,23 @@ type Components struct {
 	SecretsTable   *component.SecretsTable
 	SecretObjTable *component.SecretObjTable
 
-	Commands     *component.Commands
-	VaultInfo    *component.VaultInfo
-	Search       *component.SearchField
-	Error        *component.Error
-	Info         *component.Info
-	Failure      *component.Info
-	TogglesInfo  *component.TogglesInfo
-	Selections   *component.Selections
-	JumpToPolicy *component.JumpToPolicy
-	Logo         *component.Logo
-	Logger       *zerolog.Logger
+	Commands      *component.Commands
+	VaultInfo     *component.VaultInfo
+	Search        *component.SearchField
+	Error         *component.Error
+	Info          *component.Info
+	Failure       *component.Info
+	TogglesInfo   *component.TogglesInfo
+	Selections    *component.Selections
+	JumpToPolicy  *component.JumpToPolicy
+	TextInfoInput *component.TextInfoInput
+	Logo          *component.Logo
+	Logger        *zerolog.Logger
 }
 
 func New(components *Components, watcher Watcher, client Client, state *state.State, logger *zerolog.Logger) *View {
 	components.Search = component.NewSearchField("")
+	components.TextInfoInput = component.NewTextInfoInput()
 
 	return &View{
 		Client:     client,
@@ -142,6 +145,22 @@ func (v *View) resetSearch() {
 		v.Layout.Footer.RemoveItem(v.components.Search.InputField.Primitive())
 		v.Layout.MainPage.ResizeItem(v.Layout.Footer, 0, 0)
 		v.state.Toggle.Search = false
+	}
+}
+
+func (v *View) TextInput() {
+	textIn := v.components.TextInfoInput
+	v.Layout.MainPage.ResizeItem(v.Layout.Footer, 0, 1)
+	textIn.Render()
+	v.Layout.Container.SetFocus(textIn.InputField.Primitive())
+}
+
+func (v *View) resetTextInput() {
+	if v.state.Toggle.TextInput {
+		v.Layout.Container.SetFocus(v.state.Elements.TableMain)
+		v.Layout.Footer.RemoveItem(v.components.TextInfoInput.InputField.Primitive())
+		v.Layout.MainPage.ResizeItem(v.Layout.Footer, 0, 0)
+		v.state.Toggle.TextInput = false
 	}
 }
 

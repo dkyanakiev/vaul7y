@@ -131,39 +131,25 @@ func (s *SecretObjTable) GetIDForSelection() (string, string) {
 }
 
 func (s *SecretObjTable) Render() error {
-	missingSecret := false
+	s.Props.MissingSecret = false
 	s.Props.JsonOnly = false
 	s.reset()
 	s.Table.SetTitle("%s %s", SecretObjTableTitle, s.Props.SelectedPath)
-	if s.Props.Data != nil && s.Props.Data.Data != nil && len(s.Props.Data.Data) > 0 {
-		data, ok := s.Props.Data.Data["data"]
-		if ok && data != nil {
-			missingSecret = false
-			s.Props.JsonOnly = isJSONFlat(data.(map[string]interface{}))
-			s.Logger.Info().Msgf("Secret data is not flat json, disabing table view: %v", s.Props.JsonOnly)
-		} else {
-			missingSecret = true
-		}
-	} else {
-		s.Logger.Debug().Msg("Secret data is nil or empty")
-		missingSecret = true
-	}
+	s.validationLogic()
 
-	if missingSecret {
+	if s.Props.MissingSecret {
 		s.Props.HandleNoResources(
 			"%sno Secret Object data available\n¯%s\\_( ͡• ͜ʖ ͡•)_/¯",
 			styles.HighlightPrimaryTag,
 			styles.HighlightSecondaryTag,
 		)
-		s.Props.MissingSecret = missingSecret
 		return nil
 	}
 
 	s.Table.SetSelectedFunc(s.pathSelected)
 	s.Table.RenderHeader(SecretObjTableHeaderJobs)
 
-	if !missingSecret {
-		s.Props.MissingSecret = missingSecret
+	if !s.Props.MissingSecret {
 		s.ToggleView()
 	}
 	return nil
@@ -243,9 +229,59 @@ func isJSONFlat(objmap map[string]interface{}) bool {
 	for _, value := range objmap {
 		_, ok := value.(map[string]interface{})
 		if ok {
-			return true
+			return false
 		}
 	}
 
-	return false
+	return true
+}
+
+func (s *SecretObjTable) validateData() bool {
+	if s.Props.Data != nil && s.Props.Data.Data != nil {
+
+		data, ok := s.Props.Data.Data["data"].(map[string]interface{})
+		if !ok {
+			return false
+		}
+
+		if data == nil || len(data) == 0 {
+			return false
+		} else {
+			return true
+		}
+	} else {
+		return false
+	}
+}
+
+func (s *SecretObjTable) validationLogic() {
+	validateResult := s.validateData()
+	if validateResult {
+		if s.Props.Data != nil && s.Props.Data.Data != nil {
+			if len(s.Props.Data.Data) > 0 {
+				data, ok := s.Props.Data.Data["data"]
+				if ok && data != nil {
+					s.Props.MissingSecret = false
+					val := isJSONFlat(data.(map[string]interface{}))
+					if val {
+						s.Props.JsonOnly = false
+					} else {
+						s.Logger.Info().Msgf("Secret data is not flat json, disabing table view: %v", s.Props.JsonOnly)
+						s.Props.JsonOnly = true
+					}
+				} else {
+					s.Props.MissingSecret = true
+				}
+			} else {
+				s.Logger.Debug().Msg("Secret data is an empty map")
+				s.Props.MissingSecret = true
+			}
+		} else {
+			s.Logger.Debug().Msg("Secret data is nil")
+			s.Props.MissingSecret = true
+		}
+	} else {
+		s.Logger.Debug().Msg("Secret data is not valid")
+		s.Props.MissingSecret = true
+	}
 }

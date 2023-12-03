@@ -28,7 +28,6 @@ func (v *View) SecretObject(mount, path string) {
 		if !v.components.SecretObjTable.Editable {
 			v.components.SecretObjTable.Render()
 			v.components.SecretObjTable.Props.Data = v.state.SelectedSecret
-			v.logger.Debug().Msgf("Updated secret object is: %v", v.components.SecretObjTable.Props.UpdatedData)
 			v.Draw()
 		}
 	}

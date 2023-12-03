@@ -21,6 +21,7 @@ type State struct {
 	SelectedSecret     *api.Secret
 	PolicyList         []string
 	PolicyACL          string
+	NewSecretName      string
 
 	//Namespaces []*models.Namespace
 	Elements *Elements
@@ -32,6 +33,7 @@ type State struct {
 type Toggle struct {
 	Search       bool
 	JumpToPolicy bool
+	TextInput    bool
 }
 
 type Filter struct {

@@ -1,7 +1,6 @@
 package component
 
 import (
-	"github.com/charmbracelet/glamour"
 	"github.com/dkyanakiev/vaulty/internal/models"
 	primitive "github.com/dkyanakiev/vaulty/tui/primitives"
 	"github.com/dkyanakiev/vaulty/tui/styles"
@@ -20,8 +19,6 @@ type PolicyAclTable struct {
 	TextView TextView
 	Props    *PolicyAclTableProps
 	Flex     *tview.Flex
-	//Not sure I will use this
-	Renderer *glamour.TermRenderer
 
 	slot *tview.Flex
 }
@@ -40,17 +37,14 @@ type PolicyAclTableProps struct {
 func NewPolicyAclTable() *PolicyAclTable {
 	t := primitive.NewTextView(1)
 	t.SetTextAlign(tview.AlignLeft)
-	t.SetBorder(true)
-	t.SetBorderPadding(0, 0, 1, 1)
 	t.SetBorderColor(styles.TcellColorStandard)
+	t.SetBorder(true)
 
-	r, _ := glamour.NewTermRenderer()
 	flex := tview.NewFlex().
-		AddItem(t, 0, 1, true).
+		//(t, 0, 1, true).
 		AddItem(tview.NewBox(), 0, 1, false)
 
 	pt := &PolicyAclTable{
-		Renderer: r,
 		Flex:     flex,
 		TextView: t,
 		Props:    &PolicyAclTableProps{},
@@ -87,6 +81,6 @@ func (p *PolicyAclTable) Render() error {
 }
 
 func (p *PolicyAclTable) renderACL() {
-
+	p.TextView.SetTitle(p.Props.SelectedPolicyName)
 	p.TextView.SetText(p.Props.SelectedPolicyACL)
 }

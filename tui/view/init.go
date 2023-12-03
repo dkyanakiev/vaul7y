@@ -91,6 +91,21 @@ func (v *View) Init(version string) {
 		v.FilterText = text
 	}
 
+	// TextInput (New secret)
+	v.components.TextInfoInput.Bind(v.Layout.Footer)
+	v.components.TextInfoInput.Props.DoneFunc = func(key tcell.Key) {
+		v.Layout.MainPage.ResizeItem(v.Layout.Footer, 0, 0)
+		v.Layout.Footer.RemoveItem(v.components.TextInfoInput.InputField.Primitive())
+		v.Layout.Container.SetFocus(v.state.Elements.TableMain)
+		v.components.TextInfoInput.Render()
+
+		newText := v.components.TextInfoInput.InputField.GetText()
+		v.state.NewSecretName = newText
+		v.CreateNewSecretObject(newText)
+		v.components.TextInfoInput.InputField.SetText("")
+		v.state.Toggle.TextInput = false
+	}
+
 	// Error
 	v.components.Error.Bind(v.Layout.Pages)
 	v.components.Error.Props.Done = func(buttonIndex int, buttonLabel string) {

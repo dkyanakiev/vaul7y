@@ -90,6 +90,18 @@ func (v *View) inputSecrets(event *tcell.EventKey) *tcell.EventKey {
 			}
 			return nil
 		}
+	case tcell.KeyCtrlN:
+		v.logger.Debug().Msgf("Running New Secret view with : %v", v.state.SelectedPath)
+		if !v.Layout.Footer.HasFocus() {
+			if !v.state.Toggle.TextInput {
+				v.state.Toggle.TextInput = true
+				v.components.TextInfoInput.InputField.SetText("")
+				v.TextInput()
+			} else {
+				v.Layout.Container.SetFocus(v.components.TextInfoInput.InputField.Primitive())
+			}
+			return nil
+		}
 	case tcell.KeyRune:
 		switch event.Rune() {
 		case 'e':
@@ -155,4 +167,23 @@ func (v *View) filterSecrets() []models.SecretPath {
 func trimLastElement(s string) string {
 	dir, _ := filepath.Split(s)
 	return strings.TrimSuffix(dir, string(filepath.Separator)) + string(filepath.Separator)
+}
+
+func (v *View) CreateNewSecretObject(newObj string) {
+	v.logger.Info().Msgf("Creating new secret object for path: %v", v.components.SecretsTable.Props.SelectedPath)
+	v.logger.Info().Msgf("Creating new secret object for mount: %v", v.state.SelectedMount)
+	if v.state.NewSecretName != "" {
+		v.logger.Debug().Msgf("New secret name is: %v", v.state.NewSecretName)
+		newPath := fmt.Sprintf("%s%s", v.components.SecretsTable.Props.SelectedPath, v.state.NewSecretName)
+		err := v.Client.CreateNewSecret(v.state.SelectedMount, newPath)
+		if err != nil {
+			v.handleError(string(err.Error()))
+		} else {
+			v.handleInfo("Secret path created successfully")
+		}
+
+	} else {
+		v.logger.Debug().Msg("New secret name is empty")
+	}
+	//v.Layout.Container.SetFocus(v.components.SecretObjTable.Table.Primitive())
 }

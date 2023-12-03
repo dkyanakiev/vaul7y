@@ -76,6 +76,11 @@ type FakeTextView struct {
 	scrollToEndReturnsOnCall map[int]struct {
 		result1 *tview.TextView
 	}
+	SetBorderStub        func(bool)
+	setBorderMutex       sync.RWMutex
+	setBorderArgsForCall []struct {
+		arg1 bool
+	}
 	SetTextStub        func(string) *tview.TextView
 	setTextMutex       sync.RWMutex
 	setTextArgsForCall []struct {
@@ -87,18 +92,21 @@ type FakeTextView struct {
 	setTextReturnsOnCall map[int]struct {
 		result1 *tview.TextView
 	}
-	WriteStub        func([]byte) (int, error)
-	writeMutex       sync.RWMutex
-	writeArgsForCall []struct {
-		arg1 []byte
+	SetTextAlignStub        func(int) *tview.TextView
+	setTextAlignMutex       sync.RWMutex
+	setTextAlignArgsForCall []struct {
+		arg1 int
 	}
-	writeReturns struct {
-		result1 int
-		result2 error
+	setTextAlignReturns struct {
+		result1 *tview.TextView
 	}
-	writeReturnsOnCall map[int]struct {
-		result1 int
-		result2 error
+	setTextAlignReturnsOnCall map[int]struct {
+		result1 *tview.TextView
+	}
+	SetTitleStub        func(string)
+	setTitleMutex       sync.RWMutex
+	setTitleArgsForCall []struct {
+		arg1 string
 	}
 	invocations      map[string][][]interface{}
 	invocationsMutex sync.RWMutex
@@ -470,6 +478,38 @@ func (fake *FakeTextView) ScrollToEndReturnsOnCall(i int, result1 *tview.TextVie
 	}{result1}
 }
 
+func (fake *FakeTextView) SetBorder(arg1 bool) {
+	fake.setBorderMutex.Lock()
+	fake.setBorderArgsForCall = append(fake.setBorderArgsForCall, struct {
+		arg1 bool
+	}{arg1})
+	stub := fake.SetBorderStub
+	fake.recordInvocation("SetBorder", []interface{}{arg1})
+	fake.setBorderMutex.Unlock()
+	if stub != nil {
+		fake.SetBorderStub(arg1)
+	}
+}
+
+func (fake *FakeTextView) SetBorderCallCount() int {
+	fake.setBorderMutex.RLock()
+	defer fake.setBorderMutex.RUnlock()
+	return len(fake.setBorderArgsForCall)
+}
+
+func (fake *FakeTextView) SetBorderCalls(stub func(bool)) {
+	fake.setBorderMutex.Lock()
+	defer fake.setBorderMutex.Unlock()
+	fake.SetBorderStub = stub
+}
+
+func (fake *FakeTextView) SetBorderArgsForCall(i int) bool {
+	fake.setBorderMutex.RLock()
+	defer fake.setBorderMutex.RUnlock()
+	argsForCall := fake.setBorderArgsForCall[i]
+	return argsForCall.arg1
+}
+
 func (fake *FakeTextView) SetText(arg1 string) *tview.TextView {
 	fake.setTextMutex.Lock()
 	ret, specificReturn := fake.setTextReturnsOnCall[len(fake.setTextArgsForCall)]
@@ -531,73 +571,97 @@ func (fake *FakeTextView) SetTextReturnsOnCall(i int, result1 *tview.TextView) {
 	}{result1}
 }
 
-func (fake *FakeTextView) Write(arg1 []byte) (int, error) {
-	var arg1Copy []byte
-	if arg1 != nil {
-		arg1Copy = make([]byte, len(arg1))
-		copy(arg1Copy, arg1)
-	}
-	fake.writeMutex.Lock()
-	ret, specificReturn := fake.writeReturnsOnCall[len(fake.writeArgsForCall)]
-	fake.writeArgsForCall = append(fake.writeArgsForCall, struct {
-		arg1 []byte
-	}{arg1Copy})
-	stub := fake.WriteStub
-	fakeReturns := fake.writeReturns
-	fake.recordInvocation("Write", []interface{}{arg1Copy})
-	fake.writeMutex.Unlock()
+func (fake *FakeTextView) SetTextAlign(arg1 int) *tview.TextView {
+	fake.setTextAlignMutex.Lock()
+	ret, specificReturn := fake.setTextAlignReturnsOnCall[len(fake.setTextAlignArgsForCall)]
+	fake.setTextAlignArgsForCall = append(fake.setTextAlignArgsForCall, struct {
+		arg1 int
+	}{arg1})
+	stub := fake.SetTextAlignStub
+	fakeReturns := fake.setTextAlignReturns
+	fake.recordInvocation("SetTextAlign", []interface{}{arg1})
+	fake.setTextAlignMutex.Unlock()
 	if stub != nil {
 		return stub(arg1)
 	}
 	if specificReturn {
-		return ret.result1, ret.result2
+		return ret.result1
 	}
-	return fakeReturns.result1, fakeReturns.result2
+	return fakeReturns.result1
 }
 
-func (fake *FakeTextView) WriteCallCount() int {
-	fake.writeMutex.RLock()
-	defer fake.writeMutex.RUnlock()
-	return len(fake.writeArgsForCall)
+func (fake *FakeTextView) SetTextAlignCallCount() int {
+	fake.setTextAlignMutex.RLock()
+	defer fake.setTextAlignMutex.RUnlock()
+	return len(fake.setTextAlignArgsForCall)
 }
 
-func (fake *FakeTextView) WriteCalls(stub func([]byte) (int, error)) {
-	fake.writeMutex.Lock()
-	defer fake.writeMutex.Unlock()
-	fake.WriteStub = stub
+func (fake *FakeTextView) SetTextAlignCalls(stub func(int) *tview.TextView) {
+	fake.setTextAlignMutex.Lock()
+	defer fake.setTextAlignMutex.Unlock()
+	fake.SetTextAlignStub = stub
 }
 
-func (fake *FakeTextView) WriteArgsForCall(i int) []byte {
-	fake.writeMutex.RLock()
-	defer fake.writeMutex.RUnlock()
-	argsForCall := fake.writeArgsForCall[i]
+func (fake *FakeTextView) SetTextAlignArgsForCall(i int) int {
+	fake.setTextAlignMutex.RLock()
+	defer fake.setTextAlignMutex.RUnlock()
+	argsForCall := fake.setTextAlignArgsForCall[i]
 	return argsForCall.arg1
 }
 
-func (fake *FakeTextView) WriteReturns(result1 int, result2 error) {
-	fake.writeMutex.Lock()
-	defer fake.writeMutex.Unlock()
-	fake.WriteStub = nil
-	fake.writeReturns = struct {
-		result1 int
-		result2 error
-	}{result1, result2}
+func (fake *FakeTextView) SetTextAlignReturns(result1 *tview.TextView) {
+	fake.setTextAlignMutex.Lock()
+	defer fake.setTextAlignMutex.Unlock()
+	fake.SetTextAlignStub = nil
+	fake.setTextAlignReturns = struct {
+		result1 *tview.TextView
+	}{result1}
 }
 
-func (fake *FakeTextView) WriteReturnsOnCall(i int, result1 int, result2 error) {
-	fake.writeMutex.Lock()
-	defer fake.writeMutex.Unlock()
-	fake.WriteStub = nil
-	if fake.writeReturnsOnCall == nil {
-		fake.writeReturnsOnCall = make(map[int]struct {
-			result1 int
-			result2 error
+func (fake *FakeTextView) SetTextAlignReturnsOnCall(i int, result1 *tview.TextView) {
+	fake.setTextAlignMutex.Lock()
+	defer fake.setTextAlignMutex.Unlock()
+	fake.SetTextAlignStub = nil
+	if fake.setTextAlignReturnsOnCall == nil {
+		fake.setTextAlignReturnsOnCall = make(map[int]struct {
+			result1 *tview.TextView
 		})
 	}
-	fake.writeReturnsOnCall[i] = struct {
-		result1 int
-		result2 error
-	}{result1, result2}
+	fake.setTextAlignReturnsOnCall[i] = struct {
+		result1 *tview.TextView
+	}{result1}
+}
+
+func (fake *FakeTextView) SetTitle(arg1 string) {
+	fake.setTitleMutex.Lock()
+	fake.setTitleArgsForCall = append(fake.setTitleArgsForCall, struct {
+		arg1 string
+	}{arg1})
+	stub := fake.SetTitleStub
+	fake.recordInvocation("SetTitle", []interface{}{arg1})
+	fake.setTitleMutex.Unlock()
+	if stub != nil {
+		fake.SetTitleStub(arg1)
+	}
+}
+
+func (fake *FakeTextView) SetTitleCallCount() int {
+	fake.setTitleMutex.RLock()
+	defer fake.setTitleMutex.RUnlock()
+	return len(fake.setTitleArgsForCall)
+}
+
+func (fake *FakeTextView) SetTitleCalls(stub func(string)) {
+	fake.setTitleMutex.Lock()
+	defer fake.setTitleMutex.Unlock()
+	fake.SetTitleStub = stub
+}
+
+func (fake *FakeTextView) SetTitleArgsForCall(i int) string {
+	fake.setTitleMutex.RLock()
+	defer fake.setTitleMutex.RUnlock()
+	argsForCall := fake.setTitleArgsForCall[i]
+	return argsForCall.arg1
 }
 
 func (fake *FakeTextView) Invocations() map[string][][]interface{} {
@@ -617,10 +681,14 @@ func (fake *FakeTextView) Invocations() map[string][][]interface{} {
 	defer fake.scrollToBeginningMutex.RUnlock()
 	fake.scrollToEndMutex.RLock()
 	defer fake.scrollToEndMutex.RUnlock()
+	fake.setBorderMutex.RLock()
+	defer fake.setBorderMutex.RUnlock()
 	fake.setTextMutex.RLock()
 	defer fake.setTextMutex.RUnlock()
-	fake.writeMutex.RLock()
-	defer fake.writeMutex.RUnlock()
+	fake.setTextAlignMutex.RLock()
+	defer fake.setTextAlignMutex.RUnlock()
+	fake.setTitleMutex.RLock()
+	defer fake.setTitleMutex.RUnlock()
 	copiedInvocations := map[string][][]interface{}{}
 	for key, value := range fake.invocations {
 		copiedInvocations[key] = value

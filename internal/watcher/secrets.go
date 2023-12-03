@@ -28,7 +28,7 @@ func (w *Watcher) SubscribeToSecrets(selectedMount, selectedPath string, notify 
 }
 
 func (w *Watcher) updateSecrets(selectedMount, selectedPath string) {
-	w.logger.Printf("Updating secrets for mount: %s, path: %s", selectedMount, selectedPath)
+	w.logger.Info().Msgf("Updating secrets for mount: %s, path: %s", selectedMount, selectedPath)
 	secrets, err := w.vault.ListNestedSecrets(selectedMount, selectedPath)
 	if err != nil {
 		w.NotifyHandler(models.HandleError, err.Error())

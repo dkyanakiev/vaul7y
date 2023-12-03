@@ -383,3 +383,23 @@ func (v *Vault) PatchWithoutWrap(ctx context.Context, mountPath string, secretPa
 
 	return kvs, nil
 }
+
+func (v *Vault) CreateNewSecret(mount string, path string) error {
+	secretPath := fmt.Sprintf("%s/data/%s", mount, path)
+	secretPath = sanitizePath(secretPath)
+
+	data := map[string]interface{}{
+		"data": make(map[string]interface{}),
+	}
+
+	secret, err := v.vault.Logical().Write(secretPath, data)
+	if err != nil {
+		return fmt.Errorf("failed to create secret: %w", err)
+	}
+
+	if secret == nil {
+		return fmt.Errorf("no secret was written to %s", secretPath)
+	}
+
+	return nil
+}

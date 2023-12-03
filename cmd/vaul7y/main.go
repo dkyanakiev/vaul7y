@@ -6,19 +6,19 @@ import (
 	"os"
 	"time"
 
-	"github.com/dkyanakiev/vaulty/component"
-	"github.com/dkyanakiev/vaulty/config"
-	"github.com/dkyanakiev/vaulty/state"
-	"github.com/dkyanakiev/vaulty/vault"
-	"github.com/dkyanakiev/vaulty/view"
-	"github.com/dkyanakiev/vaulty/watcher"
+	"github.com/dkyanakiev/vaulty/internal/config"
+	"github.com/dkyanakiev/vaulty/internal/state"
+	"github.com/dkyanakiev/vaulty/internal/vault"
+	"github.com/dkyanakiev/vaulty/internal/watcher"
+	"github.com/dkyanakiev/vaulty/tui/component"
+	"github.com/dkyanakiev/vaulty/tui/view"
 	"github.com/gdamore/tcell/v2"
 	"github.com/jessevdk/go-flags"
 	"github.com/rivo/tview"
 )
 
 var refreshIntervalDefault = time.Second * 30
-var version = "0.0.5"
+var version = "0.0.6"
 
 type options struct {
 	Version bool `short:"v" long:"version" description:"Show Damon version"`
@@ -48,6 +48,7 @@ func main() {
 	})
 
 	state := initializeState(vaultClient)
+	toggles := component.NewTogglesInfo()
 	commands := component.NewCommands()
 	vaultInfo := component.NewVaultInfo()
 	mounts := component.NewMountsTable()
@@ -72,6 +73,7 @@ func main() {
 		Failure:        failure,
 		Logo:           logo,
 		Logger:         logger,
+		TogglesInfo:    toggles,
 	}
 	watcher := watcher.NewWatcher(state, vaultClient, refreshIntervalDefault, logger)
 	view := view.New(components, watcher, vaultClient, state, logger)

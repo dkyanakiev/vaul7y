@@ -1,7 +1,20 @@
 # Changelog
 
-## [0.0.5] - 2023-11-30
+## [0.0.6] - 2023-12-03
 
+## Added
+- Support for both PUT and PATCH for KV2 secrets
+    - Had to modify the default methods in the vault package.. I couldn't figure out a clean way to get rid of the wrapper
+- Better key mappings
+- Additional information pane to show edit mode and filters used to search
+
+## Fixed
+- Correctly scrolling to the top on secrets and policy view
+
+## Changes
+- Refactoring and restructuring to make navigation in the repo easier
+
+## [0.0.5] - 2023-11-30
 
 ### Fixed
 - Missing commands for 2 views

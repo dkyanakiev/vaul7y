@@ -198,3 +198,8 @@ type Mount struct {
 	Type                  string      `json:"type"`
 	UUID                  string      `json:"uuid"`
 }
+
+type Namespace struct {
+	Name        string
+	Description string
+}

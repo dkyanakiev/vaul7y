@@ -12,6 +12,7 @@ type State struct {
 	Mounts             map[string]*models.MountOutput
 	SecretsData        []models.SecretPath
 	KV2                []models.KVSecret
+	RootNamespace      string
 	Namespace          string
 	SelectedNamespace  string
 	SelectedMount      string
@@ -23,11 +24,11 @@ type State struct {
 	PolicyACL          string
 	NewSecretName      string
 
-	//Namespaces []*models.Namespace
-	Elements *Elements
-	Toggle   *Toggle
-	Filter   *Filter
-	Version  string
+	Namespaces []string
+	Elements   *Elements
+	Toggle     *Toggle
+	Filter     *Filter
+	Version    string
 }
 
 type Toggle struct {
@@ -37,8 +38,9 @@ type Toggle struct {
 }
 
 type Filter struct {
-	Object string
-	Policy string
+	Object    string
+	Policy    string
+	Namespace string
 }
 
 type Elements struct {

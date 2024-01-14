@@ -2,7 +2,9 @@ package vault
 
 import (
 	"context"
+	"strings"
 
+	"github.com/dkyanakiev/vaulty/internal/models"
 	"github.com/hashicorp/vault/api"
 	"github.com/rs/zerolog"
 )
@@ -13,13 +15,14 @@ type Client interface {
 }
 
 type Vault struct {
-	vault   *api.Client
-	Client  Client
-	KV2     KV2
-	Sys     Sys
-	Logical Logical
-	Secret  Secret
-	Logger  *zerolog.Logger
+	vault    *api.Client
+	Client   Client
+	KV2      KV2
+	Sys      Sys
+	NsClient NamespaceClient
+	Logical  Logical
+	Secret   Secret
+	Logger   *zerolog.Logger
 }
 
 //go:generate counterfeiter . Logical
@@ -37,6 +40,7 @@ type Sys interface {
 	ListPolicies() ([]string, error)
 	GetPolicy(name string) (string, error)
 	Health() (*api.HealthResponse, error)
+	// ListNamespaces() ([]models.Namespace, error)
 	//ListMounts() ([]*api.Sys, error)
 }
 
@@ -49,6 +53,10 @@ type KV2 interface {
 
 	// GetVersion(context.Context, string, int) (*api.KVSecret, error)
 	// GetVersionsAsList(context.Context, string) ([]*api.KVVersionMetadata, error)
+}
+
+type NamespaceClient interface {
+	List() ([]*models.Namespace, error)
 }
 
 type KVOption func() (key string, value interface{})
@@ -71,7 +79,8 @@ func Default(v *Vault, log *zerolog.Logger) error {
 	if err != nil {
 		return err
 	}
-
+	//TODO: This needs to be changed if we want to support namespaces
+	client.SetNamespace("admin")
 	v.vault = client
 	v.Client = client
 	//KV1 is not setup as its adviced against
@@ -92,4 +101,26 @@ func (v *Vault) Version() (string, error) {
 		return "", err
 	}
 	return health.Version, nil
+}
+
+func (v *Vault) ListNamespaces() ([]string, error) {
+	namespaces := []string{}
+	secret, err := v.vault.Logical().List("sys/namespaces")
+	if err != nil {
+		return nil, err
+	}
+
+	if secret != nil {
+		keys, ok := secret.Data["keys"].([]interface{})
+		if !ok || len(keys) == 0 {
+			return namespaces, nil
+		}
+		for _, namespace := range keys {
+			trimmedNamespace := strings.TrimSuffix(namespace.(string), "/")
+			namespaces = append(namespaces, trimmedNamespace)
+		}
+	} else {
+		return namespaces, nil
+	}
+	return namespaces, nil
 }

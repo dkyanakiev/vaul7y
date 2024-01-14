@@ -36,6 +36,7 @@ func main() {
 		fmt.Println("vaul7y", version)
 		os.Exit(0)
 	}
+
 	// Check for required Vault env vars
 	checkForVaultAddress()
 
@@ -49,6 +50,8 @@ func main() {
 
 	state := initializeState(vaultClient)
 	toggles := component.NewTogglesInfo()
+	selections := component.NewSelections(state)
+	namespaces := component.NewNamespaceTable()
 	commands := component.NewCommands()
 	vaultInfo := component.NewVaultInfo()
 	mounts := component.NewMountsTable()
@@ -63,6 +66,8 @@ func main() {
 	components := &view.Components{
 		VaultInfo:      vaultInfo,
 		Commands:       commands,
+		Selections:     selections,
+		NamespaceTable: namespaces,
 		MountsTable:    mounts,
 		PolicyTable:    policies,
 		PolicyAclTable: policyAcl,
@@ -93,7 +98,10 @@ func initializeState(client *vault.Vault) *state.State {
 	version, _ := client.Version()
 	state.VaultAddress = addr
 	state.VaultVersion = version
-	state.Namespace = "default"
+	//TODO
+	state.RootNamespace = "admin"
+	state.Namespaces, _ = client.ListNamespaces()
+	//	state.Namespace = "default"
 
 	return state
 }

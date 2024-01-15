@@ -2,8 +2,12 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
+	"os/signal"
+	"runtime"
+	"syscall"
 	"time"
 
 	"github.com/dkyanakiev/vaulty/internal/config"
@@ -25,6 +29,20 @@ type options struct {
 }
 
 func main() {
+
+	go func() {
+		ch := make(chan os.Signal, 1)
+		signal.Notify(ch, syscall.SIGUSR1)
+
+		<-ch
+		fmt.Println("Dumping goroutines")
+		bufsize := int(10 * 1024 * 1024) // 10 MiB
+		buf := make([]byte, bufsize)
+		n := runtime.Stack(buf, true)
+
+		ioutil.WriteFile("/tmp/my_goroutines_dump.txt", buf[:n], 0644)
+		os.Exit(1)
+	}()
 
 	var opts options
 	_, err := flags.ParseArgs(&opts, os.Args)

@@ -238,9 +238,39 @@ func (v *View) updateNamespaces() {
 				go v.updateNamespaces()
 			}
 			v.UpdateVaultInfo()
+			v.Draw()
 		})
 	} else {
 		// Set a dummy option
 		v.components.Selections.Namespace.SetOptions([]string{"No namespaces available"}, nil)
 	}
 }
+
+// func (v *View) updateNamespaces() {
+// 	for {
+// 		oldNamespace := v.state.SelectedNamespace
+// 		v.logger.Debug().Msgf("Changing namespace to: %s", fmt.Sprintf("%s/%s", v.state.RootNamespace, v.state.SelectedNamespace))
+// 		v.state.Namespaces = v.Client.ChangeNamespace(fmt.Sprintf("%s/%s", v.state.RootNamespace, v.state.SelectedNamespace))
+// 		v.logger.Debug().Msgf("New Namespaces: %s", v.state.Namespaces)
+
+// 		if len(v.state.Namespaces) > 0 {
+// 			v.components.Selections.Namespace.SetOptions(v.state.Namespaces, func(text string, index int) {
+// 				if v.state.SelectedNamespace == "" {
+// 					v.state.SelectedNamespace = text
+// 				} else {
+// 					v.state.SelectedNamespace = fmt.Sprintf("%s/%s", v.state.SelectedNamespace, text)
+// 				}
+// 				v.Watcher.Unsubscribe()
+// 				v.UpdateVaultInfo()
+// 				//v.Draw()
+// 			})
+// 		} else {
+// 			v.components.Selections.Namespace.SetOptions([]string{"No namespaces available"}, nil)
+// 		}
+
+// 		// If the selected namespace hasn't changed, break the loop
+// 		if oldNamespace == v.state.SelectedNamespace {
+// 			break
+// 		}
+// 	}
+// }

@@ -73,17 +73,33 @@ func New(opts ...func(*Vault) error) (*Vault, error) {
 	return &vault, nil
 }
 
-func Default(v *Vault, log *zerolog.Logger) error {
-	//ctx := context.Background()
-	client, err := api.NewClient(api.DefaultConfig())
+func Default(v *Vault, log *zerolog.Logger, vault_addr string, vault_token string, vault_ns string) error {
+	cfg := api.DefaultConfig()
+	cfg.Address = vault_addr
+
+	client, err := api.NewClient(cfg)
 	if err != nil {
+		log.Error().Err(err).Msg("Failed to create Vault client")
 		return err
 	}
-	//TODO: This needs to be changed if we want to support namespaces
-	client.SetNamespace("admin")
+
+	client.SetToken(vault_token)
+
+	// Check if the client is successfully created by making a request to Vault
+	health, err := client.Sys().Health()
+	if err != nil {
+		log.Error().Err(err).Msg("Failed to connect to Vault")
+		return err
+	}
+	// Check for enterprise version and set namespace
+	if strings.Contains(health.Version, "ent") {
+		client.SetNamespace(vault_ns)
+	}
+
+	log.Debug().Msg("Vault client successfully created and connected")
+
 	v.vault = client
 	v.Client = client
-	//KV1 is not setup as its adviced against
 	v.Sys = client.Sys()
 	v.Logical = client.Logical()
 	v.Logger = log

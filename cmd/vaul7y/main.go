@@ -32,7 +32,7 @@ func main() {
 
 	go func() {
 		ch := make(chan os.Signal, 1)
-		signal.Notify(ch, syscall.SIGUSR1)
+		signal.Notify(ch, syscall.SIGTERM)
 
 		<-ch
 		fmt.Println("Dumping goroutines")
@@ -56,17 +56,17 @@ func main() {
 	}
 
 	// Check for required Vault env vars
-	checkForVaultAddress()
+	cfg := config.LoadConfig()
 
-	logFile, logger := config.SetupLogger()
+	logFile, logger := config.SetupLogger(cfg.VaultyLogLevel, cfg.VaultyLogFile)
 	defer logFile.Close()
 	tview.Styles.PrimitiveBackgroundColor = tcell.NewRGBColor(40, 44, 48)
 
 	vaultClient, err := vault.New(func(v *vault.Vault) error {
-		return vault.Default(v, logger)
+		return vault.Default(v, logger, cfg.VaultAddr, cfg.VaultToken, cfg.VaultNamespace)
 	})
 
-	state := initializeState(vaultClient)
+	state := initializeState(vaultClient, cfg.VaultNamespace)
 	toggles := component.NewTogglesInfo()
 	selections := component.NewSelections(state)
 	namespaces := component.NewNamespaceTable()
@@ -110,29 +110,16 @@ func main() {
 
 }
 
-func initializeState(client *vault.Vault) *state.State {
+func initializeState(client *vault.Vault, rootNs string) *state.State {
 	state := state.New()
 	addr := client.Address()
 	version, _ := client.Version()
 	state.VaultAddress = addr
 	state.VaultVersion = version
 	//TODO
-	state.RootNamespace = "admin"
+	state.RootNamespace = rootNs
 	state.Namespaces, _ = client.ListNamespaces()
 	//	state.Namespace = "default"
 
 	return state
-}
-
-func checkForVaultAddress() {
-	if os.Getenv("VAULT_ADDR") == "" {
-		fmt.Println("VAULT_ADDR is not set. Please set it and try again.")
-		os.Exit(1)
-	}
-
-	if os.Getenv("VAULT_TOKEN") == "" {
-		fmt.Println("VAULT_TOKEN is not set. Please set it and try again.")
-		os.Exit(1)
-	}
-
 }

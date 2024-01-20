@@ -403,3 +403,14 @@ func (v *Vault) CreateNewSecret(mount string, path string) error {
 
 	return nil
 }
+
+func (v *Vault) ChangeNamespace(ns string) []string {
+	v.Logger.Debug().Msgf("Changing namespace to: %v", ns)
+	v.vault.SetNamespace(ns)
+	list, err := v.ListNamespaces()
+	if err != nil {
+		v.Logger.Err(err).Msgf("Failed to list namespaces: %v", err)
+	}
+	v.Logger.Debug().Msgf("New available namespaces are: %v", list)
+	return list
+}

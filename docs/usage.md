@@ -70,7 +70,9 @@ Currently the capabilities are limited.
     * Currently only KV2
 * Looking up secret objects
     * Show/hide secrets and coping data
-    * Update/patch coming soon
+    * Update/patch secrets
+    * Create new secrets
+    * Filter paths/secrets 
 * Support for exploring and filtering ACL Policies
 
-*Note*: Currently only supporting default namespace. Will implement the namespace change fairly soon.
+*Note*: Currently only supporting default namespace. NS changes require enterprise vault setup

@@ -16,6 +16,7 @@ var (
 		fmt.Sprintf("%sctrl-b%s to display Secret Engines", styles.HighlightPrimaryTag, styles.StandardColorTag),
 		fmt.Sprintf("%sctrl-p%s to display ACL Policies", styles.HighlightPrimaryTag, styles.StandardColorTag),
 		fmt.Sprintf("%sctrl-c%s to Quit", styles.HighlightPrimaryTag, styles.StandardColorTag),
+		fmt.Sprintf("%sctrl-w%s to clear Namespaces", styles.HighlightPrimaryTag, styles.StandardColorTag),
 	}
 	MountsCommands = []string{
 		fmt.Sprintf("\n%s Secret Engines Command List:", styles.HighlightSecondaryTag),

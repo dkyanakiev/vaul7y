@@ -17,6 +17,8 @@ const (
 type Client interface {
 	UpdateSecretObjectKV2(mount string, path string, update bool, data map[string]interface{}) error
 	CreateNewSecret(mount string, path string) error
+	ListNamespaces() ([]string, error)
+	ChangeNamespace(ns string) []string
 }
 
 type Watcher interface {
@@ -53,19 +55,19 @@ type Components struct {
 	PolicyAclTable *component.PolicyAclTable
 	SecretsTable   *component.SecretsTable
 	SecretObjTable *component.SecretObjTable
-
-	Commands      *component.Commands
-	VaultInfo     *component.VaultInfo
-	Search        *component.SearchField
-	Error         *component.Error
-	Info          *component.Info
-	Failure       *component.Info
-	TogglesInfo   *component.TogglesInfo
-	Selections    *component.Selections
-	JumpToPolicy  *component.JumpToPolicy
-	TextInfoInput *component.TextInfoInput
-	Logo          *component.Logo
-	Logger        *zerolog.Logger
+	NamespaceTable *component.NamespaceTable
+	Commands       *component.Commands
+	VaultInfo      *component.VaultInfo
+	Search         *component.SearchField
+	Error          *component.Error
+	Info           *component.Info
+	Failure        *component.Info
+	TogglesInfo    *component.TogglesInfo
+	Selections     *component.Selections
+	JumpToPolicy   *component.JumpToPolicy
+	TextInfoInput  *component.TextInfoInput
+	Logo           *component.Logo
+	Logger         *zerolog.Logger
 }
 
 func New(components *Components, watcher Watcher, client Client, state *state.State, logger *zerolog.Logger) *View {
@@ -123,8 +125,8 @@ func (v *View) addToHistory(ns string, topic string, update func()) {
 		})
 		// v.Watcher.Subscribe(topic, update)
 
-		//index := getNamespaceNameIndex(ns, v.state.Namespaces)
-		//v.state.Elements.DropDownNamespace.SetCurrentOption(index)
+		index := getNamespaceNameIndex(ns, v.state.Namespaces)
+		v.state.Elements.DropDownNamespace.SetCurrentOption(index)
 	})
 }
 

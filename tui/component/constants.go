@@ -1,6 +1,9 @@
 package component
 
 const (
+	LabelName        = "Name"
+	LabelNamespace   = "Namespace"
+	LabelDescription = "Description"
 	MountID          = "RowID"
 	MountName        = "Mount"
 	MountPath        = "Path"

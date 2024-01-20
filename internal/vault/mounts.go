@@ -2,6 +2,7 @@ package vault
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/dkyanakiev/vaulty/internal/models"
 	"github.com/hashicorp/vault/api"
@@ -10,9 +11,13 @@ import (
 func (v *Vault) ListMounts() (map[string]*models.MountOutput, error) {
 	apiMountList, err := v.vault.Sys().ListMounts()
 	if err != nil {
-		return nil, fmt.Errorf("filed to retrieve secret mounts: %w", err)
+		if strings.Contains(err.Error(), "route entry not found") {
+			return make(map[string]*models.MountOutput), nil
+		}
+		return nil, fmt.Errorf("failed to retrieve secret mounts: %w", err)
 	}
-	// Convert api.MountOutput to models.MountOutput
+
+	// Convert api.MountOutput to MountOutput
 	mountList := make(map[string]*models.MountOutput)
 	for k, v := range apiMountList {
 		mountList[k] = toMount(v)

@@ -28,6 +28,7 @@ func (w *Watcher) SubscribeToMounts(notify func()) {
 	}()
 }
 func (w *Watcher) UpdateMounts() {
+	w.logger.Debug().Msg("Updating mounts")
 	mounts, err := w.vault.AllMounts()
 	if err != nil {
 		log.Println(err)

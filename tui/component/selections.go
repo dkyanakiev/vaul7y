@@ -32,37 +32,56 @@ func NewSelections(state *state.State) *Selections {
 	}
 }
 
+func (s *Selections) Init() error {
+	if s.slot == nil {
+		return ErrComponentNotBound
+	}
+
+	// if len(s.state.Namespaces) != 0 {
+	s.Namespace.SetOptions(s.state.Namespaces, s.Selected)
+	s.Namespace.SetCurrentOption(len(s.state.Namespace) - 1)
+	s.Namespace.SetSelectedFunc(s.rerender)
+
+	// }
+	s.state.Elements.DropDownNamespace = s.Namespace.Primitive().(*tview.DropDown)
+	s.slot.AddItem(s.Namespace.Primitive(), 0, 1, true)
+
+	return nil
+}
 func (s *Selections) Render() error {
 	if s.slot == nil {
 		return ErrComponentNotBound
 	}
 
-	//s.Namespace.SetOptions(convert(s.state.Namespace), s.selected)
-	s.Namespace.SetCurrentOption(len(s.state.Namespace) - 1)
-	s.Namespace.SetSelectedFunc(s.rerender)
+	// if len(s.state.Namespaces) != 0 {
+	s.Namespace.SetOptions(s.state.Namespaces, s.Selected)
 
-	//s.state.Elements.DropDownNamespace = s.Namespace.Primitive().(*tview.DropDown)
-	s.slot.AddItem(s.Namespace.Primitive(), 0, 1, true)
+	// }
+	s.state.Elements.DropDownNamespace = s.Namespace.Primitive().(*tview.DropDown)
+	// s.slot.AddItem(s.Namespace.Primitive(), 0, 1, true)
 
 	return nil
 }
+
+func (s *Selections) Refresh() {
+	s.Render()
+}
+
+// func (s *Selections) Update() error {
+// 	s.Namespace.SetOptions(s.state.Namespaces, s.selected)
+// 	s.Namespace.SetCurrentOption(len(s.state.Namespace) - 1)
+// 	s.Namespace.SetSelectedFunc(s.rerender)
+
+// }
 
 func (s *Selections) Bind(slot *tview.Flex) {
 	s.slot = slot
 }
 
-func (s *Selections) selected(text string, index int) {
+func (s *Selections) Selected(text string, index int) {
 	s.state.SelectedNamespace = text
 }
 
 func (s *Selections) rerender(text string, index int) {
 	s.state.SelectedNamespace = text
 }
-
-// func convert(list []*models.Namespaces) []string {
-// 	var ns []string
-// 	for _, n := range list {
-// 		ns = append(ns, n.Name)
-// 	}
-// 	return ns
-// }

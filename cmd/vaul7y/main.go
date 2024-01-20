@@ -2,8 +2,12 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
+	"os/signal"
+	"runtime"
+	"syscall"
 	"time"
 
 	"github.com/dkyanakiev/vaulty/internal/config"
@@ -26,6 +30,20 @@ type options struct {
 
 func main() {
 
+	go func() {
+		ch := make(chan os.Signal, 1)
+		signal.Notify(ch, syscall.SIGTERM)
+
+		<-ch
+		fmt.Println("Dumping goroutines")
+		bufsize := int(10 * 1024 * 1024) // 10 MiB
+		buf := make([]byte, bufsize)
+		n := runtime.Stack(buf, true)
+
+		ioutil.WriteFile("/tmp/my_goroutines_dump.txt", buf[:n], 0644)
+		os.Exit(1)
+	}()
+
 	var opts options
 	_, err := flags.ParseArgs(&opts, os.Args)
 	if err != nil {
@@ -36,19 +54,22 @@ func main() {
 		fmt.Println("vaul7y", version)
 		os.Exit(0)
 	}
-	// Check for required Vault env vars
-	checkForVaultAddress()
 
-	logFile, logger := config.SetupLogger()
+	// Check for required Vault env vars
+	cfg := config.LoadConfig()
+
+	logFile, logger := config.SetupLogger(cfg.VaultyLogLevel, cfg.VaultyLogFile)
 	defer logFile.Close()
 	tview.Styles.PrimitiveBackgroundColor = tcell.NewRGBColor(40, 44, 48)
 
 	vaultClient, err := vault.New(func(v *vault.Vault) error {
-		return vault.Default(v, logger)
+		return vault.Default(v, logger, cfg.VaultAddr, cfg.VaultToken, cfg.VaultNamespace)
 	})
 
-	state := initializeState(vaultClient)
+	state := initializeState(vaultClient, cfg.VaultNamespace)
 	toggles := component.NewTogglesInfo()
+	selections := component.NewSelections(state)
+	namespaces := component.NewNamespaceTable()
 	commands := component.NewCommands()
 	vaultInfo := component.NewVaultInfo()
 	mounts := component.NewMountsTable()
@@ -63,6 +84,8 @@ func main() {
 	components := &view.Components{
 		VaultInfo:      vaultInfo,
 		Commands:       commands,
+		Selections:     selections,
+		NamespaceTable: namespaces,
 		MountsTable:    mounts,
 		PolicyTable:    policies,
 		PolicyAclTable: policyAcl,
@@ -87,26 +110,16 @@ func main() {
 
 }
 
-func initializeState(client *vault.Vault) *state.State {
+func initializeState(client *vault.Vault, rootNs string) *state.State {
 	state := state.New()
 	addr := client.Address()
 	version, _ := client.Version()
 	state.VaultAddress = addr
 	state.VaultVersion = version
-	state.Namespace = "default"
+	//TODO
+	state.RootNamespace = rootNs
+	state.Namespaces, _ = client.ListNamespaces()
+	//	state.Namespace = "default"
 
 	return state
-}
-
-func checkForVaultAddress() {
-	if os.Getenv("VAULT_ADDR") == "" {
-		fmt.Println("VAULT_ADDR is not set. Please set it and try again.")
-		os.Exit(1)
-	}
-
-	if os.Getenv("VAULT_TOKEN") == "" {
-		fmt.Println("VAULT_TOKEN is not set. Please set it and try again.")
-		os.Exit(1)
-	}
-
 }

@@ -34,9 +34,9 @@ func (v *View) Mounts() {
 	update()
 
 	// Add this view to the history
-	v.addToHistory(v.state.SelectedNamespace, "mounts", func() {
-		v.Mounts()
-	})
+	// v.addToHistory(v.state.SelectedNamespace, "mounts", func() {
+	// 	v.Mounts()
+	// })
 	v.Layout.Container.SetFocus(v.components.MountsTable.Table.Primitive())
 }
 

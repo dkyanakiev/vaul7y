@@ -8,6 +8,10 @@ import (
 //		event = v.InputMainCommands(event)
 //		return v.inputMounts(event)
 //	}
+func (v *View) InputNamespaces(event *tcell.EventKey) *tcell.EventKey {
+	return v.InputMainCommands(event)
+}
+
 func (v *View) InputMounts(event *tcell.EventKey) *tcell.EventKey {
 	event = v.InputMainCommands(event)
 	return v.inputMounts(event)
@@ -34,6 +38,11 @@ func (v *View) InputMainCommands(event *tcell.EventKey) *tcell.EventKey {
 	}
 	switch event.Key() {
 	// Bug: CTRL+M key maps to enter and causes conflicts
+
+	case tcell.KeyCtrlW:
+		v.state.SelectedNamespace = ""
+		v.updateNamespaces()
+		v.Mounts()
 	case tcell.KeyCtrlB:
 		v.Watcher.Unsubscribe()
 		v.Mounts()
@@ -42,6 +51,14 @@ func (v *View) InputMainCommands(event *tcell.EventKey) *tcell.EventKey {
 		// Needs editing
 		// case tcell.KeyCtrlJ:
 		// 	v.SecretObject()
+	case tcell.KeyRune:
+		switch event.Rune() {
+
+		case 's':
+			if !v.Layout.Footer.HasFocus() {
+				v.Layout.Container.SetFocus(v.state.Elements.DropDownNamespace)
+			}
+		}
 	}
 
 	return event

@@ -9,7 +9,8 @@ import (
 //		return v.inputMounts(event)
 //	}
 func (v *View) InputNamespaces(event *tcell.EventKey) *tcell.EventKey {
-	return v.InputMainCommands(event)
+	event = v.InputMainCommands(event)
+	return v.inputNamespaces(event)
 }
 
 func (v *View) InputMounts(event *tcell.EventKey) *tcell.EventKey {
@@ -51,6 +52,8 @@ func (v *View) InputMainCommands(event *tcell.EventKey) *tcell.EventKey {
 		// Needs editing
 		// case tcell.KeyCtrlJ:
 		// 	v.SecretObject()
+	case tcell.KeyCtrlT:
+		v.Namespaces()
 	case tcell.KeyRune:
 		switch event.Rune() {
 

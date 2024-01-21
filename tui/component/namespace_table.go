@@ -3,6 +3,7 @@ package component
 import (
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
+	"github.com/rs/zerolog"
 
 	"github.com/dkyanakiev/vaulty/internal/models"
 	primitive "github.com/dkyanakiev/vaulty/tui/primitives"
@@ -14,20 +15,23 @@ const TableTitleNamespaces = "Namespaces"
 var (
 	TableHeaderNamespaces = []string{
 		LabelName,
-		LabelDescription,
 	}
 )
 
-type NamespaceTable struct {
-	Table Table
-	Props *NamespacesProps
+type SelectNsPathFunc func(ns string)
 
-	slot *tview.Flex
+type NamespaceTable struct {
+	Table  Table
+	Props  *NamespacesProps
+	Logger *zerolog.Logger
+	slot   *tview.Flex
 }
 
 type NamespacesProps struct {
+	SelectedNamespace string
+	SelectNs          SelectNsPathFunc
 	HandleNoResources models.HandlerFunc
-	Data              []*models.Namespace
+	Data              []string
 }
 
 func NewNamespaceTable() *NamespaceTable {
@@ -54,7 +58,7 @@ func (n *NamespaceTable) Render() error {
 	}
 
 	n.reset()
-
+	n.Logger.Debug().Msgf("rendering namespaces: %v", n.Props.Data)
 	if len(n.Props.Data) == 0 {
 		n.Props.HandleNoResources(
 			"%sno namespaces available\n¯%s\\_( ͡• ͜ʖ ͡•)_/¯",
@@ -66,8 +70,8 @@ func (n *NamespaceTable) Render() error {
 	}
 
 	n.Table.SetTitle(TableTitleNamespaces)
-
 	n.Table.RenderHeader(TableHeaderNamespaces)
+	n.Table.SetSelectedFunc(n.namespaceSelected)
 	n.renderRows()
 
 	n.slot.AddItem(n.Table.Primitive(), 0, 1, false)
@@ -80,13 +84,23 @@ func (n *NamespaceTable) reset() {
 }
 
 func (n *NamespaceTable) renderRows() {
+	index := 0
 	for i, ns := range n.Props.Data {
 		row := []string{
-			ns.Name,
-			ns.Description,
+			ns,
 		}
 
-		index := i + 1
+		index = i + 1
 		n.Table.RenderRow(row, index, tcell.ColorWhite)
 	}
+}
+
+func (n *NamespaceTable) GetIDForSelection() string {
+	row, _ := n.Table.GetSelection()
+	return n.Table.GetCellContent(row, 0)
+}
+
+func (n *NamespaceTable) namespaceSelected(row, _ int) {
+	ns := n.Table.GetCellContent(row, 0)
+	n.Props.SelectedNamespace = ns
 }

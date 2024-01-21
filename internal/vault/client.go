@@ -23,6 +23,7 @@ type Vault struct {
 	Logical  Logical
 	Secret   Secret
 	Logger   *zerolog.Logger
+	Version  string
 }
 
 //go:generate counterfeiter . Logical
@@ -102,6 +103,7 @@ func Default(v *Vault, log *zerolog.Logger, vault_addr string, vault_token strin
 	v.Client = client
 	v.Sys = client.Sys()
 	v.Logical = client.Logical()
+	v.Version = health.Version
 	v.Logger = log
 
 	return nil
@@ -111,32 +113,10 @@ func (v *Vault) Address() string {
 	return v.Client.Address()
 }
 
-func (v *Vault) Version() (string, error) {
-	health, err := v.Sys.Health()
-	if err != nil {
-		return "", err
-	}
-	return health.Version, nil
-}
-
-func (v *Vault) ListNamespaces() ([]string, error) {
-	namespaces := []string{}
-	secret, err := v.vault.Logical().List("sys/namespaces")
-	if err != nil {
-		return nil, err
-	}
-
-	if secret != nil {
-		keys, ok := secret.Data["keys"].([]interface{})
-		if !ok || len(keys) == 0 {
-			return namespaces, nil
-		}
-		for _, namespace := range keys {
-			trimmedNamespace := strings.TrimSuffix(namespace.(string), "/")
-			namespaces = append(namespaces, trimmedNamespace)
-		}
-	} else {
-		return namespaces, nil
-	}
-	return namespaces, nil
-}
+// func (v *Vault) Version() (string, error) {
+// 	health, err := v.Sys.Health()
+// 	if err != nil {
+// 		return "", err
+// 	}
+// 	return health.Version, nil
+// }

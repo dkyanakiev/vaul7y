@@ -113,11 +113,12 @@ func main() {
 func initializeState(client *vault.Vault, rootNs string) *state.State {
 	state := state.New()
 	addr := client.Address()
-	version, _ := client.Version()
+	version := client.Version
 	state.VaultAddress = addr
 	state.VaultVersion = version
 	//TODO
 	state.RootNamespace = rootNs
+	state.Namespace = rootNs
 	state.Namespaces, _ = client.ListNamespaces()
 	//	state.Namespace = "default"
 

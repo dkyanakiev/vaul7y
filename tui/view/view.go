@@ -28,6 +28,7 @@ type Watcher interface {
 	SubscribeToPolicies(notify func())
 	SubscribeToPoliciesACL(notify func())
 	SubscribeToMounts(notify func())
+	SubscribeToNamespaces(notify func())
 	SubscribeToSecrets(selectedMount, selectedPath string, notify func())
 	SubscribeToSecret(selectedMount, selectedPath string, notify func())
 	UpdateMounts()

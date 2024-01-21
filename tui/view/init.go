@@ -7,7 +7,6 @@ import (
 	"github.com/dkyanakiev/vaulty/tui/component"
 	"github.com/dkyanakiev/vaulty/tui/styles"
 	"github.com/gdamore/tcell/v2"
-	"github.com/rivo/tview"
 )
 
 func (v *View) Init(version string) {
@@ -32,7 +31,7 @@ func (v *View) Init(version string) {
 	v.components.VaultInfo.InitialRender()
 	// TogglesInfo
 	v.components.TogglesInfo.Bind(v.Layout.Elements.ClusterInfo)
-	v.components.TogglesInfo.InitialRender()
+	v.components.TogglesInfo.InitialRender(v.state.Namespace)
 
 	// Logo
 	v.components.Logo.Bind(v.Layout.Header.SlotLogo)
@@ -67,36 +66,19 @@ func (v *View) Init(version string) {
 	v.components.NamespaceTable.Props.HandleNoResources = v.handleNoResources
 
 	// Selections
-	v.components.Selections.Bind(v.Layout.Elements.Dropdowns)
+	//v.components.Selections.Bind(v.Layout.Elements.Dropdowns)
 	// v.components.Selections.Render()
-	v.components.Selections.Init()
+	//v.components.Selections.Init()
+
 	// v.components.Selections.Namespace.SetSelectedFunc(func(option string, optionIndex int) {
 	// 	v.Layout.Container.SetFocus(v.state.Elements.TableMain)
 	// 	_, t := v.components.Selections.Namespace.Primitive().(*tview.DropDown).GetCurrentOption()
 	// 	v.state.SelectedNamespace = t
-	// 	v.logger.Debug().Msgf("Selected namespace: %s", v.state.SelectedNamespace)
-	// 	v.logger.Debug().Msgf("New Namespace: %s", fmt.Sprintf("%s/%s", v.state.Namespace, v.state.SelectedNamespace))
-	// 	v.state.Namespaces = v.Client.ChangeNamespace(fmt.Sprintf("%s/%s", v.state.Namespace, v.state.SelectedNamespace))
-	// 	v.logger.Debug().Msgf("New list: %v", v.state.Namespaces)
-	// 	v.components.Selections.Namespace.SetOptions(v.state.Namespaces, func(text string, index int) {
-	// 		// Add your logic here if you want to do something when an option is selected
-	// 		v.state.SelectedNamespace = text
-
-	// 	})
+	// 	v.logger.Debug().Msgf("New Namespace: %s", fmt.Sprintf("%s/%s", v.state.RootNamespace, v.state.SelectedNamespace))
+	// 	// Call the function to update the namespaces and the dropdown options
+	// 	v.updateNamespaces()
 	// 	v.UpdateVaultInfo()
-	// 	// v.components.Selections.Render(list)
 	// })
-
-	// Set the selected function
-	v.components.Selections.Namespace.SetSelectedFunc(func(option string, optionIndex int) {
-		v.Layout.Container.SetFocus(v.state.Elements.TableMain)
-		_, t := v.components.Selections.Namespace.Primitive().(*tview.DropDown).GetCurrentOption()
-		v.state.SelectedNamespace = t
-		v.logger.Debug().Msgf("New Namespace: %s", fmt.Sprintf("%s/%s", v.state.RootNamespace, v.state.SelectedNamespace))
-		// Call the function to update the namespaces and the dropdown options
-		v.updateNamespaces()
-		v.UpdateVaultInfo()
-	})
 
 	// v.components.Selections.Props.DoneFunc = func(key tcell.Key) {
 
@@ -245,32 +227,3 @@ func (v *View) updateNamespaces() {
 		v.components.Selections.Namespace.SetOptions([]string{"No namespaces available"}, nil)
 	}
 }
-
-// func (v *View) updateNamespaces() {
-// 	for {
-// 		oldNamespace := v.state.SelectedNamespace
-// 		v.logger.Debug().Msgf("Changing namespace to: %s", fmt.Sprintf("%s/%s", v.state.RootNamespace, v.state.SelectedNamespace))
-// 		v.state.Namespaces = v.Client.ChangeNamespace(fmt.Sprintf("%s/%s", v.state.RootNamespace, v.state.SelectedNamespace))
-// 		v.logger.Debug().Msgf("New Namespaces: %s", v.state.Namespaces)
-
-// 		if len(v.state.Namespaces) > 0 {
-// 			v.components.Selections.Namespace.SetOptions(v.state.Namespaces, func(text string, index int) {
-// 				if v.state.SelectedNamespace == "" {
-// 					v.state.SelectedNamespace = text
-// 				} else {
-// 					v.state.SelectedNamespace = fmt.Sprintf("%s/%s", v.state.SelectedNamespace, text)
-// 				}
-// 				v.Watcher.Unsubscribe()
-// 				v.UpdateVaultInfo()
-// 				//v.Draw()
-// 			})
-// 		} else {
-// 			v.components.Selections.Namespace.SetOptions([]string{"No namespaces available"}, nil)
-// 		}
-
-// 		// If the selected namespace hasn't changed, break the loop
-// 		if oldNamespace == v.state.SelectedNamespace {
-// 			break
-// 		}
-// 	}
-// }

@@ -1,8 +1,14 @@
+#r equired
 vault_addr: http://127.0.0.1:8200
-vault_namespace: admin
 vault_token: hvs.token
+# For ent users only
+vault_namespace: admin
 vault_ca_cert: /tmp/ca.crt
 vault_client_cert: /tmp/client.crt
 vault_client_key: /tmp/client.key
+# optional
 vaulty_log_file: /tmp/my-vault-log.log
 vaulty_log_level: debug
+# How often to pull information from Vault. Added in case rate limit is a problem
+# Default is 30 seconds
+# vaulty_refresh_rate: 30

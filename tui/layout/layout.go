@@ -54,7 +54,7 @@ func Default(l *Layout) {
 
 	l.Header.SlotInfo = tview.NewFlex().SetDirection(tview.FlexRow)
 	l.Header.SlotInfo.AddItem(l.Elements.ClusterInfo, 0, 1, false)
-	l.Header.SlotInfo.AddItem(l.Elements.Dropdowns, 0, 1, false)
+	l.Header.SlotInfo.AddItem(l.Elements.Dropdowns, 1, 1, false)
 
 	l.Header.SlotCmd = tview.NewFlex()
 	l.Header.SlotLogo = tview.NewFlex()

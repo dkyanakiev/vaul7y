@@ -30,6 +30,10 @@ func (w *Watcher) SubscribeToPolicies(notify func()) {
 }
 
 func (w *Watcher) updatePolicies() {
+	if w.state.Enterprise {
+		w.logger.Debug().Msgf("Enterprise version detected, setting namespace to %v", w.state.SelectedNamespace)
+		w.vault.SetNamespace(w.state.SelectedNamespace)
+	}
 	policies, err := w.vault.AllPolicies()
 	if err != nil {
 		w.NotifyHandler(models.HandleError, err.Error())

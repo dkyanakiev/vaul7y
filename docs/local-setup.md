@@ -12,7 +12,7 @@ $ make setup-test-data
 ```
     * Note: This requires Vault tokent to be set in order to be able to write to Vault
 
-3. Configure the env variables required to auth to vault
+3. Configure the env variables required to auth to vault or `.vaul7y.yaml` in your home directory
 
 4. Make sure to set    
 `VAULTY_LOG_FILE` env variable and point to a file, to log to a file 

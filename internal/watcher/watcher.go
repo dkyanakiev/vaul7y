@@ -23,6 +23,8 @@ type Vault interface {
 	AllMounts() (map[string]*models.MountOutput, error)
 	ListSecrets(string) (*api.Secret, error)
 	ListNestedSecrets(string, string) ([]models.SecretPath, error)
+	SetNamespace(string)
+	ListNamespaces() ([]string, error)
 	GetSecretInfo(string, string) (*api.Secret, error)
 	//GetPolicy(string) (string, error)
 	//ListPolicies() ([]string, error)

@@ -28,6 +28,10 @@ func (w *Watcher) SubscribeToSecrets(selectedMount, selectedPath string, notify 
 }
 
 func (w *Watcher) updateSecrets(selectedMount, selectedPath string) {
+	if w.state.Enterprise {
+		w.logger.Debug().Msgf("Enterprise version detected, setting namespace to %v", w.state.SelectedNamespace)
+		w.vault.SetNamespace(w.state.SelectedNamespace)
+	}
 	w.logger.Info().Msgf("Updating secrets for mount: %s, path: %s", selectedMount, selectedPath)
 	secrets, err := w.vault.ListNestedSecrets(selectedMount, selectedPath)
 	if err != nil {

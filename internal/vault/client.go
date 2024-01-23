@@ -2,7 +2,10 @@ package vault
 
 import (
 	"context"
+	"strings"
 
+	"github.com/dkyanakiev/vaulty/internal/config"
+	"github.com/dkyanakiev/vaulty/internal/models"
 	"github.com/hashicorp/vault/api"
 	"github.com/rs/zerolog"
 )
@@ -13,13 +16,15 @@ type Client interface {
 }
 
 type Vault struct {
-	vault   *api.Client
-	Client  Client
-	KV2     KV2
-	Sys     Sys
-	Logical Logical
-	Secret  Secret
-	Logger  *zerolog.Logger
+	vault    *api.Client
+	Client   Client
+	KV2      KV2
+	Sys      Sys
+	NsClient NamespaceClient
+	Logical  Logical
+	Secret   Secret
+	Logger   *zerolog.Logger
+	Version  string
 }
 
 //go:generate counterfeiter . Logical
@@ -37,6 +42,7 @@ type Sys interface {
 	ListPolicies() ([]string, error)
 	GetPolicy(name string) (string, error)
 	Health() (*api.HealthResponse, error)
+	// ListNamespaces() ([]models.Namespace, error)
 	//ListMounts() ([]*api.Sys, error)
 }
 
@@ -49,6 +55,10 @@ type KV2 interface {
 
 	// GetVersion(context.Context, string, int) (*api.KVSecret, error)
 	// GetVersionsAsList(context.Context, string) ([]*api.KVVersionMetadata, error)
+}
+
+type NamespaceClient interface {
+	List() ([]*models.Namespace, error)
 }
 
 type KVOption func() (key string, value interface{})
@@ -65,18 +75,56 @@ func New(opts ...func(*Vault) error) (*Vault, error) {
 	return &vault, nil
 }
 
-func Default(v *Vault, log *zerolog.Logger) error {
-	//ctx := context.Background()
-	client, err := api.NewClient(api.DefaultConfig())
+func Default(v *Vault, log *zerolog.Logger, vaultyCfg config.Config) error {
+	cfg := api.DefaultConfig()
+	cfg.Address = vaultyCfg.VaultAddr
+
+	tlsCfg := &api.TLSConfig{}
+
+	if vaultyCfg.VaultCaCert != "" {
+		tlsCfg.CACert = vaultyCfg.VaultCaCert
+	}
+
+	if vaultyCfg.VaultClientCert != "" {
+		tlsCfg.ClientCert = vaultyCfg.VaultClientCert
+	}
+
+	if vaultyCfg.VaultClientKey != "" {
+		tlsCfg.ClientKey = vaultyCfg.VaultClientKey
+	}
+
+	err := cfg.ConfigureTLS(tlsCfg)
 	if err != nil {
+		log.Error().Err(err).Msgf("Failed to configure TLS: %v", err)
 		return err
 	}
 
+	client, err := api.NewClient(cfg)
+	if err != nil {
+		log.Error().Err(err).Msg("Failed to create Vault client")
+		return err
+	}
+
+	client.SetToken(vaultyCfg.VaultToken)
+
+	// Check if the client is successfully created by making a request to Vault
+	health, err := client.Sys().Health()
+	if err != nil {
+		log.Error().Err(err).Msg("Failed to connect to Vault")
+		return err
+	}
+	// Check for enterprise version and set namespace
+	if strings.Contains(health.Version, "ent") {
+		client.SetNamespace(vaultyCfg.VaultNamespace)
+	}
+
+	log.Debug().Msg("Vault client successfully created and connected")
+
 	v.vault = client
 	v.Client = client
-	//KV1 is not setup as its adviced against
 	v.Sys = client.Sys()
 	v.Logical = client.Logical()
+	v.Version = health.Version
 	v.Logger = log
 
 	return nil
@@ -86,10 +134,10 @@ func (v *Vault) Address() string {
 	return v.Client.Address()
 }
 
-func (v *Vault) Version() (string, error) {
-	health, err := v.Sys.Health()
-	if err != nil {
-		return "", err
-	}
-	return health.Version, nil
-}
+// func (v *Vault) Version() (string, error) {
+// 	health, err := v.Sys.Health()
+// 	if err != nil {
+// 		return "", err
+// 	}
+// 	return health.Version, nil
+// }

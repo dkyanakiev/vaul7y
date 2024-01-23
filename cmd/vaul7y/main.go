@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/dkyanakiev/vaulty/internal/config"
@@ -17,8 +18,7 @@ import (
 	"github.com/rivo/tview"
 )
 
-var refreshIntervalDefault = time.Second * 30
-var version = "0.0.7"
+var version = "0.1.0"
 
 type options struct {
 	Version bool `short:"v" long:"version" description:"Show Damon version"`
@@ -36,19 +36,22 @@ func main() {
 		fmt.Println("vaul7y", version)
 		os.Exit(0)
 	}
-	// Check for required Vault env vars
-	checkForVaultAddress()
 
-	logFile, logger := config.SetupLogger()
+	// Check for required Vault env vars
+	cfg := config.LoadConfig()
+
+	logFile, logger := config.SetupLogger(cfg.VaultyLogLevel, cfg.VaultyLogFile)
 	defer logFile.Close()
 	tview.Styles.PrimitiveBackgroundColor = tcell.NewRGBColor(40, 44, 48)
 
 	vaultClient, err := vault.New(func(v *vault.Vault) error {
-		return vault.Default(v, logger)
+		return vault.Default(v, logger, cfg)
 	})
-
-	state := initializeState(vaultClient)
+	refreshIntervalDefault := time.Duration(cfg.VaultyRefreshRate) * time.Second
+	state := initializeState(vaultClient, cfg.VaultNamespace)
 	toggles := component.NewTogglesInfo()
+	selections := component.NewSelections(state)
+	namespaces := component.NewNamespaceTable()
 	commands := component.NewCommands()
 	vaultInfo := component.NewVaultInfo()
 	mounts := component.NewMountsTable()
@@ -63,6 +66,8 @@ func main() {
 	components := &view.Components{
 		VaultInfo:      vaultInfo,
 		Commands:       commands,
+		Selections:     selections,
+		NamespaceTable: namespaces,
 		MountsTable:    mounts,
 		PolicyTable:    policies,
 		PolicyAclTable: policyAcl,
@@ -87,26 +92,31 @@ func main() {
 
 }
 
-func initializeState(client *vault.Vault) *state.State {
+func initializeState(client *vault.Vault, rootNs string) *state.State {
 	state := state.New()
 	addr := client.Address()
-	version, _ := client.Version()
+	version := client.Version
 	state.VaultAddress = addr
 	state.VaultVersion = version
-	state.Namespace = "default"
+	state.DefaultNamespace = "-"
+	state.RootNamespace = "-"
+
+	if strings.Contains(version, "ent") {
+		state.Enterprise = true
+		state.RootNamespace = getFirstPart(rootNs)
+		state.DefaultNamespace = rootNs
+		state.SelectedNamespace = rootNs
+		state.Namespaces, _ = client.ListNamespaces()
+	}
+	//	state.Namespace = "default"
 
 	return state
 }
 
-func checkForVaultAddress() {
-	if os.Getenv("VAULT_ADDR") == "" {
-		fmt.Println("VAULT_ADDR is not set. Please set it and try again.")
-		os.Exit(1)
+func getFirstPart(s string) string {
+	parts := strings.Split(s, "/")
+	if len(parts) > 0 {
+		return parts[0]
 	}
-
-	if os.Getenv("VAULT_TOKEN") == "" {
-		fmt.Println("VAULT_TOKEN is not set. Please set it and try again.")
-		os.Exit(1)
-	}
-
+	return ""
 }

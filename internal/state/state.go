@@ -7,12 +7,16 @@ import (
 )
 
 type State struct {
-	VaultAddress       string
-	VaultVersion       string
-	Mounts             map[string]*models.MountOutput
-	SecretsData        []models.SecretPath
-	KV2                []models.KVSecret
-	Namespace          string
+	VaultAddress string
+	VaultVersion string
+	Mounts       map[string]*models.MountOutput
+	SecretsData  []models.SecretPath
+	KV2          []models.KVSecret
+	// Central/Root ns for the Vault instance
+	RootNamespace    string
+	DefaultNamespace string
+	Namespaces       []string
+	// Current ns for the Vault instance
 	SelectedNamespace  string
 	SelectedMount      string
 	SelectedPath       string
@@ -22,8 +26,8 @@ type State struct {
 	PolicyList         []string
 	PolicyACL          string
 	NewSecretName      string
+	Enterprise         bool
 
-	//Namespaces []*models.Namespace
 	Elements *Elements
 	Toggle   *Toggle
 	Filter   *Filter
@@ -37,8 +41,9 @@ type Toggle struct {
 }
 
 type Filter struct {
-	Object string
-	Policy string
+	Object    string
+	Policy    string
+	Namespace string
 }
 
 type Elements struct {

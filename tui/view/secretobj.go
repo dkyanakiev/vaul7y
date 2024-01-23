@@ -143,7 +143,10 @@ func (v *View) patchSecret() {
 	if ok != "" {
 		v.handleError(ok)
 	} else {
-
+		if v.state.Enterprise {
+			v.logger.Debug().Msgf("Enterprise version detected, setting namespace to %v", v.state.SelectedNamespace)
+			v.Client.ChangeNamespace(v.state.SelectedNamespace)
+		}
 		v.logger.Debug().Msgf("Updated secret object is: %v", v.components.SecretObjTable.Props.UpdatedData)
 		err := v.Client.UpdateSecretObjectKV2(v.state.SelectedMount, v.components.SecretObjTable.Props.SelectedPath, patch, v.components.SecretObjTable.Props.UpdatedData)
 

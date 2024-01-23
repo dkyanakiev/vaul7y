@@ -4,6 +4,7 @@ import (
 	"context"
 	"strings"
 
+	"github.com/dkyanakiev/vaulty/internal/config"
 	"github.com/dkyanakiev/vaulty/internal/models"
 	"github.com/hashicorp/vault/api"
 	"github.com/rs/zerolog"
@@ -74,9 +75,29 @@ func New(opts ...func(*Vault) error) (*Vault, error) {
 	return &vault, nil
 }
 
-func Default(v *Vault, log *zerolog.Logger, vault_addr string, vault_token string, vault_ns string) error {
+func Default(v *Vault, log *zerolog.Logger, vaultyCfg config.Config) error {
 	cfg := api.DefaultConfig()
-	cfg.Address = vault_addr
+	cfg.Address = vaultyCfg.VaultAddr
+
+	tlsCfg := &api.TLSConfig{}
+
+	if vaultyCfg.VaultCaCert != "" {
+		tlsCfg.CACert = vaultyCfg.VaultCaCert
+	}
+
+	if vaultyCfg.VaultClientCert != "" {
+		tlsCfg.ClientCert = vaultyCfg.VaultClientCert
+	}
+
+	if vaultyCfg.VaultClientKey != "" {
+		tlsCfg.ClientKey = vaultyCfg.VaultClientKey
+	}
+
+	err := cfg.ConfigureTLS(tlsCfg)
+	if err != nil {
+		log.Error().Err(err).Msgf("Failed to configure TLS: %v", err)
+		return err
+	}
 
 	client, err := api.NewClient(cfg)
 	if err != nil {
@@ -84,7 +105,7 @@ func Default(v *Vault, log *zerolog.Logger, vault_addr string, vault_token strin
 		return err
 	}
 
-	client.SetToken(vault_token)
+	client.SetToken(vaultyCfg.VaultToken)
 
 	// Check if the client is successfully created by making a request to Vault
 	health, err := client.Sys().Health()
@@ -94,7 +115,7 @@ func Default(v *Vault, log *zerolog.Logger, vault_addr string, vault_token strin
 	}
 	// Check for enterprise version and set namespace
 	if strings.Contains(health.Version, "ent") {
-		client.SetNamespace(vault_ns)
+		client.SetNamespace(vaultyCfg.VaultNamespace)
 	}
 
 	log.Debug().Msg("Vault client successfully created and connected")

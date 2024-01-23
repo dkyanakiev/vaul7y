@@ -61,6 +61,8 @@ Required:
 
 For the full list see the [official docs](https://developer.hashicorp.com/vault/docs/commands#environment-variables)
 
+Another option is to store your configs in yaml file named `.vaul7y.yaml` stored in your home directory    Example: [`/Users/myuser/.vaul7y.yaml`](./examples/vaul7y.yaml)
+
 
 ### Features
 
@@ -74,5 +76,4 @@ Currently the capabilities are limited.
     * Create new secrets
     * Filter paths/secrets 
 * Support for exploring and filtering ACL Policies
-
-*Note*: Currently only supporting default namespace. NS changes require enterprise vault setup
+* Namespace support for Enteprise versions

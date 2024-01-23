@@ -29,7 +29,10 @@ func (w *Watcher) SubscribeToMounts(notify func()) {
 }
 func (w *Watcher) UpdateMounts() {
 	w.logger.Debug().Msg("Updating mounts")
-	w.vault.SetNamespace(w.state.Namespace)
+	if w.state.Enterprise {
+		w.logger.Debug().Msgf("Enterprise version detected, setting namespace to %v", w.state.SelectedNamespace)
+		w.vault.SetNamespace(w.state.SelectedNamespace)
+	}
 	mounts, err := w.vault.AllMounts()
 	if err != nil {
 		log.Println(err)

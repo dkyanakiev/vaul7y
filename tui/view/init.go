@@ -13,7 +13,7 @@ func (v *View) Init(version string) {
 	// ClusterInfo
 	v.state.Version = version
 	v.components.VaultInfo.Props.Info = fmt.Sprintf(
-		"%sAddress: %s%s %s\n%sVersion:%s %s\n%sNamespace: %s%s %s\n",
+		"%sAddress: %s%s %s\n%sVersion:%s %s\n",
 		styles.HighlightSecondaryTag,
 		styles.StandardColorTag,
 		v.state.VaultAddress,
@@ -21,17 +21,13 @@ func (v *View) Init(version string) {
 		styles.HighlightSecondaryTag,
 		styles.StandardColorTag,
 		v.state.VaultVersion,
-		styles.HighlightSecondaryTag,
-		styles.StandardColorTag,
-		v.state.Namespace,
-		styles.StandardColorTag,
 	)
 
 	v.components.VaultInfo.Bind(v.Layout.Elements.ClusterInfo)
 	v.components.VaultInfo.InitialRender()
 	// TogglesInfo
 	v.components.TogglesInfo.Bind(v.Layout.Elements.ClusterInfo)
-	v.components.TogglesInfo.InitialRender(v.state.Namespace)
+	v.components.TogglesInfo.InitialRender(v.state.DefaultNamespace)
 
 	// Logo
 	v.components.Logo.Bind(v.Layout.Header.SlotLogo)
@@ -172,10 +168,10 @@ func (v *View) Init(version string) {
 
 func (v *View) UpdateVaultInfo() {
 	// Update the component's state
-	newNS := fmt.Sprintf("%s/%s", v.state.RootNamespace, v.state.SelectedNamespace)
+	// newNS := fmt.Sprintf("%s/%s", v.state.RootNamespace, v.state.SelectedNamespace)
 
 	v.components.VaultInfo.Props.Info = fmt.Sprintf(
-		"%sAddress: %s%s %s\n%sVersion:%s %s\n%sNamespace: %s%s %s\n",
+		"%sAddress: %s%s %s\n%sVersion:%s %s\n",
 		styles.HighlightSecondaryTag,
 		styles.StandardColorTag,
 		v.state.VaultAddress,
@@ -183,10 +179,6 @@ func (v *View) UpdateVaultInfo() {
 		styles.HighlightSecondaryTag,
 		styles.StandardColorTag,
 		v.state.VaultVersion,
-		styles.HighlightSecondaryTag,
-		styles.StandardColorTag,
-		newNS,
-		styles.StandardColorTag,
 	)
 
 	// Re-render the component
@@ -194,36 +186,36 @@ func (v *View) UpdateVaultInfo() {
 }
 
 // Function to update the namespaces and the dropdown options
-func (v *View) updateNamespaces() {
-	var oldNamespace string
-	if v.state.SelectedNamespace == "" {
-		v.logger.Debug().Msgf("Changing namespace to: %s", fmt.Sprintf("%s/%s", v.state.RootNamespace, v.state.SelectedNamespace))
-		v.state.Namespaces = v.Client.ChangeNamespace(v.state.RootNamespace)
-		v.logger.Debug().Msgf("New Namespaces: %s", v.state.Namespaces)
-	} else {
-		oldNamespace = v.state.SelectedNamespace
-		v.logger.Debug().Msgf("Changing namespace to: %s", fmt.Sprintf("%s/%s", v.state.RootNamespace, v.state.SelectedNamespace))
-		v.state.Namespaces = v.Client.ChangeNamespace(fmt.Sprintf("%s/%s", v.state.RootNamespace, v.state.SelectedNamespace))
-		v.logger.Debug().Msgf("New Namespaces: %s", v.state.Namespaces)
-	}
-	// Check if the namespaces slice is not empty
-	if len(v.state.Namespaces) > 0 {
-		v.components.Selections.Namespace.SetOptions(v.state.Namespaces, func(text string, index int) {
-			if v.state.SelectedNamespace == "" {
-				v.state.SelectedNamespace = text
-			} else {
-				v.state.SelectedNamespace = fmt.Sprintf("%s/%s", v.state.SelectedNamespace, text)
-			}
-			// Only update namespaces if the selected namespace has changed
-			if oldNamespace != v.state.SelectedNamespace {
-				// Use a separate goroutine for the recursive call
-				go v.updateNamespaces()
-			}
-			v.UpdateVaultInfo()
-			v.Draw()
-		})
-	} else {
-		// Set a dummy option
-		v.components.Selections.Namespace.SetOptions([]string{"No namespaces available"}, nil)
-	}
-}
+// func (v *View) updateNamespaces() {
+// 	var oldNamespace string
+// 	if v.state.SelectedNamespace == "" {
+// 		v.logger.Debug().Msgf("Changing namespace to: %s", fmt.Sprintf("%s/%s", v.state.RootNamespace, v.state.SelectedNamespace))
+// 		v.state.Namespaces = v.Client.ChangeNamespace(v.state.RootNamespace)
+// 		v.logger.Debug().Msgf("New Namespaces: %s", v.state.Namespaces)
+// 	} else {
+// 		oldNamespace = v.state.SelectedNamespace
+// 		v.logger.Debug().Msgf("Changing namespace to: %s", fmt.Sprintf("%s/%s", v.state.RootNamespace, v.state.SelectedNamespace))
+// 		v.state.Namespaces = v.Client.ChangeNamespace(fmt.Sprintf("%s/%s", v.state.RootNamespace, v.state.SelectedNamespace))
+// 		v.logger.Debug().Msgf("New Namespaces: %s", v.state.Namespaces)
+// 	}
+// 	// Check if the namespaces slice is not empty
+// 	if len(v.state.Namespaces) > 0 {
+// 		v.components.Selections.Namespace.SetOptions(v.state.Namespaces, func(text string, index int) {
+// 			if v.state.SelectedNamespace == "" {
+// 				v.state.SelectedNamespace = text
+// 			} else {
+// 				v.state.SelectedNamespace = fmt.Sprintf("%s/%s", v.state.SelectedNamespace, text)
+// 			}
+// 			// Only update namespaces if the selected namespace has changed
+// 			if oldNamespace != v.state.SelectedNamespace {
+// 				// Use a separate goroutine for the recursive call
+// 				go v.updateNamespaces()
+// 			}
+// 			v.UpdateVaultInfo()
+// 			v.Draw()
+// 		})
+// 	} else {
+// 		// Set a dummy option
+// 		v.components.Selections.Namespace.SetOptions([]string{"No namespaces available"}, nil)
+// 	}
+// }

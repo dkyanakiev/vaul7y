@@ -15,7 +15,7 @@ func (v *View) Namespaces() {
 
 	v.state.Elements.TableMain = v.components.NamespaceTable.Table.Primitive().(*tview.Table)
 	v.components.NamespaceTable.Logger = v.logger
-	v.components.Commands.Update(component.NoViewCommands)
+	v.components.Commands.Update(component.NamespaceObjectCommands)
 	v.Layout.Container.SetInputCapture(v.InputNamespaces)
 
 	update := func() {
@@ -53,15 +53,35 @@ func (v *View) inputNamespaces(event *tcell.EventKey) *tcell.EventKey {
 	switch event.Key() {
 	case tcell.KeyEsc:
 		//v.GoBack()
+	case tcell.KeyCtrlD:
+		v.logger.Debug().Msgf("Going back to default namespace: %v", v.state.DefaultNamespace)
+		v.state.SelectedNamespace = v.state.DefaultNamespace
+		v.components.TogglesInfo.Props.Namespace = v.state.DefaultNamespace
+		v.components.TogglesInfo.Render()
+		v.state.SelectedNamespace = v.state.DefaultNamespace
+		//v.Client.ChangeNamespace(v.state.DefaultNamespace)
+		v.Watcher.Unsubscribe()
+		v.Mounts()
+		return nil
+	case tcell.KeyCtrlW:
+		v.logger.Debug().Msgf("Going back to root namespace : %v", v.state.RootNamespace)
+		v.state.SelectedNamespace = v.state.RootNamespace
+		v.components.TogglesInfo.Props.Namespace = v.state.RootNamespace
+		v.components.TogglesInfo.Render()
+		v.state.SelectedNamespace = v.state.RootNamespace
+		// v.Client.ChangeNamespace(v.state.RootNamespace)
+		v.Watcher.Unsubscribe()
+		v.Mounts()
+		return nil
 	case tcell.KeyEnter:
 		selectdNs := v.components.NamespaceTable.GetIDForSelection()
 		v.logger.Debug().Msgf("Selected namespace is: %v", selectdNs)
-		newNs := fmt.Sprintf("%s/%s", v.state.Namespace, selectdNs)
+		newNs := fmt.Sprintf("%s/%s", v.state.SelectedNamespace, selectdNs)
 		v.logger.Debug().Msgf("Changing namespace to: %s", newNs)
 		v.components.TogglesInfo.Props.Namespace = newNs
 		v.components.TogglesInfo.Render()
-		v.state.Namespace = newNs
-		v.Client.ChangeNamespace(newNs)
+		v.state.SelectedNamespace = newNs
+		// v.Client.ChangeNamespace(newNs)
 		v.Watcher.Unsubscribe()
 		v.Mounts()
 		return nil

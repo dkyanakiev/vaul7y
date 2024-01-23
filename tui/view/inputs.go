@@ -40,10 +40,6 @@ func (v *View) InputMainCommands(event *tcell.EventKey) *tcell.EventKey {
 	switch event.Key() {
 	// Bug: CTRL+M key maps to enter and causes conflicts
 
-	case tcell.KeyCtrlW:
-		v.state.SelectedNamespace = ""
-		v.updateNamespaces()
-		v.Mounts()
 	case tcell.KeyCtrlB:
 		v.Watcher.Unsubscribe()
 		v.Mounts()

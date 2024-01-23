@@ -39,7 +39,7 @@ func (s *Selections) Init() error {
 
 	// if len(s.state.Namespaces) != 0 {
 	s.Namespace.SetOptions(s.state.Namespaces, s.Selected)
-	s.Namespace.SetCurrentOption(len(s.state.Namespace) - 1)
+	s.Namespace.SetCurrentOption(len(s.state.SelectedNamespace) - 1)
 	s.Namespace.SetSelectedFunc(s.rerender)
 
 	// }

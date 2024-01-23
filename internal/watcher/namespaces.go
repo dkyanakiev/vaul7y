@@ -30,7 +30,10 @@ func (w *Watcher) SubscribeToNamespaces(notify func()) {
 
 func (w *Watcher) UpdateNamespaces() {
 	w.logger.Debug().Msg("Updating namespaces")
-
+	if w.state.Enterprise {
+		w.logger.Debug().Msgf("Enterprise version detected, setting namespace to %v", w.state.SelectedNamespace)
+		w.vault.SetNamespace(w.state.SelectedNamespace)
+	}
 	namespaces, err := w.vault.ListNamespaces()
 	if err != nil {
 		log.Println(err)

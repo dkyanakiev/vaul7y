@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.1.0] - 2024-01-23
+
+## Added
+- Env variable loading in addition to a yaml 
+- Namespace support for enterprise vault instances
+
+## Fixed
+- Minor bugfixes around navigation
+
+## Changes
+- Housekeeping change
+
 ## [0.0.7] - 2023-12-03
 
 ## Added

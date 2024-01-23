@@ -1,6 +1,8 @@
 module github.com/dkyanakiev/vaulty
 
-go 1.20
+go 1.21
+
+toolchain go1.21.3
 
 require (
 	github.com/atotto/clipboard v0.1.4
@@ -11,6 +13,7 @@ require (
 	github.com/rivo/tview v0.0.0-20230907083354-a39fe28ba466
 	github.com/rs/zerolog v1.31.0
 	github.com/stretchr/testify v1.8.4
+	gopkg.in/yaml.v2 v2.4.0
 )
 
 require (
@@ -31,9 +34,10 @@ require (
 	github.com/hashicorp/go-secure-stdlib/strutil v0.1.2 // indirect
 	github.com/hashicorp/go-sockaddr v1.0.2 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
+	github.com/kr/pretty v0.3.1 // indirect
 	github.com/lucasb-eyer/go-colorful v1.2.0 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
-	github.com/mattn/go-isatty v0.0.19 // indirect
+	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/mattn/go-runewidth v0.0.15 // indirect
 	github.com/mitchellh/go-homedir v1.1.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect

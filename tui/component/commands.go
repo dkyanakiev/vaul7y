@@ -15,6 +15,7 @@ var (
 		fmt.Sprintf("%sMain Commands:", styles.HighlightSecondaryTag),
 		fmt.Sprintf("%sctrl-b%s to display Secret Engines", styles.HighlightPrimaryTag, styles.StandardColorTag),
 		fmt.Sprintf("%sctrl-p%s to display ACL Policies", styles.HighlightPrimaryTag, styles.StandardColorTag),
+		fmt.Sprintf("%sctrl-t%s to display Namespaces", styles.HighlightPrimaryTag, styles.StandardColorTag),
 		fmt.Sprintf("%sctrl-c%s to Quit", styles.HighlightPrimaryTag, styles.StandardColorTag),
 	}
 	MountsCommands = []string{
@@ -52,6 +53,11 @@ var (
 		fmt.Sprintf("\n%s Secret Commands:", styles.HighlightSecondaryTag),
 		fmt.Sprintf("%sctrl-w%s to submit your PATCH/UPDATE request", styles.HighlightPrimaryTag, styles.StandardColorTag),
 		fmt.Sprintf("%sesc%s to go back to the previous path", styles.HighlightPrimaryTag, styles.StandardColorTag),
+	}
+	NamespaceObjectCommands = []string{
+		fmt.Sprintf("\n%s Namespace Commands:", styles.HighlightSecondaryTag),
+		fmt.Sprintf("%sctrl-d%s to back to default namespace", styles.HighlightPrimaryTag, styles.StandardColorTag),
+		fmt.Sprintf("%sctrl-w%s to back to root namespace", styles.HighlightPrimaryTag, styles.StandardColorTag),
 	}
 )
 

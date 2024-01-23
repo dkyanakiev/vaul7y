@@ -71,6 +71,18 @@ type FakeVault struct {
 		result1 *api.Secret
 		result2 error
 	}
+	ListNamespacesStub        func() ([]string, error)
+	listNamespacesMutex       sync.RWMutex
+	listNamespacesArgsForCall []struct {
+	}
+	listNamespacesReturns struct {
+		result1 []string
+		result2 error
+	}
+	listNamespacesReturnsOnCall map[int]struct {
+		result1 []string
+		result2 error
+	}
 	ListNestedSecretsStub        func(string, string) ([]models.SecretPath, error)
 	listNestedSecretsMutex       sync.RWMutex
 	listNestedSecretsArgsForCall []struct {
@@ -97,6 +109,11 @@ type FakeVault struct {
 	listSecretsReturnsOnCall map[int]struct {
 		result1 *api.Secret
 		result2 error
+	}
+	SetNamespaceStub        func(string)
+	setNamespaceMutex       sync.RWMutex
+	setNamespaceArgsForCall []struct {
+		arg1 string
 	}
 	invocations      map[string][][]interface{}
 	invocationsMutex sync.RWMutex
@@ -396,6 +413,62 @@ func (fake *FakeVault) GetSecretInfoReturnsOnCall(i int, result1 *api.Secret, re
 	}{result1, result2}
 }
 
+func (fake *FakeVault) ListNamespaces() ([]string, error) {
+	fake.listNamespacesMutex.Lock()
+	ret, specificReturn := fake.listNamespacesReturnsOnCall[len(fake.listNamespacesArgsForCall)]
+	fake.listNamespacesArgsForCall = append(fake.listNamespacesArgsForCall, struct {
+	}{})
+	stub := fake.ListNamespacesStub
+	fakeReturns := fake.listNamespacesReturns
+	fake.recordInvocation("ListNamespaces", []interface{}{})
+	fake.listNamespacesMutex.Unlock()
+	if stub != nil {
+		return stub()
+	}
+	if specificReturn {
+		return ret.result1, ret.result2
+	}
+	return fakeReturns.result1, fakeReturns.result2
+}
+
+func (fake *FakeVault) ListNamespacesCallCount() int {
+	fake.listNamespacesMutex.RLock()
+	defer fake.listNamespacesMutex.RUnlock()
+	return len(fake.listNamespacesArgsForCall)
+}
+
+func (fake *FakeVault) ListNamespacesCalls(stub func() ([]string, error)) {
+	fake.listNamespacesMutex.Lock()
+	defer fake.listNamespacesMutex.Unlock()
+	fake.ListNamespacesStub = stub
+}
+
+func (fake *FakeVault) ListNamespacesReturns(result1 []string, result2 error) {
+	fake.listNamespacesMutex.Lock()
+	defer fake.listNamespacesMutex.Unlock()
+	fake.ListNamespacesStub = nil
+	fake.listNamespacesReturns = struct {
+		result1 []string
+		result2 error
+	}{result1, result2}
+}
+
+func (fake *FakeVault) ListNamespacesReturnsOnCall(i int, result1 []string, result2 error) {
+	fake.listNamespacesMutex.Lock()
+	defer fake.listNamespacesMutex.Unlock()
+	fake.ListNamespacesStub = nil
+	if fake.listNamespacesReturnsOnCall == nil {
+		fake.listNamespacesReturnsOnCall = make(map[int]struct {
+			result1 []string
+			result2 error
+		})
+	}
+	fake.listNamespacesReturnsOnCall[i] = struct {
+		result1 []string
+		result2 error
+	}{result1, result2}
+}
+
 func (fake *FakeVault) ListNestedSecrets(arg1 string, arg2 string) ([]models.SecretPath, error) {
 	fake.listNestedSecretsMutex.Lock()
 	ret, specificReturn := fake.listNestedSecretsReturnsOnCall[len(fake.listNestedSecretsArgsForCall)]
@@ -525,6 +598,38 @@ func (fake *FakeVault) ListSecretsReturnsOnCall(i int, result1 *api.Secret, resu
 	}{result1, result2}
 }
 
+func (fake *FakeVault) SetNamespace(arg1 string) {
+	fake.setNamespaceMutex.Lock()
+	fake.setNamespaceArgsForCall = append(fake.setNamespaceArgsForCall, struct {
+		arg1 string
+	}{arg1})
+	stub := fake.SetNamespaceStub
+	fake.recordInvocation("SetNamespace", []interface{}{arg1})
+	fake.setNamespaceMutex.Unlock()
+	if stub != nil {
+		fake.SetNamespaceStub(arg1)
+	}
+}
+
+func (fake *FakeVault) SetNamespaceCallCount() int {
+	fake.setNamespaceMutex.RLock()
+	defer fake.setNamespaceMutex.RUnlock()
+	return len(fake.setNamespaceArgsForCall)
+}
+
+func (fake *FakeVault) SetNamespaceCalls(stub func(string)) {
+	fake.setNamespaceMutex.Lock()
+	defer fake.setNamespaceMutex.Unlock()
+	fake.SetNamespaceStub = stub
+}
+
+func (fake *FakeVault) SetNamespaceArgsForCall(i int) string {
+	fake.setNamespaceMutex.RLock()
+	defer fake.setNamespaceMutex.RUnlock()
+	argsForCall := fake.setNamespaceArgsForCall[i]
+	return argsForCall.arg1
+}
+
 func (fake *FakeVault) Invocations() map[string][][]interface{} {
 	fake.invocationsMutex.RLock()
 	defer fake.invocationsMutex.RUnlock()
@@ -538,10 +643,14 @@ func (fake *FakeVault) Invocations() map[string][][]interface{} {
 	defer fake.getPolicyInfoMutex.RUnlock()
 	fake.getSecretInfoMutex.RLock()
 	defer fake.getSecretInfoMutex.RUnlock()
+	fake.listNamespacesMutex.RLock()
+	defer fake.listNamespacesMutex.RUnlock()
 	fake.listNestedSecretsMutex.RLock()
 	defer fake.listNestedSecretsMutex.RUnlock()
 	fake.listSecretsMutex.RLock()
 	defer fake.listSecretsMutex.RUnlock()
+	fake.setNamespaceMutex.RLock()
+	defer fake.setNamespaceMutex.RUnlock()
 	copiedInvocations := map[string][][]interface{}{}
 	for key, value := range fake.invocations {
 		copiedInvocations[key] = value

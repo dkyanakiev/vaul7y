@@ -38,7 +38,10 @@ func (w *Watcher) SubscribeToPoliciesACL(notify func()) {
 // }
 
 func (w *Watcher) readPolicy() {
-
+	if w.state.Enterprise {
+		w.logger.Debug().Msgf("Enterprise version detected, setting namespace to %v", w.state.SelectedNamespace)
+		w.vault.SetNamespace(w.state.SelectedNamespace)
+	}
 	policy, err := w.vault.GetPolicyInfo(w.state.SelectedPolicyName)
 	if err != nil {
 		w.NotifyHandler(models.HandleError, err.Error())

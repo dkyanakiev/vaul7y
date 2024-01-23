@@ -7,10 +7,10 @@ import (
 	"github.com/dkyanakiev/vaulty/internal/models"
 )
 
-func (w *Watcher) SubscribeToMounts(notify func()) {
-	w.UpdateMounts()
-	w.Subscribe(notify, "mounts")
-	w.Notify("mounts")
+func (w *Watcher) SubscribeToNamespaces(notify func()) {
+	w.UpdateNamespaces()
+	w.Subscribe(notify, "namespaces")
+	w.Notify("namespaces")
 
 	stop := make(chan struct{})
 	w.activities.Add(stop)
@@ -19,24 +19,26 @@ func (w *Watcher) SubscribeToMounts(notify func()) {
 		for {
 			select {
 			case <-ticker.C:
-				w.UpdateMounts()
-				w.Notify("mounts")
+				w.UpdateNamespaces()
+				w.Notify("namespaces")
 			case <-stop:
 				return
 			}
 		}
 	}()
 }
-func (w *Watcher) UpdateMounts() {
-	w.logger.Debug().Msg("Updating mounts")
+
+func (w *Watcher) UpdateNamespaces() {
+	w.logger.Debug().Msg("Updating namespaces")
 	if w.state.Enterprise {
 		w.logger.Debug().Msgf("Enterprise version detected, setting namespace to %v", w.state.SelectedNamespace)
 		w.vault.SetNamespace(w.state.SelectedNamespace)
 	}
-	mounts, err := w.vault.AllMounts()
+	namespaces, err := w.vault.ListNamespaces()
 	if err != nil {
 		log.Println(err)
 		w.NotifyHandler(models.HandleError, err.Error())
 	}
-	w.state.Mounts = mounts
+	w.logger.Debug().Msgf("Namespaces: %v", namespaces)
+	w.state.Namespaces = namespaces
 }

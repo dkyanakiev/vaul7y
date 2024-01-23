@@ -20,6 +20,7 @@ type TogglesInfo struct {
 
 type TogglesInfoProps struct {
 	Info       string
+	Namespace  string
 	FilterText string ""
 	Editable   bool
 }
@@ -31,14 +32,17 @@ func NewTogglesInfo() *TogglesInfo {
 	}
 }
 
-func (t *TogglesInfo) InitialRender() error {
+func (t *TogglesInfo) InitialRender(ns string) error {
 	if t.slot == nil {
 		return ErrComponentNotBound
 	}
 	editableStr := strconv.FormatBool(t.Props.Editable)
 
 	text := fmt.Sprintf(
-		"\n%sEdit Mode: %s %s \n%sFilter: %s %s \n",
+		"\n%sNamespace: %s %s \n%sEdit Mode: %s %s  \n%sFilter: %s %s \n",
+		styles.HighlightSecondaryTag,
+		styles.StandardColorTag,
+		ns,
 		styles.HighlightSecondaryTag,
 		styles.StandardColorTag,
 		editableStr,
@@ -60,7 +64,10 @@ func (t *TogglesInfo) Render() error {
 	editableStr := strconv.FormatBool(t.Props.Editable)
 
 	text := fmt.Sprintf(
-		"\n%sEdit Mode: %s %s \n%sFilter: %s %s \n",
+		"\n%sNamespace: %s %s \n%sEdit Mode: %s %s  \n%sFilter: %s %s \n",
+		styles.HighlightSecondaryTag,
+		styles.StandardColorTag,
+		t.Props.Namespace,
 		styles.HighlightSecondaryTag,
 		styles.StandardColorTag,
 		editableStr,

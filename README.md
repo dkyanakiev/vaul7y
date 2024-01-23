@@ -20,8 +20,5 @@ The tool is in active development and is bug heavy. There are multiple things th
 If anyone decides to use this and wants to request a specific feature or even fix a bug - please open an issue :smile:
 
 ## Short term TODO list:
-1. [x] Finish implementing PUT/Patch to existing secrets
-1. [X] Create new secret objects and paths.
 1. [ ] Version select and rollback for secrets
 2. [ ] Work on PKI and Certs 
-3. [ ] Support for namespace changes. (Requires enterprise license)

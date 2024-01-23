@@ -23,13 +23,24 @@ func NewVaultInfo() *VaultInfo {
 	}
 }
 
-func (c *VaultInfo) Render() error {
+func (c *VaultInfo) InitialRender() error {
 	if c.slot == nil {
 		return ErrComponentNotBound
 	}
 
 	c.TextView.SetText(c.Props.Info)
 	c.slot.AddItem(c.TextView.Primitive(), 0, 1, false)
+
+	return nil
+}
+
+func (c *VaultInfo) Render() error {
+	if c.slot == nil {
+		return ErrComponentNotBound
+	}
+
+	c.TextView.SetText(c.Props.Info)
+	// c.slot.AddItem(c.TextView.Primitive(), 0, 1, false)
 
 	return nil
 }

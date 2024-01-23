@@ -61,6 +61,8 @@ Required:
 
 For the full list see the [official docs](https://developer.hashicorp.com/vault/docs/commands#environment-variables)
 
+Another option is to store your configs in yaml file named `.vaul7y.yaml` stored in your home directory    Example: [`/Users/myuser/.vaul7y.yaml`](./examples/vaul7y.yaml)
+
 
 ### Features
 
@@ -70,7 +72,8 @@ Currently the capabilities are limited.
     * Currently only KV2
 * Looking up secret objects
     * Show/hide secrets and coping data
-    * Update/patch coming soon
+    * Update/patch secrets
+    * Create new secrets
+    * Filter paths/secrets 
 * Support for exploring and filtering ACL Policies
-
-*Note*: Currently only supporting default namespace. Will implement the namespace change fairly soon.
+* Namespace support for Enteprise versions

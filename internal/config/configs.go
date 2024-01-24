@@ -20,7 +20,7 @@ type Config struct {
 	VaultToken        string `yaml:"vault_token"`
 	VaultCaCert       string `yaml:"vault_cacert"`
 	VaultClientCert   string `yaml:"vault_client_cert"`
-	VaultClientKey    string `yaml:"vault_client_Key"`
+	VaultClientKey    string `yaml:"vault_client_key"`
 	VaultyLogFile     string `yaml:"vaulty_log_file"`
 	VaultyLogLevel    string `yaml:"vaulty_log_level"`
 	VaultyRefreshRate int    `yaml:"vaulty_refresh_rate"`
@@ -79,7 +79,7 @@ func LoadConfig() Config {
 		config.VaultClientCert = vaultClientCert
 	}
 	if vaultClientKey := os.Getenv("VAULT_CLIENT_KEY"); vaultClientKey != "" {
-		config.VaultClientCert = vaultClientKey
+		config.VaultClientKey = vaultClientKey
 	}
 	if vaultyLogFile := os.Getenv("VAULTY_LOG_FILE"); vaultyLogFile != "" {
 		config.VaultyLogFile = vaultyLogFile

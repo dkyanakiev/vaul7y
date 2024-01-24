@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.1.1] - 2024-01-24
+
+## Added
+
+- Additional error message when failing to create vault client
+
+## Fixed
+
+- Fixed loading for client key when using VAULT_CLIENT_KEY
+
 ## [0.1.0] - 2024-01-23
 
 ## Added

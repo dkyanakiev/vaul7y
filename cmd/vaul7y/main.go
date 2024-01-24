@@ -47,6 +47,11 @@ func main() {
 	vaultClient, err := vault.New(func(v *vault.Vault) error {
 		return vault.Default(v, logger, cfg)
 	})
+	if err != nil {
+		fmt.Printf("Failed to start Vault client: %v\n", err)
+		os.Exit(1)
+	}
+
 	refreshIntervalDefault := time.Duration(cfg.VaultyRefreshRate) * time.Second
 	state := initializeState(vaultClient, cfg.VaultNamespace)
 	toggles := component.NewTogglesInfo()

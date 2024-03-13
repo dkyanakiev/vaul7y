@@ -39,7 +39,7 @@ func checkForVaultAddress() {
 
 }
 
-func LoadConfig() Config {
+func LoadConfig(cfgFile string) Config {
 	// Load the config from the YAML file
 	home, err := os.UserHomeDir()
 	if err != nil {
@@ -47,12 +47,22 @@ func LoadConfig() Config {
 		os.Exit(1)
 	}
 
-	yamlFilePath := filepath.Join(home, ".vaul7y.yaml")
-
-	data, err := ioutil.ReadFile(yamlFilePath)
-	if err != nil {
-		fmt.Printf("Error reading YAML file: %v\n", err)
-		os.Exit(1)
+	var data []byte
+	if cfgFile == "" {
+		fmt.Println("No config file specified, using default")
+		yamlFilePath := filepath.Join(home, ".vaul7y.yaml")
+		data, err = ioutil.ReadFile(yamlFilePath)
+		if err != nil {
+			fmt.Printf("Error reading YAML file: %v\n", err)
+			os.Exit(1)
+		}
+	} else {
+		fmt.Println("Using config file: ", cfgFile)
+		data, err = ioutil.ReadFile(cfgFile)
+		if err != nil {
+			fmt.Printf("Error reading YAML file: %v\n", err)
+			os.Exit(1)
+		}
 	}
 
 	var config Config

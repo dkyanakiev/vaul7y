@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.2] - 2024-03-13
+
+## Added
+
+- Allows for custom config file to be passed over during using `-c` rather than using the default one
+
 ## [0.1.1] - 2024-01-24
 
 ## Added

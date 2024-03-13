@@ -31,3 +31,6 @@ pkg/
 dist/
 *.token
 *_token
+
+vaul7y-cfg.yml
+vaul7y-cfg.yaml

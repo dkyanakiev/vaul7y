@@ -21,7 +21,8 @@ import (
 var version = "0.1.0"
 
 type options struct {
-	Version bool `short:"v" long:"version" description:"Show Damon version"`
+	Version    bool   `short:"v" long:"version" description:"Show Damon version"`
+	ConfigFile string `short:"c" long:"config" description:"Path to the config file"`
 }
 
 func main() {
@@ -38,7 +39,7 @@ func main() {
 	}
 
 	// Check for required Vault env vars
-	cfg := config.LoadConfig()
+	cfg := config.LoadConfig(opts.ConfigFile)
 
 	logFile, logger := config.SetupLogger(cfg.VaultyLogLevel, cfg.VaultyLogFile)
 	defer logFile.Close()

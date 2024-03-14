@@ -18,7 +18,7 @@ import (
 	"github.com/rivo/tview"
 )
 
-var version = "0.1.0"
+var version = "dev"
 
 type options struct {
 	Version    bool   `short:"v" long:"version" description:"Show Damon version"`
@@ -34,7 +34,7 @@ func main() {
 	}
 
 	if opts.Version {
-		fmt.Println("vaul7y", version)
+		fmt.Println("vaul7y", strings.TrimPrefix(version, "v"))
 		os.Exit(0)
 	}
 

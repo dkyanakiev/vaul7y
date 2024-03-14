@@ -20,7 +20,7 @@ dev: ## Build for the current development version
 
 .PHONY: build
 build:
-	go build -o bin/vaul7y ./cmd/vaul7y
+	go build -ldflags "-X main.version=`git tag --sort=-version:refname | head -n 1`" -o bin/vaul7y ./cmd/vaul7y
 
 .PHONY: run
 run:

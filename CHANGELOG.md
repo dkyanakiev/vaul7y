@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.3] - 2024-03-14
+
+## Fixed
+
+- Dynamic version passed when building the binary.
+
 ## [0.1.2] - 2024-03-13
 
 ## Added

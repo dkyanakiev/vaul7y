@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.5] - 2024-04-18
+
+## Fixed
+
+- Fixing issue where vaulty will error if no config file is provided.
+
 ## [0.1.4] - 2024-04-17
 
 ## Fixed

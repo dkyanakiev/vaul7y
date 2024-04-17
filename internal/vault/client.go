@@ -2,7 +2,6 @@ package vault
 
 import (
 	"context"
-	"strings"
 
 	"github.com/dkyanakiev/vaulty/internal/config"
 	"github.com/dkyanakiev/vaulty/internal/models"
@@ -106,15 +105,17 @@ func Default(v *Vault, log *zerolog.Logger, vaultyCfg config.Config) error {
 	}
 
 	client.SetToken(vaultyCfg.VaultToken)
-
+	var version string
 	// Check if the client is successfully created by making a request to Vault
 	health, err := client.Sys().Health()
 	if err != nil {
-		log.Error().Err(err).Msg("Failed to connect to Vault")
+		log.Error().Err(err).Msg("Failed to connect to `v1/sys/health` ")
 		return err
+	} else {
+		version = health.Version
 	}
 	// Check for enterprise version and set namespace
-	if strings.Contains(health.Version, "ent") {
+	if vaultyCfg.VaultNamespace != "" {
 		client.SetNamespace(vaultyCfg.VaultNamespace)
 	}
 
@@ -124,7 +125,7 @@ func Default(v *Vault, log *zerolog.Logger, vaultyCfg config.Config) error {
 	v.Client = client
 	v.Sys = client.Sys()
 	v.Logical = client.Logical()
-	v.Version = health.Version
+	v.Version = version
 	v.Logger = log
 
 	return nil

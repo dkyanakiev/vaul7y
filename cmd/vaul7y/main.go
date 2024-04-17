@@ -107,14 +107,13 @@ func initializeState(client *vault.Vault, rootNs string) *state.State {
 	state.DefaultNamespace = "-"
 	state.RootNamespace = "-"
 
-	if strings.Contains(version, "ent") {
+	if rootNs != "" {
 		state.Enterprise = true
 		state.RootNamespace = getFirstPart(rootNs)
 		state.DefaultNamespace = rootNs
 		state.SelectedNamespace = rootNs
 		state.Namespaces, _ = client.ListNamespaces()
 	}
-	//	state.Namespace = "default"
 
 	return state
 }

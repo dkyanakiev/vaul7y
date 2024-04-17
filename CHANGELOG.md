@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.4] - 2024-04-17
+
+## Fixed
+
+- Fixing issue where cli wont run if version check fails.
+
 ## [0.1.3] - 2024-03-14
 
 ## Fixed

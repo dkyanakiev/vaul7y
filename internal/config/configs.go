@@ -26,50 +26,33 @@ type Config struct {
 	VaultyRefreshRate int    `yaml:"vaulty_refresh_rate"`
 }
 
-func checkForVaultAddress() {
-	if os.Getenv("VAULT_ADDR") == "" {
-		fmt.Println("VAULT_ADDR is not set. Please set it and try again.")
-		os.Exit(1)
-	}
-
-	if os.Getenv("VAULT_TOKEN") == "" {
-		fmt.Println("VAULT_TOKEN is not set. Please set it and try again.")
-		os.Exit(1)
-	}
-
-}
-
 func LoadConfig(cfgFile string) Config {
+	var config Config
 	// Load the config from the YAML file
 	home, err := os.UserHomeDir()
 	if err != nil {
 		fmt.Println("Error getting user home directory")
-		os.Exit(1)
 	}
 
 	var data []byte
 	if cfgFile == "" {
-		fmt.Println("No config file specified, using default")
+		fmt.Println("No config file specified")
 		yamlFilePath := filepath.Join(home, ".vaul7y.yaml")
-		data, err = ioutil.ReadFile(yamlFilePath)
+		data, err = os.ReadFile(yamlFilePath)
 		if err != nil {
 			fmt.Printf("Error reading YAML file: %v\n", err)
-			os.Exit(1)
 		}
 	} else {
 		fmt.Println("Using config file: ", cfgFile)
-		data, err = ioutil.ReadFile(cfgFile)
+		data, err = os.ReadFile(cfgFile)
 		if err != nil {
 			fmt.Printf("Error reading YAML file: %v\n", err)
-			os.Exit(1)
 		}
 	}
 
-	var config Config
 	err = yaml.Unmarshal(data, &config)
 	if err != nil {
 		fmt.Printf("Error parsing YAML file: %v\n", err)
-		os.Exit(1)
 	}
 
 	// Overwrite with environment variables if they are set

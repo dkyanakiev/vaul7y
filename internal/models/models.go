@@ -44,6 +44,12 @@ type MountConfigOutput struct {
 	PluginName string `json:"plugin_name,omitempty" mapstructure:"plugin_name"`
 }
 
+type UiMountsResponse struct {
+	Data struct {
+		Secret map[string]*MountOutput `json:"secret"`
+	} `json:"data"`
+}
+
 type UserLockoutConfigOutput struct {
 	LockoutThreshold    uint  `json:"lockout_threshold,omitempty" structs:"lockout_threshold" mapstructure:"lockout_threshold"`
 	LockoutDuration     int   `json:"lockout_duration,omitempty" structs:"lockout_duration" mapstructure:"lockout_duration"`

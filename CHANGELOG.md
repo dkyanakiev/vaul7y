@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.7] - 2024-04-24
+
+## Added
+
+-- Fallback method for mounts listing when user doesnt access to `sys/mounts`
+
 ## [0.1.5] - 2024-04-18
 
 ## Fixed

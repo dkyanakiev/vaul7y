@@ -110,7 +110,6 @@ func Default(v *Vault, log *zerolog.Logger, vaultyCfg config.Config) error {
 	health, err := client.Sys().Health()
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to connect to `v1/sys/health` ")
-		// client.NewRequest("GET", "v1/sys/health")
 	} else {
 		version = health.Version
 	}

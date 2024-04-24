@@ -3,7 +3,7 @@ package vault
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 
 	"github.com/dkyanakiev/vaulty/internal/models"
 	"github.com/hashicorp/vault/api"
@@ -27,14 +27,13 @@ func (v *Vault) ListMounts() (map[string]*models.MountOutput, error) {
 }
 
 func (v *Vault) listMountsFallback() (map[string]*models.MountOutput, error) {
-	req := v.vault.NewRequest("GET", "/v1/sys/internal/ui/mounts")
-	resp, err := v.vault.RawRequest(req)
+
+	resp, err := v.vault.Logical().ReadRaw("/sys/internal/ui/mounts")
 	if err != nil {
 		return nil, fmt.Errorf("failed to retrieve secret mounts: %w", err)
 	}
 
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, fmt.Errorf("failed to read response body: %w", err)
 	}

@@ -32,12 +32,19 @@ func (w *Watcher) updateSecretState(selectedMount, selectedPath string) {
 		w.logger.Debug().Msgf("Enterprise version detected, setting namespace to %v", w.state.SelectedNamespace)
 		w.vault.SetNamespace(w.state.SelectedNamespace)
 	}
-	secret, err := w.vault.GetSecretInfo(selectedMount, selectedPath)
+	secret, err := w.vault.GetSecretData(selectedMount, selectedPath)
 	if err != nil {
-		w.NotifyHandler(models.HandleError, err.Error())
-		return
+		w.NotifyHandler(models.HandleInfo, err.Error())
+	}
+	metadata, err2 := w.vault.GetSecretMetadata(selectedMount, selectedPath)
+	if err2 != nil {
+		w.NotifyHandler(models.HandleInfo, err2.Error())
+	}
+	if err != nil && err2 != nil {
+		w.NotifyHandler(models.HandleError, "Unable to return secret data or metadata")
 	}
 	w.state.SelectedSecret = secret
+	w.state.SelectedSecretMeta = metadata
 
 }
 

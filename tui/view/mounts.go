@@ -11,6 +11,7 @@ func (v *View) Mounts() {
 	v.logger.Debug().Msg("Mounts view")
 	v.viewSwitch()
 	v.Layout.Body.SetTitle("Secret Mounts")
+	v.Layout.Container.SetFocus(v.components.MountsTable.Table.Primitive())
 	v.Layout.Container.SetInputCapture(v.InputMounts)
 	v.components.Commands.Update(component.MountsCommands)
 	v.state.Elements.TableMain = v.components.MountsTable.Table.Primitive().(*tview.Table)
@@ -37,7 +38,6 @@ func (v *View) Mounts() {
 	// v.addToHistory(v.state.SelectedNamespace, "mounts", func() {
 	// 	v.Mounts()
 	// })
-	v.Layout.Container.SetFocus(v.components.MountsTable.Table.Primitive())
 }
 
 func (v *View) parseMounts(data []*models.MountOutput) []*models.MountOutput {

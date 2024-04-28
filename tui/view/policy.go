@@ -12,6 +12,7 @@ func (v *View) VPolicy() {
 	v.viewSwitch()
 	v.Layout.Body.Clear()
 	v.Layout.Body.SetTitle("Vault Policies")
+	v.Layout.Container.SetFocus(v.components.PolicyTable.Table.Primitive())
 	v.Layout.Container.SetInputCapture(v.InputVaultPolicy)
 	v.components.Commands.Update(component.PolicyCommands)
 	search := v.components.Search
@@ -36,7 +37,6 @@ func (v *View) VPolicy() {
 	update()
 
 	v.state.Elements.TableMain = v.components.PolicyTable.Table.Primitive().(*tview.Table)
-	v.Layout.Container.SetFocus(v.components.PolicyTable.Table.Primitive())
 }
 
 func (v *View) inputPolicy(event *tcell.EventKey) *tcell.EventKey {

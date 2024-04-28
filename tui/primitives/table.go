@@ -81,3 +81,11 @@ func (t *Table) ScrollToTop() *tview.Table {
 	t.primitive.ScrollToBeginning()
 	return t.primitive
 }
+
+func (t *Table) SetSelectedStyle(style tcell.Style) {
+	t.tviewTable.SetSelectedStyle(style)
+}
+
+func (t *Table) SetSelectable(rows, columns bool) {
+	t.primitive.SetSelectable(rows, columns)
+}

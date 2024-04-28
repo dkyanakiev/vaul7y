@@ -209,3 +209,25 @@ type Namespace struct {
 	Name        string
 	Description string
 }
+
+type MetaResponse struct {
+	Data Metadata `json:"data"`
+}
+
+type Metadata struct {
+	CasRequired        bool                   `json:"cas_required"`
+	CreatedTime        string                 `json:"created_time"`
+	CurrentVersion     int                    `json:"current_version"`
+	DeleteVersionAfter string                 `json:"delete_version_after"`
+	MaxVersions        int                    `json:"max_versions"`
+	OldestVersion      int                    `json:"oldest_version"`
+	UpdatedTime        string                 `json:"updated_time"`
+	CustomMetadata     map[string]interface{} `json:"custom_metadata"`
+	Versions           map[string]Version     `json:"versions"`
+}
+
+type Version struct {
+	CreatedTime  string `json:"created_time"`
+	DeletionTime string `json:"deletion_time"`
+	Destroyed    bool   `json:"destroyed"`
+}

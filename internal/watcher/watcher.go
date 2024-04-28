@@ -25,7 +25,8 @@ type Vault interface {
 	ListNestedSecrets(string, string) ([]models.SecretPath, error)
 	SetNamespace(string)
 	ListNamespaces() ([]string, error)
-	GetSecretInfo(string, string) (*api.Secret, error)
+	GetSecretData(string, string) (*api.Secret, error)
+	GetSecretMetadata(string, string) (*models.Metadata, error)
 	//GetPolicy(string) (string, error)
 	//ListPolicies() ([]string, error)
 }

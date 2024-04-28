@@ -20,6 +20,7 @@ func (v *View) Secrets(path string, secretBool string) {
 	v.viewSwitch()
 	v.Layout.Body.Clear()
 	v.Layout.Body.SetTitle(fmt.Sprintf("Secrets: %s", path))
+	v.Layout.Container.SetFocus(v.components.SecretsTable.Table.Primitive())
 	v.Layout.Container.SetInputCapture(v.InputSecrets)
 	v.components.Commands.Update(component.SecretsCommands)
 	v.logger.Debug().Msgf("Selected path for secret is: %v", path)
@@ -56,7 +57,6 @@ func (v *View) Secrets(path string, secretBool string) {
 	update()
 
 	v.state.Elements.TableMain = v.components.SecretsTable.Table.Primitive().(*tview.Table)
-	v.Layout.Container.SetFocus(v.components.SecretsTable.Table.Primitive())
 
 }
 

@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.1.8] - 2024-04-28
+
+## Fixed
+
+-- Fixing issue with popups not being focused and requiring selection with mouse
+
+## Added
+
+-- Adding metadata view on secret objects
+
 ## [0.1.7] - 2024-04-24
 
 ## Added

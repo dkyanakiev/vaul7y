@@ -32,6 +32,8 @@ type Table interface {
 	SetSelectedFunc(fn func(row, column int))
 	SetInputCapture(capture func(event *tcell.EventKey) *tcell.EventKey)
 	ScrollToTop() *tview.Table
+	SetSelectedStyle(style tcell.Style)
+	SetSelectable(rows, columns bool)
 }
 
 //go:generate counterfeiter . TextView

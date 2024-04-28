@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"sort"
 	"strconv"
+	"time"
 
 	"github.com/dkyanakiev/vaulty/internal/models"
 	primitive "github.com/dkyanakiev/vaulty/tui/primitives"
@@ -32,16 +33,18 @@ var (
 type SelectSecretPathFunc func(jsonPath string)
 
 type SecretObjTable struct {
-	Table          Table
-	TextView       TextView
-	TextArea       TextArea
-	Props          *SecretObjTableProps
-	Logger         *zerolog.Logger
-	ShowJson       bool
-	ShowMetadata   bool
-	Editable       bool
-	CursorPosition int
-	slot           *tview.Flex
+	Table               Table
+	MetadataTable       Table
+	CustomMetadataTable Table
+	TextView            TextView
+	TextArea            TextArea
+	Props               *SecretObjTableProps
+	Logger              *zerolog.Logger
+	ShowJson            bool
+	ShowMetadata        bool
+	Editable            bool
+	CursorPosition      int
+	slot                *tview.Flex
 }
 
 type SecretObjTableProps struct {
@@ -64,20 +67,26 @@ type SecretObjTableProps struct {
 
 func NewSecretObjTable() *SecretObjTable {
 	t := primitive.NewTable()
+	mt := primitive.NewTable()
+	cmtt := primitive.NewTable()
 	tv := primitive.NewTextView(1)
 	tv.SetTextAlign(tview.AlignLeft)
 	tv.SetBorderColor(styles.TcellColorStandard)
 	ta := primitive.NewTextArea()
 
+	mt.SetSelectable(false, false)
+	cmtt.SetSelectable(false, false)
 	jt := &SecretObjTable{
-		Table:        t,
-		TextView:     tv,
-		TextArea:     ta,
-		Props:        &SecretObjTableProps{},
-		ShowJson:     false,
-		ShowMetadata: false,
-		Editable:     false,
-		slot:         tview.NewFlex(),
+		Table:               t,
+		MetadataTable:       mt,
+		CustomMetadataTable: cmtt,
+		TextView:            tv,
+		TextArea:            ta,
+		Props:               &SecretObjTableProps{},
+		ShowJson:            false,
+		ShowMetadata:        false,
+		Editable:            false,
+		slot:                tview.NewFlex(),
 	}
 	//TODO: Revisit
 	jt.slot.AddItem(jt.TextView.Primitive(), 0, 1, false)
@@ -91,6 +100,8 @@ func (s *SecretObjTable) Bind(slot *tview.Flex) {
 func (s *SecretObjTable) reset() {
 	s.slot.Clear()
 	s.Table.Clear()
+	s.MetadataTable.Clear()
+	s.CustomMetadataTable.Clear()
 	s.TextView.Clear()
 }
 
@@ -126,10 +137,9 @@ func (s *SecretObjTable) ToggleView() {
 func (s *SecretObjTable) ToggleMetaView() {
 	s.Logger.Debug().Msgf("ShowMetadata: %v", s.ShowMetadata)
 	if s.ShowMetadata {
-		s.slot.AddItem(s.Table.Primitive(), 0, 1, true)
-		// s.slot.AddItem(tview.NewFlex().SetDirection(tview.FlexRow).
-		// 	AddItem(tview.NewTable().SetBorder(true).SetTitle("Metadata"), 10, 1, false).
-		// 	AddItem(tview.NewTable().SetBorder(true).SetTitle("Custom MetaData"), 0, 1, false), 0, 2, false)
+		s.slot.AddItem(tview.NewFlex().SetDirection(tview.FlexRow).
+			AddItem(s.MetadataTable.Primitive(), 10, 1, false).
+			AddItem(s.CustomMetadataTable.Primitive(), 0, 1, false), 0, 2, false)
 		s.renderMetadata()
 	} else {
 		s.Render()
@@ -186,36 +196,32 @@ func (s *SecretObjTable) renderMetadata() error {
 		return nil
 	}
 
-	s.Logger.Debug().Msgf("slot: %v", s.slot.GetItemCount())
-	// item := s.slot.GetItem(1)
-	// // itemType := reflect.TypeOf(item)
-	// count1 := item.(*tview.Flex).GetItem(0)
-	// count2 := item.(*tview.Flex).GetItem(1)
-	// itemType := reflect.TypeOf(count1)
-	// itemType2 := reflect.TypeOf(count2)
-	// s.Logger.Debug().Msgf("Item: %v", itemType)
-	// s.Logger.Debug().Msgf("Item: %v", itemType2)
+	s.MetadataTable.SetTitle("Metadata")
+	s.CustomMetadataTable.SetTitle("Custom Metadata")
+	s.Logger.Debug().Msgf("Metadata: %v", s.Props.Metadata.CreatedTime)
 
-	// item := s.slot.GetItem(1)
-	// table1 := item.(*tview.Flex).GetItem(1)
-	// table2 := table1.(*tview.Box).
-	// // // Assuming item is of type interface{}
-	// table, ok := item.(*tview.Table)
-	// if !ok {
-	// 	panic(itemType)
-	// }
+	s.MetadataTable.RenderRow([]string{"Created Time", ConvertTimeFormat(s.Props.Metadata.CreatedTime)}, 0, tcell.ColorYellow)
+	s.MetadataTable.RenderRow([]string{"Update Time", ConvertTimeFormat(s.Props.Metadata.UpdatedTime)}, 1, tcell.ColorYellow)
+	s.MetadataTable.RenderRow([]string{"Current Version", strconv.Itoa(s.Props.Metadata.CurrentVersion)}, 2, tcell.ColorYellow)
+	s.MetadataTable.RenderRow([]string{"Oldest Version", strconv.Itoa(s.Props.Metadata.CurrentVersion)}, 3, tcell.ColorYellow)
+	s.MetadataTable.RenderRow([]string{"Delete after version", s.Props.Metadata.DeleteVersionAfter}, 4, tcell.ColorYellow)
+	s.MetadataTable.RenderRow([]string{"Cas Required", strconv.FormatBool(s.Props.Metadata.CasRequired)}, 5, tcell.ColorYellow)
 
-	// Now you can call Table methods on table
+	i := 0
+	for k, v := range s.Props.Metadata.CustomMetadata {
+		value, ok := v.(string)
+		if !ok {
+			// handle the case where v is not a string
+			continue
+		}
+		row := []string{
+			k,
+			value,
+		}
+		s.CustomMetadataTable.RenderRow(row, i, tcell.ColorYellow)
+		i++
+	}
 
-	// s.Logger.Debug().Msgf("Item: %v", itemType)
-	s.Table.SetSelectedFunc(s.pathSelected)
-	s.Table.RenderHeader(SecretObjTableHeaderJobs)
-	// table1.(*tview.Table).SetCell(0, 0, tview.NewTableCell("Created Time").SetTextColor(tcell.ColorYellow))
-	// .RenderRow([]string{"Created Time", s.Props.Metadata.CreatedTime}, 0, tcell.ColorYellow)
-	s.Table.RenderRow([]string{"Created Time", s.Props.Metadata.CreatedTime}, 0, tcell.ColorYellow)
-	s.Table.RenderRow([]string{"Current Version", strconv.Itoa(s.Props.Metadata.CurrentVersion)}, 1, tcell.ColorYellow)
-	s.Table.RenderRow([]string{"Oldest Version", strconv.Itoa(s.Props.Metadata.CurrentVersion)}, 2, tcell.ColorYellow)
-	s.Table.RenderRow([]string{"Update Time", s.Props.Metadata.UpdatedTime}, 3, tcell.ColorYellow)
 	return nil
 }
 
@@ -348,4 +354,17 @@ func (s *SecretObjTable) validationLogic() {
 		s.Logger.Debug().Msg("Secret data is not valid")
 		s.Props.MissingSecret = true
 	}
+}
+
+func ConvertTimeFormat(input string) string {
+	// Parse the input string into a time.Time value
+	t, err := time.Parse(time.RFC3339Nano, input)
+	if err != nil {
+		return input
+	}
+
+	// Format the time.Time value into a human-friendly string
+	output := t.Format("Monday, 02-Jan-06 15:04:05 MST")
+
+	return output
 }

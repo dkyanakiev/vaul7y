@@ -43,6 +43,7 @@ var (
 	SecretObjectCommands = []string{
 		fmt.Sprintf("\n%s Secret Commands:", styles.HighlightSecondaryTag),
 		fmt.Sprintf("%sh%s toggle display for secrets", styles.HighlightPrimaryTag, styles.StandardColorTag),
+		fmt.Sprintf("%st%s toggle display for metadata info", styles.HighlightPrimaryTag, styles.StandardColorTag),
 		fmt.Sprintf("%sc%s copy secret to clipboard", styles.HighlightPrimaryTag, styles.StandardColorTag),
 		fmt.Sprintf("%sj%s toggle json view for secret", styles.HighlightPrimaryTag, styles.StandardColorTag),
 		fmt.Sprintf("%sP%s to PATCH secret", styles.HighlightPrimaryTag, styles.StandardColorTag),

@@ -9,9 +9,10 @@ import (
 )
 
 func (v *View) Namespaces() {
-	v.logger.Debug().Msg("view: Namespaces")
 	v.viewSwitch()
+	v.logger.Debug().Msg("view: Namespaces")
 	v.Layout.Body.SetTitle("Vault Nmespaces")
+	v.Layout.Container.SetFocus(v.components.NamespaceTable.Table.Primitive())
 
 	v.state.Elements.TableMain = v.components.NamespaceTable.Table.Primitive().(*tview.Table)
 	v.components.NamespaceTable.Logger = v.logger
@@ -42,7 +43,6 @@ func (v *View) Namespaces() {
 	// })
 
 	// v.addToHistory(v.state.SelectedNamespace, models.TopicNamespace, v.Namespaces)
-	v.Layout.Container.SetFocus(v.components.NamespaceTable.Table.Primitive())
 }
 
 func (v *View) inputNamespaces(event *tcell.EventKey) *tcell.EventKey {

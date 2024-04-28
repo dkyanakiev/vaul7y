@@ -2,6 +2,7 @@ package vault
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
@@ -74,21 +75,50 @@ func (v *Vault) ListNestedSecrets(mount, path string) ([]models.SecretPath, erro
 	return secretPaths, nil
 }
 
-func (v *Vault) GetSecretInfo(mount, path string) (*api.Secret, error) {
+func (v *Vault) GetSecretData(mount, path string) (*api.Secret, error) {
 	secretPath := fmt.Sprintf("%s/data/%s", mount, path)
 	secretPath = sanitizePath(secretPath)
 	secretData, err := v.vault.Logical().Read(secretPath)
 	if err != nil {
 		v.Logger.Err(err).Msgf("failed to read secret: %s", err)
-		return nil, errors.New(fmt.Sprintf("Failed to read secret: %v", err))
+		return nil, fmt.Errorf("failed to read secret: %v", err)
 	}
 
 	if secretData == nil {
 		v.Logger.Err(err).Msgf("no data found at %s", secretPath)
-		return nil, errors.New(fmt.Sprintf("No data found at %s", secretPath))
+		return nil, fmt.Errorf("no data found at %s", secretPath)
 	}
-	//TODO: Add logging
+
 	return secretData, nil
+}
+
+func (v *Vault) GetSecretMetadata(mount, path string) (*models.Metadata, error) {
+	secretPath := fmt.Sprintf("%s/metadata/%s", mount, path)
+	secretPath = sanitizePath(secretPath)
+	var metadata models.Metadata
+	secretData, err := v.vault.Logical().Read(secretPath)
+	if err != nil {
+		v.Logger.Debug().Msgf("failed to read secret metadata: %s", err)
+		return nil, fmt.Errorf("failed to read secret metadata: %v", err)
+	}
+
+	if secretData == nil {
+		v.Logger.Debug().Msgf("no metadata found at %s", secretPath)
+		return nil, fmt.Errorf("no metadata found at %s", secretPath)
+	}
+
+	jsonData, err := json.Marshal(secretData.Data)
+	if err != nil {
+		v.Logger.Err(err).Msgf("failed to marshal secret data: %s", err)
+	}
+	// Convert JSON to Metadata
+	err = json.Unmarshal(jsonData, &metadata)
+	if err != nil {
+		v.Logger.Err(err).Msgf("failed to unmarshal secret data: %s", err)
+	}
+
+	v.Logger.Debug().Msgf("Metadata: %v", metadata.CustomMetadata)
+	return &metadata, nil
 }
 
 func (v *Vault) UpdateSecretObjectKV2(mount string, path string, patch bool, data map[string]interface{}) error {

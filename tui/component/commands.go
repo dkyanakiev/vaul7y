@@ -84,7 +84,6 @@ func NewCommands() *Commands {
 
 func (c *Commands) Update(commands []string) {
 	c.Props.ViewCommands = commands
-
 	c.updateText()
 }
 
@@ -101,6 +100,10 @@ func (c *Commands) Render() error {
 
 func (c *Commands) updateText() {
 	commands := append(c.Props.MainCommands, c.Props.ViewCommands...)
+	// Easy way to handle long list of commands for views
+	if len(c.Props.ViewCommands) > 6 {
+		commands = c.Props.ViewCommands
+	}
 	cmds := strings.Join(commands, "\n")
 	c.TextView.SetText(cmds)
 }

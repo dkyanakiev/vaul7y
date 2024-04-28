@@ -13,6 +13,7 @@ func (v *View) SecretObject(mount, path string) {
 	v.viewSwitch()
 	v.Layout.Body.SetTitle("Secret object")
 	v.Layout.Container.SetInputCapture(v.InputSecret)
+	v.Layout.Container.SetFocus(v.components.SecretObjTable.Table.Primitive())
 	v.components.Commands.Update(component.SecretObjectCommands)
 
 	v.logger.Debug().Msgf("Selected mount is: %v", mount)
@@ -28,6 +29,7 @@ func (v *View) SecretObject(mount, path string) {
 		if !v.components.SecretObjTable.Editable {
 			v.components.SecretObjTable.Render()
 			v.components.SecretObjTable.Props.Data = v.state.SelectedSecret
+			v.components.SecretObjTable.Props.Metadata = v.state.SelectedSecretMeta
 			v.Draw()
 		}
 	}
@@ -36,11 +38,6 @@ func (v *View) SecretObject(mount, path string) {
 	update()
 
 	v.state.Elements.TableMain = v.components.SecretObjTable.Table.Primitive().(*tview.Table)
-	v.Layout.Container.SetFocus(v.components.SecretObjTable.Table.Primitive())
-
-	// v.addToHistory(v.state.SelectedNamespace, "secret", func() {
-	// 	v.SecretObject(mount, path)
-	// })
 
 }
 
@@ -73,6 +70,10 @@ func (v *View) inputSecret(event *tcell.EventKey) *tcell.EventKey {
 				return nil
 			case 'b':
 				v.goBack()
+			case 't':
+				v.components.SecretObjTable.ShowMetadata = !v.components.SecretObjTable.ShowMetadata
+				v.logger.Debug().Msgf("Show metadata: %v", v.state.SelectedSecretMeta.UpdatedTime)
+				v.components.SecretObjTable.ToggleMetaView()
 			case 'j':
 				v.components.SecretObjTable.ShowJson = !v.components.SecretObjTable.ShowJson
 				v.components.SecretObjTable.ToggleView()

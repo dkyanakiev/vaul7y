@@ -23,6 +23,7 @@ type State struct {
 	SelectedObject     string
 	SelectedPolicyName string
 	SelectedSecret     *api.Secret
+	SelectedSecretMeta *models.Metadata
 	PolicyList         []string
 	PolicyACL          string
 	NewSecretName      string

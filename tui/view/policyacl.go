@@ -10,6 +10,7 @@ func (v *View) PolicyACL(policyName string) {
 
 	v.viewSwitch()
 	v.Layout.Body.SetTitle(policyName)
+	v.Layout.Container.SetFocus(v.components.PolicyAclTable.TextView.Primitive())
 	v.components.PolicyAclTable.TextView.Clear().ScrollToBeginning()
 	v.components.Commands.Update(component.PolicyACLCommands)
 	v.Layout.Container.SetInputCapture(v.inputPolicyACL)
@@ -26,7 +27,6 @@ func (v *View) PolicyACL(policyName string) {
 	update()
 
 	v.state.Elements.TextMain = v.components.PolicyAclTable.TextView.Primitive().(*tview.TextView)
-	v.Layout.Container.SetFocus(v.components.PolicyAclTable.TextView.Primitive())
 
 }
 

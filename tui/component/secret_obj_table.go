@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"sort"
+	"strconv"
 
 	"github.com/dkyanakiev/vaulty/internal/models"
 	primitive "github.com/dkyanakiev/vaulty/tui/primitives"
@@ -37,6 +38,7 @@ type SecretObjTable struct {
 	Props          *SecretObjTableProps
 	Logger         *zerolog.Logger
 	ShowJson       bool
+	ShowMetadata   bool
 	Editable       bool
 	CursorPosition int
 	slot           *tview.Flex
@@ -53,6 +55,7 @@ type SecretObjTableProps struct {
 
 	Namespace      string
 	Data           *api.Secret
+	Metadata       *models.Metadata
 	UpdatedData    map[string]interface{}
 	ObscureSecrets bool
 	Update         string
@@ -67,13 +70,14 @@ func NewSecretObjTable() *SecretObjTable {
 	ta := primitive.NewTextArea()
 
 	jt := &SecretObjTable{
-		Table:    t,
-		TextView: tv,
-		TextArea: ta,
-		Props:    &SecretObjTableProps{},
-		ShowJson: false,
-		Editable: false,
-		slot:     tview.NewFlex(),
+		Table:        t,
+		TextView:     tv,
+		TextArea:     ta,
+		Props:        &SecretObjTableProps{},
+		ShowJson:     false,
+		ShowMetadata: false,
+		Editable:     false,
+		slot:         tview.NewFlex(),
 	}
 	//TODO: Revisit
 	jt.slot.AddItem(jt.TextView.Primitive(), 0, 1, false)
@@ -92,29 +96,43 @@ func (s *SecretObjTable) reset() {
 
 func (s *SecretObjTable) ToggleView() {
 	s.slot.Clear()
-	if !s.Editable {
-		if s.Props.JsonOnly {
-			s.slot.AddItem(s.TextView.Primitive(), 0, 1, true)
-			s.renderJson()
-		} else {
-
-			if s.ShowJson {
+	if !s.ShowMetadata {
+		if !s.Editable {
+			if s.Props.JsonOnly {
 				s.slot.AddItem(s.TextView.Primitive(), 0, 1, true)
 				s.renderJson()
 			} else {
-				s.slot.AddItem(s.Table.Primitive(), 0, 1, true)
-				s.renderRows()
+				if s.ShowJson {
+					s.slot.AddItem(s.TextView.Primitive(), 0, 1, true)
+					s.renderJson()
+				} else {
+					s.slot.AddItem(s.Table.Primitive(), 0, 1, true)
+					s.renderRows()
+				}
 			}
-		}
-	} else {
-		if !s.Props.MissingSecret {
-			s.Props.UpdatedData = s.Props.Data.Data["data"].(map[string]interface{})
 		} else {
-			s.Props.UpdatedData = make(map[string]interface{})
+			if !s.Props.MissingSecret {
+				s.Props.UpdatedData = s.Props.Data.Data["data"].(map[string]interface{})
+			} else {
+				s.Props.UpdatedData = make(map[string]interface{})
+			}
+			s.TextView.SetText(s.TextArea.GetText())
+			s.slot.AddItem(s.TextArea.Primitive(), 0, 1, true)
+			s.renderEditArea()
 		}
-		s.TextView.SetText(s.TextArea.GetText())
-		s.slot.AddItem(s.TextArea.Primitive(), 0, 1, true)
-		s.renderEditArea()
+	}
+}
+
+func (s *SecretObjTable) ToggleMetaView() {
+	s.Logger.Debug().Msgf("ShowMetadata: %v", s.ShowMetadata)
+	if s.ShowMetadata {
+		s.slot.AddItem(s.Table.Primitive(), 0, 1, true)
+		// s.slot.AddItem(tview.NewFlex().SetDirection(tview.FlexRow).
+		// 	AddItem(tview.NewTable().SetBorder(true).SetTitle("Metadata"), 10, 1, false).
+		// 	AddItem(tview.NewTable().SetBorder(true).SetTitle("Custom MetaData"), 0, 1, false), 0, 2, false)
+		s.renderMetadata()
+	} else {
+		s.Render()
 	}
 }
 
@@ -131,13 +149,35 @@ func (s *SecretObjTable) GetIDForSelection() (string, string) {
 }
 
 func (s *SecretObjTable) Render() error {
-	s.Props.MissingSecret = false
-	s.Props.JsonOnly = false
-	s.reset()
-	s.Table.SetTitle("%s %s", SecretObjTableTitle, s.Props.SelectedPath)
-	s.validationLogic()
+	if !s.ShowMetadata {
+		s.Props.MissingSecret = false
+		s.Props.JsonOnly = false
+		s.reset()
+		s.Table.SetTitle("%s %s", SecretObjTableTitle, s.Props.SelectedPath)
+		s.validationLogic()
 
-	if s.Props.MissingSecret {
+		if s.Props.MissingSecret {
+			s.Props.HandleNoResources(
+				"%sno Secret Object data available\n¯%s\\_( ͡• ͜ʖ ͡•)_/¯",
+				styles.HighlightPrimaryTag,
+				styles.HighlightSecondaryTag,
+			)
+			return nil
+		}
+
+		s.Table.SetSelectedFunc(s.pathSelected)
+		s.Table.RenderHeader(SecretObjTableHeaderJobs)
+
+		if !s.Props.MissingSecret {
+			s.ToggleView()
+		}
+
+	}
+	return nil
+}
+
+func (s *SecretObjTable) renderMetadata() error {
+	if s.Props.Metadata == nil {
 		s.Props.HandleNoResources(
 			"%sno Secret Object data available\n¯%s\\_( ͡• ͜ʖ ͡•)_/¯",
 			styles.HighlightPrimaryTag,
@@ -146,12 +186,36 @@ func (s *SecretObjTable) Render() error {
 		return nil
 	}
 
+	s.Logger.Debug().Msgf("slot: %v", s.slot.GetItemCount())
+	// item := s.slot.GetItem(1)
+	// // itemType := reflect.TypeOf(item)
+	// count1 := item.(*tview.Flex).GetItem(0)
+	// count2 := item.(*tview.Flex).GetItem(1)
+	// itemType := reflect.TypeOf(count1)
+	// itemType2 := reflect.TypeOf(count2)
+	// s.Logger.Debug().Msgf("Item: %v", itemType)
+	// s.Logger.Debug().Msgf("Item: %v", itemType2)
+
+	// item := s.slot.GetItem(1)
+	// table1 := item.(*tview.Flex).GetItem(1)
+	// table2 := table1.(*tview.Box).
+	// // // Assuming item is of type interface{}
+	// table, ok := item.(*tview.Table)
+	// if !ok {
+	// 	panic(itemType)
+	// }
+
+	// Now you can call Table methods on table
+
+	// s.Logger.Debug().Msgf("Item: %v", itemType)
 	s.Table.SetSelectedFunc(s.pathSelected)
 	s.Table.RenderHeader(SecretObjTableHeaderJobs)
-
-	if !s.Props.MissingSecret {
-		s.ToggleView()
-	}
+	// table1.(*tview.Table).SetCell(0, 0, tview.NewTableCell("Created Time").SetTextColor(tcell.ColorYellow))
+	// .RenderRow([]string{"Created Time", s.Props.Metadata.CreatedTime}, 0, tcell.ColorYellow)
+	s.Table.RenderRow([]string{"Created Time", s.Props.Metadata.CreatedTime}, 0, tcell.ColorYellow)
+	s.Table.RenderRow([]string{"Current Version", strconv.Itoa(s.Props.Metadata.CurrentVersion)}, 1, tcell.ColorYellow)
+	s.Table.RenderRow([]string{"Oldest Version", strconv.Itoa(s.Props.Metadata.CurrentVersion)}, 2, tcell.ColorYellow)
+	s.Table.RenderRow([]string{"Update Time", s.Props.Metadata.UpdatedTime}, 3, tcell.ColorYellow)
 	return nil
 }
 

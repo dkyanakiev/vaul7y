@@ -198,8 +198,6 @@ func (s *SecretObjTable) renderMetadata() error {
 
 	s.MetadataTable.SetTitle("Metadata")
 	s.CustomMetadataTable.SetTitle("Custom Metadata")
-	s.Logger.Debug().Msgf("Metadata: %v", s.Props.Metadata.CreatedTime)
-
 	s.MetadataTable.RenderRow([]string{"Created Time", ConvertTimeFormat(s.Props.Metadata.CreatedTime)}, 0, tcell.ColorYellow)
 	s.MetadataTable.RenderRow([]string{"Update Time", ConvertTimeFormat(s.Props.Metadata.UpdatedTime)}, 1, tcell.ColorYellow)
 	s.MetadataTable.RenderRow([]string{"Current Version", strconv.Itoa(s.Props.Metadata.CurrentVersion)}, 2, tcell.ColorYellow)

@@ -17,7 +17,7 @@ To see detailed guide on how to use the tool see the [docs](./docs/usage.md)
 
 The tool is in active development and is bug heavy. There are multiple things that are on my short and long term TODO list.
 
-If anyone decides to use this and wants to request a specific feature or even fix a bug - please open an issue :smile:
+If anyone decides to use this and wants to request a specific feature or even fix a bug - [please open an issue](https://github.com/dkyanakiev/vaul7y/issues/new/choose). :smile:
 
 ## Short term TODO list:
 1. [ ] Version select and rollback for secrets

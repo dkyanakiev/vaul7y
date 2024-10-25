@@ -1,1 +1,3 @@
 # vaulty
+
+Simple Vault CLI

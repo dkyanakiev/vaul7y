@@ -1,6 +1,6 @@
 # Vaul7y / Vaulty
 
-Vaulty is a TUI for Hashicorp Vault. The goal is to support as many functionalities as possible in order to make the tool as usefu as possible.   
+Vaulty is a TUI for Hashicorp Vault. The goal is to support as many functionalities as possible in order to make the tool as useful as possible.   
 
 ## Why use Vaul7y 
    

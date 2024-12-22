@@ -5,7 +5,7 @@
 
 ### Brew
 
-```bash
+```shell
 brew install dkyanakiev/tap/vaul7y
 ```
 to upgrade

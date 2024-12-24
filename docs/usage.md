@@ -67,6 +67,13 @@ Example: [`~/myuser/.vaul7y.yaml`](./examples/vaul7y.yaml)
 Or alternatively pass a config file as an argument using `-c <path/file.yaml>`  
 Example: `vaul7y -c ./new-env.yml`
 
+#### Authentication and variables priority
+Variables will be loaded in the following order, with the next superseding the previous ones:
+
+1. Will check for vault [token cache](https://developer.hashicorp.com/vault/docs/commands#authenticating-to-vault)
+2. Read from env variables
+3. Config file 
+
 ### Features
 
 Currently the capabilities are limited. 

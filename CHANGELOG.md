@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.9] - 2024-04-28
+
+## Added
+
+-- Vault cache token lookup
+
 ## [0.1.8] - 2024-04-28
 
 ## Fixed

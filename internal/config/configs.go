@@ -36,11 +36,14 @@ func LoadConfig(cfgFile string) Config {
 
 	var data []byte
 	if cfgFile == "" {
-		fmt.Println("No config file specified")
 		yamlFilePath := filepath.Join(home, ".vaul7y.yaml")
-		data, err = os.ReadFile(yamlFilePath)
-		if err != nil {
-			fmt.Printf("Error reading YAML file: %v\n", err)
+		if _, err := os.Stat(yamlFilePath); os.IsNotExist(err) {
+			fmt.Printf("Config file does not exist: %s\n", yamlFilePath)
+		} else {
+			data, err = os.ReadFile(yamlFilePath)
+			if err != nil {
+				fmt.Printf("Error reading YAML file: %v\n", err)
+			}
 		}
 	} else {
 		fmt.Println("Using config file: ", cfgFile)
@@ -50,9 +53,29 @@ func LoadConfig(cfgFile string) Config {
 		}
 	}
 
-	err = yaml.Unmarshal(data, &config)
+	if data != nil {
+		err = yaml.Unmarshal(data, &config)
+		if err != nil {
+			fmt.Printf("Error parsing YAML file: %v\n", err)
+		}
+	}
+
+	// Check for vault cache
+	home, err = os.UserHomeDir()
 	if err != nil {
-		fmt.Printf("Error parsing YAML file: %v\n", err)
+		fmt.Println("Error getting user home directory")
+	} else {
+		vaultTokenPath := filepath.Join(home, ".vault-token")
+		if _, err := os.Stat(vaultTokenPath); os.IsNotExist(err) {
+			fmt.Printf("Vault token file does not exist: %s\n", vaultTokenPath)
+		} else {
+			data, err := os.ReadFile(vaultTokenPath)
+			if err != nil {
+				fmt.Printf("Error reading vault token file: %v\n", err)
+			} else {
+				config.VaultToken = string(data)
+			}
+		}
 	}
 
 	// Overwrite with environment variables if they are set
@@ -86,6 +109,23 @@ func LoadConfig(cfgFile string) Config {
 			fmt.Printf("Error converting VAULTY_REFRESH_RATE to int: %v", err)
 		} else {
 			config.VaultyRefreshRate = vaultyRefreshRateInt
+		}
+	}
+
+	if config.VaultToken == "" {
+		home, err := os.UserHomeDir()
+		if err != nil {
+			fmt.Println("Error getting user home directory")
+		} else {
+			vaultTokenPath := filepath.Join(home, ".vault-token")
+			if _, err := os.Stat(vaultTokenPath); err == nil {
+				data, err := os.ReadFile(vaultTokenPath)
+				if err != nil {
+					fmt.Printf("Error reading vault token file: %v\n", err)
+				} else {
+					config.VaultToken = string(data)
+				}
+			}
 		}
 	}
 

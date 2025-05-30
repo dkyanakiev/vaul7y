@@ -38,6 +38,7 @@ type State struct {
 type Toggle struct {
 	Search       bool
 	JumpToPolicy bool
+	JumpToPath   bool
 	TextInput    bool
 }
 

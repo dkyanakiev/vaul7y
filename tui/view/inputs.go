@@ -51,13 +51,14 @@ func (v *View) InputMainCommands(event *tcell.EventKey) *tcell.EventKey {
 	case tcell.KeyCtrlT:
 		v.Namespaces()
 	case tcell.KeyRune:
-		switch event.Rune() {
+		r := event.Rune()
 
-		case 's':
+		if (r == 's') && !v.components.SecretObjTable.Editable {
 			if !v.Layout.Footer.HasFocus() {
 				v.Layout.Container.SetFocus(v.state.Elements.DropDownNamespace)
 			}
 		}
+
 	}
 
 	return event

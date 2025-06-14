@@ -118,11 +118,19 @@ func (v *View) Init(version string) {
 		v.Layout.Container.SetFocus(v.state.Elements.TableMain)
 		v.components.TextInfoInput.Render()
 
-		newText := v.components.TextInfoInput.InputField.GetText()
-		v.state.NewSecretName = newText
-		v.CreateNewSecretObject(newText)
-		v.components.TextInfoInput.InputField.SetText("")
-		v.state.Toggle.TextInput = false
+		if !v.state.Toggle.JumpToPath {
+			newText := v.components.TextInfoInput.InputField.GetText()
+			v.state.NewSecretName = newText
+			v.CreateNewSecretObject(newText)
+			v.components.TextInfoInput.InputField.SetText("")
+			v.state.Toggle.TextInput = false
+		}
+		if v.state.Toggle.JumpToPath {
+			newPath := v.components.TextInfoInput.InputField.GetText()
+			v.state.SelectedPath = newPath
+			v.Secrets(v.state.SelectedPath, "false")
+		}
+
 	}
 
 	// Error

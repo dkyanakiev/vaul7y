@@ -115,6 +115,19 @@ func (v *View) inputSecrets(event *tcell.EventKey) *tcell.EventKey {
 				}
 				return nil
 			}
+		case 'J':
+			v.logger.Debug().Msgf("Waiting for secret path New Secret view with : %v", v.state.SelectedPath)
+			if !v.Layout.Footer.HasFocus() {
+				if !v.state.Toggle.TextInput {
+					v.state.Toggle.JumpToPath = true
+					v.components.TextInfoInput.InputField.SetText("")
+					v.TextInput()
+				} else {
+					v.state.Toggle.JumpToPath = true
+					v.Layout.Container.SetFocus(v.components.TextInfoInput.InputField.Primitive())
+				}
+				return nil
+			}
 
 		//TODO: Need to clean this up
 		case 'b':

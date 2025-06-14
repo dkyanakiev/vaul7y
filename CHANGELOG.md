@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.10] - 2025-06-15
+
+## Fixed
+
+App crashing when updating secret and pressing S key
+
 ## [0.1.9] - 2024-04-28
 
 ## Added

@@ -15,7 +15,7 @@ dev: ## Build for the current development version
 	@mkdir -p ./bin
 	@CGO_ENABLED=0 go build -o ./bin/vaul7y ./cmd/vaul7y
 	@rm -f $(GOPATH)/bin/vaul7y
-	@cp ./bin/vaul7y/vaul7y $(GOPATH)/bin/vaul7y
+	@cp ./bin/vaul7y $(GOPATH)/bin/vaul7y
 	@echo "==> Done"
 
 .PHONY: build

@@ -5,9 +5,9 @@ import (
 	"github.com/rivo/tview"
 	"github.com/rs/zerolog"
 
-	"github.com/dkyanakiev/vaulty/internal/models"
-	primitive "github.com/dkyanakiev/vaulty/tui/primitives"
-	"github.com/dkyanakiev/vaulty/tui/styles"
+	"github.com/dkyanakiev/vaul7y/internal/models"
+	primitive "github.com/dkyanakiev/vaul7y/tui/primitives"
+	"github.com/dkyanakiev/vaul7y/tui/styles"
 )
 
 const TableTitleNamespaces = "Namespaces"

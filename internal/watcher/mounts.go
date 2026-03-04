@@ -4,7 +4,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/dkyanakiev/vaulty/internal/models"
+	"github.com/dkyanakiev/vaul7y/internal/models"
 )
 
 func (w *Watcher) SubscribeToMounts(notify func()) {

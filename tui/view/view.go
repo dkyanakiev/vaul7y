@@ -3,10 +3,10 @@ package view
 import (
 	"sync"
 
-	"github.com/dkyanakiev/vaulty/internal/models"
-	"github.com/dkyanakiev/vaulty/internal/state"
-	"github.com/dkyanakiev/vaulty/tui/component"
-	"github.com/dkyanakiev/vaulty/tui/layout"
+	"github.com/dkyanakiev/vaul7y/internal/models"
+	"github.com/dkyanakiev/vaul7y/internal/state"
+	"github.com/dkyanakiev/vaul7y/tui/component"
+	"github.com/dkyanakiev/vaul7y/tui/layout"
 	"github.com/rs/zerolog"
 )
 

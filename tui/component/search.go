@@ -3,7 +3,7 @@ package component
 import (
 	"fmt"
 
-	primitive "github.com/dkyanakiev/vaulty/tui/primitives"
+	primitive "github.com/dkyanakiev/vaul7y/tui/primitives"
 	"github.com/rivo/tview"
 )
 

@@ -6,8 +6,8 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/dkyanakiev/vaulty/internal/models"
-	"github.com/dkyanakiev/vaulty/tui/component"
+	"github.com/dkyanakiev/vaul7y/internal/models"
+	"github.com/dkyanakiev/vaul7y/tui/component"
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 )

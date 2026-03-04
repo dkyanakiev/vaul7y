@@ -3,8 +3,8 @@ package vault
 import (
 	"context"
 
-	"github.com/dkyanakiev/vaulty/internal/config"
-	"github.com/dkyanakiev/vaulty/internal/models"
+	"github.com/dkyanakiev/vaul7y/internal/config"
+	"github.com/dkyanakiev/vaul7y/internal/models"
 	"github.com/hashicorp/vault/api"
 	"github.com/rs/zerolog"
 )

@@ -6,8 +6,8 @@ import (
 
 	"github.com/rivo/tview"
 
-	primitive "github.com/dkyanakiev/vaulty/tui/primitives"
-	"github.com/dkyanakiev/vaulty/tui/styles"
+	primitive "github.com/dkyanakiev/vaul7y/tui/primitives"
+	"github.com/dkyanakiev/vaul7y/tui/styles"
 )
 
 var (

@@ -3,7 +3,7 @@ package watcher
 import (
 	"time"
 
-	"github.com/dkyanakiev/vaulty/internal/models"
+	"github.com/dkyanakiev/vaul7y/internal/models"
 )
 
 func (w *Watcher) SubscribeToSecret(selectedMount, selectedPath string, notify func()) {

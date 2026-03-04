@@ -4,7 +4,7 @@ import (
 	"strings"
 
 	"github.com/atotto/clipboard"
-	"github.com/dkyanakiev/vaulty/tui/component"
+	"github.com/dkyanakiev/vaul7y/tui/component"
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 )

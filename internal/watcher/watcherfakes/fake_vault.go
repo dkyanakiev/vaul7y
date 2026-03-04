@@ -4,8 +4,8 @@ package watcherfakes
 import (
 	"sync"
 
-	"github.com/dkyanakiev/vaulty/internal/models"
-	"github.com/dkyanakiev/vaulty/internal/watcher"
+	"github.com/dkyanakiev/vaul7y/internal/models"
+	"github.com/dkyanakiev/vaul7y/internal/watcher"
 	"github.com/hashicorp/vault/api"
 )
 

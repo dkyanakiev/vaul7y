@@ -1,7 +1,7 @@
 package primitives
 
 import (
-	"github.com/dkyanakiev/vaulty/tui/styles"
+	"github.com/dkyanakiev/vaul7y/tui/styles"
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 )

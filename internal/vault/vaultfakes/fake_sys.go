@@ -4,7 +4,7 @@ package vaultfakes
 import (
 	"sync"
 
-	"github.com/dkyanakiev/vaulty/internal/vault"
+	"github.com/dkyanakiev/vaul7y/internal/vault"
 	"github.com/hashicorp/vault/api"
 )
 

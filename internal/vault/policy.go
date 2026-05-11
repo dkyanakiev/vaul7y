@@ -22,3 +22,7 @@ func (v *Vault) GetPolicyInfo(name string) (string, error) {
 	}
 	return policy, nil
 }
+
+func (v *Vault) UpdatePolicy(name, rules string) error {
+	return v.vault.Sys().PutPolicy(name, rules)
+}

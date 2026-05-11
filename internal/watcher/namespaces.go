@@ -4,18 +4,18 @@ import (
 	"log"
 	"time"
 
-	"github.com/dkyanakiev/vaulty/internal/models"
+	"github.com/dkyanakiev/vaul7y/internal/models"
 )
 
 func (w *Watcher) SubscribeToNamespaces(notify func()) {
 	w.UpdateNamespaces()
 	w.Subscribe(notify, "namespaces")
-	w.Notify("namespaces")
 
 	stop := make(chan struct{})
 	w.activities.Add(stop)
-	ticker := time.NewTicker(30 * time.Second)
+	ticker := time.NewTicker(w.interval)
 	go func() {
+		defer ticker.Stop()
 		for {
 			select {
 			case <-ticker.C:
@@ -40,5 +40,7 @@ func (w *Watcher) UpdateNamespaces() {
 		w.NotifyHandler(models.HandleError, err.Error())
 	}
 	w.logger.Debug().Msgf("Namespaces: %v", namespaces)
+	w.state.Lock()
 	w.state.Namespaces = namespaces
+	w.state.Unlock()
 }

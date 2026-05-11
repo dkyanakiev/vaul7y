@@ -1,12 +1,15 @@
 package state
 
 import (
-	"github.com/dkyanakiev/vaulty/internal/models"
+	"sync"
+
+	"github.com/dkyanakiev/vaul7y/internal/models"
 	"github.com/hashicorp/vault/api"
 	"github.com/rivo/tview"
 )
 
 type State struct {
+	mu sync.RWMutex
 	VaultAddress string
 	VaultVersion string
 	Mounts       map[string]*models.MountOutput
@@ -29,6 +32,12 @@ type State struct {
 	NewSecretName      string
 	Enterprise         bool
 
+	AuthMethods   map[string]*models.AuthMethod
+	TokenTTL      int64
+	TokenPolicies []string
+	SealStatus    string
+	ClusterName   string
+
 	Elements *Elements
 	Toggle   *Toggle
 	Filter   *Filter
@@ -38,6 +47,7 @@ type State struct {
 type Toggle struct {
 	Search       bool
 	JumpToPolicy bool
+	JumpToPath   bool
 	TextInput    bool
 }
 
@@ -60,3 +70,8 @@ func New() *State {
 		Filter:   &Filter{},
 	}
 }
+
+func (s *State) Lock()    { s.mu.Lock() }
+func (s *State) Unlock()  { s.mu.Unlock() }
+func (s *State) RLock()   { s.mu.RLock() }
+func (s *State) RUnlock() { s.mu.RUnlock() }

@@ -2,9 +2,11 @@ package vault
 
 import (
 	"context"
+	"strings"
+	"sync"
 
-	"github.com/dkyanakiev/vaulty/internal/config"
-	"github.com/dkyanakiev/vaulty/internal/models"
+	"github.com/dkyanakiev/vaul7y/internal/config"
+	"github.com/dkyanakiev/vaul7y/internal/models"
 	"github.com/hashicorp/vault/api"
 	"github.com/rs/zerolog"
 )
@@ -24,6 +26,39 @@ type Vault struct {
 	Secret   Secret
 	Logger   *zerolog.Logger
 	Version  string
+
+	mountsMu    sync.RWMutex
+	mountsCache map[string]*models.MountOutput
+}
+
+// kvVersionForMount returns "1" or "2" for a KV mount by consulting the cached
+// mount list. It defaults to "2" if the mount is not found or not a KV mount.
+func (v *Vault) kvVersionForMount(mount string) string {
+	v.mountsMu.RLock()
+	defer v.mountsMu.RUnlock()
+
+	key := mount
+	if !strings.HasSuffix(key, "/") {
+		key += "/"
+	}
+
+	m, ok := v.mountsCache[key]
+	if !ok {
+		m, ok = v.mountsCache[mount]
+		if !ok {
+			return "2"
+		}
+	}
+
+	if m.Type != models.MountTypeKV {
+		return "2"
+	}
+
+	// KV v2 always sets Options["version"] = "2"; anything else is v1.
+	if m.Options != nil && m.Options["version"] == "2" {
+		return "2"
+	}
+	return "1"
 }
 
 //go:generate counterfeiter . Logical

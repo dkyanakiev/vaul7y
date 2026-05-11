@@ -121,7 +121,7 @@ type SecretAuth struct {
 
 type SecretWrapInfo struct {
 	Token           string    `json:"token"`
-	Accessor        string    `json:"accessor`
+	Accessor        string    `json:"accessor"`
 	TTL             int       `json:"ttl"`
 	CreationTime    time.Time `json:"creation_time"`
 	CreationPath    string    `json:"creation_path"`
@@ -230,4 +230,11 @@ type Version struct {
 	CreatedTime  string `json:"created_time"`
 	DeletionTime string `json:"deletion_time"`
 	Destroyed    bool   `json:"destroyed"`
+}
+
+type AuthMethod struct {
+	Type        string
+	Description string
+	Accessor    string
+	Local       bool
 }

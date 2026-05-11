@@ -9,7 +9,8 @@ import (
 func (v *Vault) Get(ctx context.Context, path string) (*api.KVSecret, error) {
 	secret, err := v.KV2.Get(ctx, path)
 	if err != nil {
-		v.Logger.Err(err).Msgf("filed to retrieve secret: %s", err)
+		v.Logger.Err(err).Msgf("failed to retrieve secret: %s", err)
+		return nil, err
 	}
 	return secret, nil
 }
@@ -17,7 +18,8 @@ func (v *Vault) Get(ctx context.Context, path string) (*api.KVSecret, error) {
 func (v *Vault) GetMetadata(ctx context.Context, path string) (*api.KVMetadata, error) {
 	secret, err := v.KV2.GetMetadata(ctx, path)
 	if err != nil {
-		v.Logger.Err(err).Msgf("filed to retrieve secret: %s", err)
+		v.Logger.Err(err).Msgf("failed to retrieve secret metadata: %s", err)
+		return nil, err
 	}
 	return secret, nil
 }

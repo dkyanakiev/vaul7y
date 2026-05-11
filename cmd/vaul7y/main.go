@@ -7,12 +7,12 @@ import (
 	"strings"
 	"time"
 
-	"github.com/dkyanakiev/vaulty/internal/config"
-	"github.com/dkyanakiev/vaulty/internal/state"
-	"github.com/dkyanakiev/vaulty/internal/vault"
-	"github.com/dkyanakiev/vaulty/internal/watcher"
-	"github.com/dkyanakiev/vaulty/tui/component"
-	"github.com/dkyanakiev/vaulty/tui/view"
+	"github.com/dkyanakiev/vaul7y/internal/config"
+	"github.com/dkyanakiev/vaul7y/internal/state"
+	"github.com/dkyanakiev/vaul7y/internal/vault"
+	"github.com/dkyanakiev/vaul7y/internal/watcher"
+	"github.com/dkyanakiev/vaul7y/tui/component"
+	"github.com/dkyanakiev/vaul7y/tui/view"
 	"github.com/gdamore/tcell/v2"
 	"github.com/jessevdk/go-flags"
 	"github.com/rivo/tview"
@@ -42,7 +42,13 @@ func main() {
 	cfg := config.LoadConfig(opts.ConfigFile)
 
 	logFile, logger := config.SetupLogger(cfg.VaultyLogLevel, cfg.VaultyLogFile)
-	defer logFile.Close()
+	defer func() {
+		if r := recover(); r != nil {
+			_ = logFile.Close()
+			panic(r)
+		}
+		_ = logFile.Close()
+	}()
 	tview.Styles.PrimitiveBackgroundColor = tcell.NewRGBColor(40, 44, 48)
 
 	vaultClient, err := vault.New(func(v *vault.Vault) error {
@@ -69,6 +75,8 @@ func main() {
 	info := component.NewInfo()
 	failure := component.NewInfo()
 	errorComp := component.NewError()
+	confirmComp := component.NewConfirm()
+	authTable := component.NewAuthTable()
 	components := &view.Components{
 		VaultInfo:      vaultInfo,
 		Commands:       commands,
@@ -79,9 +87,11 @@ func main() {
 		PolicyAclTable: policyAcl,
 		SecretsTable:   secrets,
 		SecretObjTable: secretObj,
+		AuthTable:      authTable,
 		Info:           info,
 		Error:          errorComp,
 		Failure:        failure,
+		Confirm:        confirmComp,
 		Logo:           logo,
 		Logger:         logger,
 		TogglesInfo:    toggles,
@@ -92,6 +102,7 @@ func main() {
 
 	//view.Init("0.0.1")
 	err = view.Layout.Container.Run()
+	view.Shutdown()
 	if err != nil {
 		log.Fatal("cannot initialize view.")
 	}

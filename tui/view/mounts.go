@@ -1,8 +1,8 @@
 package view
 
 import (
-	"github.com/dkyanakiev/vaulty/internal/models"
-	"github.com/dkyanakiev/vaulty/tui/component"
+	"github.com/dkyanakiev/vaul7y/internal/models"
+	"github.com/dkyanakiev/vaul7y/tui/component"
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 )
@@ -22,15 +22,21 @@ func (v *View) Mounts() {
 	v.state.SelectedObject = ""
 
 	update := func() {
-		v.components.MountsTable.Props.Data = v.state.Mounts
+		v.state.RLock()
+		mounts := v.state.Mounts
+		selectedMount := v.state.SelectedMount
+		selectedPath := v.state.SelectedPath
+		v.state.RUnlock()
+
+		v.components.MountsTable.Props.Data = mounts
 		v.components.MountsTable.Render()
 		v.Draw()
 		v.logger.Debug().Msg("Updated mounts table")
-		v.logger.Debug().Msgf("Selected mount is: %v", v.state.SelectedMount)
-		v.logger.Debug().Msgf("Selected path is: %v", v.state.SelectedPath)
+		v.logger.Debug().Msgf("Selected mount is: %v", selectedMount)
+		v.logger.Debug().Msgf("Selected path is: %v", selectedPath)
 	}
 
-	v.Watcher.SubscribeToMounts(update)
+	v.Watcher.SubscribeToMounts(func() { v.Layout.Container.QueueUpdateDraw(update) })
 	// v.Watcher.UpdateMounts()
 	update()
 
@@ -52,7 +58,9 @@ func (v *View) inputMounts(event *tcell.EventKey) *tcell.EventKey {
 	switch event.Key() {
 	case tcell.KeyEnter:
 		if v.components.MountsTable.Table.Primitive().HasFocus() {
+			v.state.Lock()
 			v.state.SelectedMount = v.components.MountsTable.GetIDForSelection()
+			v.state.Unlock()
 			v.Secrets("", "false")
 			return nil
 		}
@@ -60,7 +68,9 @@ func (v *View) inputMounts(event *tcell.EventKey) *tcell.EventKey {
 		switch event.Rune() {
 		case 'e':
 			if v.components.MountsTable.Table.Primitive().HasFocus() {
+				v.state.Lock()
 				v.state.SelectedMount = v.components.MountsTable.GetIDForSelection()
+				v.state.Unlock()
 				v.Secrets("", "false")
 				return nil
 			}

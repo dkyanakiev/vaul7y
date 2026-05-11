@@ -3,18 +3,18 @@ package watcher
 import (
 	"time"
 
-	"github.com/dkyanakiev/vaulty/internal/models"
+	"github.com/dkyanakiev/vaul7y/internal/models"
 )
 
 func (w *Watcher) SubscribeToSecret(selectedMount, selectedPath string, notify func()) {
 	w.updateSecretState(selectedMount, selectedPath)
 	w.Subscribe(notify, "secret")
-	w.Notify("secret")
 
 	stop := make(chan struct{})
 	w.activities.Add(stop)
-	ticker := time.NewTicker(5 * time.Second)
+	ticker := time.NewTicker(w.interval)
 	go func() {
+		defer ticker.Stop()
 		for {
 			select {
 			case <-ticker.C:
@@ -43,8 +43,10 @@ func (w *Watcher) updateSecretState(selectedMount, selectedPath string) {
 	if err != nil && err2 != nil {
 		w.NotifyHandler(models.HandleError, "Unable to return secret data or metadata")
 	}
+	w.state.Lock()
 	w.state.SelectedSecret = secret
 	w.state.SelectedSecretMeta = metadata
+	w.state.Unlock()
 
 }
 

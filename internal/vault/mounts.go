@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/dkyanakiev/vaulty/internal/models"
+	"github.com/dkyanakiev/vaul7y/internal/models"
 	"github.com/hashicorp/vault/api"
 )
 
@@ -59,6 +59,11 @@ func (v *Vault) AllMounts() (map[string]*models.MountOutput, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to retrieve mounts: %w", err)
 	}
+
+	v.mountsMu.Lock()
+	v.mountsCache = mounts
+	v.mountsMu.Unlock()
+
 	return mounts, nil
 }
 

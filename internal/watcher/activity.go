@@ -9,16 +9,10 @@ func (a *ActivityPool) Add(act chan struct{}) {
 }
 
 func (a *ActivityPool) DeactivateAll() {
-	for a.hasActivities() {
-		a.deactivate()
-	}
-}
-
-func (a *ActivityPool) deactivate() {
-	if a.hasActivities() {
-		ch := a.Activities[0]
-		ch <- struct{}{}
-		a.Activities = a.Activities[1:]
+	activities := a.Activities
+	a.Activities = nil
+	for _, ch := range activities {
+		go func(c chan struct{}) { c <- struct{}{} }(ch)
 	}
 }
 

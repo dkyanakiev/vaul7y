@@ -1,13 +1,16 @@
 ---
 name: Feature request
-about: Suggest an idea of a feature you would like
+about: Suggest an idea for a feature you would like
 title: ''
 labels: enhancement
 assignees: dkyanakiev
 
 ---
 
-**Is your feature request related to a problem? Please describe what it is.**
+**Which area does this relate to?**
+[e.g. Secret Engines / KV secrets, ACL Policies, Auth Methods, Namespaces, Header info, General navigation]
+
+**Is your feature request related to a problem? Please describe.**
 A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
 
 **Describe the solution you'd like**

@@ -1,9 +1,11 @@
 package component
 
 import (
-	"github.com/dkyanakiev/vaulty/internal/models"
-	primitive "github.com/dkyanakiev/vaulty/tui/primitives"
-	"github.com/dkyanakiev/vaulty/tui/styles"
+	"sync"
+
+	"github.com/dkyanakiev/vaul7y/internal/models"
+	primitive "github.com/dkyanakiev/vaul7y/tui/primitives"
+	"github.com/dkyanakiev/vaul7y/tui/styles"
 	"github.com/rivo/tview"
 )
 
@@ -17,10 +19,55 @@ type SelectPolicyACLFunc func(policyName string)
 
 type PolicyAclTable struct {
 	TextView TextView
+	TextArea TextArea
 	Props    *PolicyAclTableProps
 	Flex     *tview.Flex
+	editable bool
+	wordWrap bool
+	editMu   sync.RWMutex
 
 	slot *tview.Flex
+}
+
+const ScrollHalfPage = 15
+
+func (p *PolicyAclTable) ToggleWrap() {
+	p.wordWrap = !p.wordWrap
+	wrap := p.wordWrap
+	p.TextView.ModifyPrimitive(func(tv *tview.TextView) {
+		tv.SetWrap(wrap)
+		tv.SetWordWrap(wrap)
+	})
+}
+
+func (p *PolicyAclTable) ScrollDown(lines int) {
+	p.TextView.ModifyPrimitive(func(tv *tview.TextView) {
+		row, col := tv.GetScrollOffset()
+		tv.ScrollTo(row+lines, col)
+	})
+}
+
+func (p *PolicyAclTable) ScrollUp(lines int) {
+	p.TextView.ModifyPrimitive(func(tv *tview.TextView) {
+		row, col := tv.GetScrollOffset()
+		if newRow := row - lines; newRow > 0 {
+			tv.ScrollTo(newRow, col)
+		} else {
+			tv.ScrollTo(0, col)
+		}
+	})
+}
+
+func (p *PolicyAclTable) IsEditable() bool {
+	p.editMu.RLock()
+	defer p.editMu.RUnlock()
+	return p.editable
+}
+
+func (p *PolicyAclTable) SetEditable(val bool) {
+	p.editMu.Lock()
+	defer p.editMu.Unlock()
+	p.editable = val
 }
 
 type PolicyAclTableProps struct {
@@ -39,15 +86,25 @@ func NewPolicyAclTable() *PolicyAclTable {
 	t.SetTextAlign(tview.AlignLeft)
 	t.SetBorderColor(styles.TcellColorStandard)
 	t.SetBorder(true)
+	t.ModifyPrimitive(func(tv *tview.TextView) {
+		tv.SetWrap(true)
+		tv.SetWordWrap(true)
+		tv.SetScrollable(true)
+	})
+
+	ta := primitive.NewTextArea()
+	ta.SetBorder(true)
+	ta.SetBorderColor(styles.TcellColorStandard)
 
 	flex := tview.NewFlex().
-		//(t, 0, 1, true).
 		AddItem(tview.NewBox(), 0, 1, false)
 
 	pt := &PolicyAclTable{
 		Flex:     flex,
 		TextView: t,
+		TextArea: ta,
 		Props:    &PolicyAclTableProps{},
+		wordWrap: true,
 	}
 
 	return pt
@@ -83,4 +140,11 @@ func (p *PolicyAclTable) Render() error {
 func (p *PolicyAclTable) renderACL() {
 	p.TextView.SetTitle(p.Props.SelectedPolicyName)
 	p.TextView.SetText(p.Props.SelectedPolicyACL)
+}
+
+func (p *PolicyAclTable) RenderEditArea() {
+	p.reset()
+	p.TextArea.SetTitle(p.Props.SelectedPolicyName + " [EDITING]")
+	p.TextArea.SetText(p.Props.SelectedPolicyACL, true)
+	p.slot.AddItem(p.TextArea.Primitive(), 0, 1, true)
 }

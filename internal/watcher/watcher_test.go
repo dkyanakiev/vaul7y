@@ -8,10 +8,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/dkyanakiev/vaulty/internal/models"
-	"github.com/dkyanakiev/vaulty/internal/state"
-	"github.com/dkyanakiev/vaulty/internal/watcher"
-	"github.com/dkyanakiev/vaulty/internal/watcher/watcherfakes"
+	"github.com/dkyanakiev/vaul7y/internal/models"
+	"github.com/dkyanakiev/vaul7y/internal/state"
+	"github.com/dkyanakiev/vaul7y/internal/watcher"
+	"github.com/dkyanakiev/vaul7y/internal/watcher/watcherfakes"
 	"github.com/rs/zerolog"
 
 	"github.com/stretchr/testify/require"

@@ -3,18 +3,18 @@ package watcher
 import (
 	"time"
 
-	"github.com/dkyanakiev/vaulty/internal/models"
+	"github.com/dkyanakiev/vaul7y/internal/models"
 )
 
 func (w *Watcher) SubscribeToSecrets(selectedMount, selectedPath string, notify func()) {
 	w.updateSecrets(selectedMount, selectedPath)
 	w.Subscribe(notify, "secrets")
-	w.Notify("secrets")
 
 	stop := make(chan struct{})
 	w.activities.Add(stop)
 	ticker := time.NewTicker(w.interval)
 	go func() {
+		defer ticker.Stop()
 		for {
 			select {
 			case <-ticker.C:
@@ -38,6 +38,8 @@ func (w *Watcher) updateSecrets(selectedMount, selectedPath string) {
 		w.NotifyHandler(models.HandleError, err.Error())
 
 	}
+	w.state.Lock()
 	w.state.SecretsData = secrets
+	w.state.Unlock()
 
 }

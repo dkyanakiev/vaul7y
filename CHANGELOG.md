@@ -1,5 +1,30 @@
 # Changelog
 
+## [0.2.0] - 2026-05-11
+
+### Added
+
+- **Auth Methods view** — `ctrl-a` from any view opens a table of all enabled auth methods showing mount path, type, and description
+- **Enriched header** — startup now fetches token TTL, attached policies, seal status, and cluster name; all are shown in the info bar alongside vault address and version
+- **Secret version management** (KV v2 only):
+  - `D` — soft-delete the current version (recoverable via rollback)
+  - `R` — rollback to a previous version by entering a version number
+  - `X` — permanently destroy a specific version (irreversible, requires confirmation)
+- **Secret metadata editing** (`M`) — edit `max_versions`, `cas_required`, and `delete_version_after` for KV v2 secrets directly in the TUI
+- **Policy editing** (`E` in policy ACL view) — edit policy rules in-place using the built-in text editor; save with `ctrl-w`, cancel with `esc`
+- **Format selector for secret create/update** — pressing `ctrl-n` (new secret), `P` (patch), or `U` (update) now prompts for JSON or Key-Value format before opening the editor:
+  - **JSON** — opens the existing JSON text editor (unchanged flow)
+  - **Key-Value** — opens a form with labelled Key/Value fields; an **Add Key** button appends additional pairs; pairs with blank keys are skipped on save; form pre-populates with existing data on `P`/`U`
+- **Policy ACL vim-style navigation** — when reading a policy file, `j`/`k` scroll one line, `d`/`u` scroll a half-page, `g`/`G` jump to top/bottom (arrow keys and Page Up/Down continue to work as before)
+
+### Fixed
+
+- **Blank secret view after rollback or metadata toggle** — `SecretObject()` now resets `ShowMetadata`, `ShowJson`, and `Editable` flags on every entry; previously these stale flags caused `Render()` to take the in-place refresh path on a cleared body slot, producing a blank view for all subsequent secrets
+- **Event loop blocking on vault operations** — delete version, destroy versions, rollback, and metadata update calls are now dispatched to background goroutines with `QueueUpdateDraw` for UI callbacks; previously they ran on the event goroutine and froze the UI during the network call
+- **DoneFunc state corruption after rollback/destroy prompts** — `promptRollback` and `promptDestroyVersion` now save and restore `TextInfoInput.Props.DoneFunc`; previously they permanently overrode it, breaking all subsequent text-input flows
+- **Non-blocking `Draw()`** — `Draw()` now uses `select/default` so it never blocks when the draw channel is already signalled
+- **Error propagation in vault KV client** — `Get()` and `GetMetadata()` now return the error to the caller instead of logging it and returning nil; callers can now surface fetch failures correctly
+
 ## [0.1.10] - 2025-06-15
 
 ## Fixed

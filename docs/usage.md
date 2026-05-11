@@ -76,14 +76,63 @@ Variables will be loaded in the following order, with the next superseding the p
 
 ### Features
 
-Currently the capabilities are limited. 
+#### Navigation
 
-* Support for navigation between KV mounts
-    * Currently only KV2
-* Looking up secret objects
-    * Show/hide secrets and coping data
-    * Update/patch secrets
-    * Create new secrets
-    * Filter paths/secrets 
-* Support for exploring and filtering ACL Policies
-* Namespace support for Enteprise versions
+| Key | Action |
+|-----|--------|
+| `ctrl-b` | Secret Engines (KV mounts) |
+| `ctrl-p` | ACL Policies |
+| `ctrl-t` | Namespaces (Enterprise) |
+| `ctrl-a` | Auth Methods |
+| `ctrl-c` | Quit |
+
+#### Secret Engines / KV Secrets
+
+* Browse KV v1 and v2 mounts
+* Filter paths and secrets with `/`
+* Jump directly to a path with `J`
+* Create new secrets with `ctrl-n` — choose JSON editor or Key-Value form
+
+#### Secret Object view
+
+| Key | Action |
+|-----|--------|
+| `h` | Toggle show/hide secret values |
+| `c` | Copy selected value to clipboard |
+| `j` (JSON view) | Toggle JSON view |
+| `t` | Toggle metadata panel (KV v2 only) |
+| `P` | Patch secret — choose JSON editor or Key-Value form |
+| `U` | Update (full replace) secret — choose JSON editor or Key-Value form |
+| `D` | Soft-delete current version (KV v2) |
+| `R` | Rollback to a previous version (KV v2) |
+| `X` | Permanently destroy a specific version (KV v2) |
+| `M` | Edit secret metadata — max_versions, cas_required, delete_version_after (KV v2) |
+| `b` / `esc` | Go back |
+
+When creating or updating via the Key-Value form, use **Add Key** to add multiple key-value pairs. Pairs with a blank key are ignored on save.
+
+#### ACL Policies
+
+* Browse and filter policies
+* `i` / `Enter` — inspect policy content
+* In policy view: `E` to edit, `ctrl-w` to save, `esc` to cancel
+* `c` — copy policy to clipboard
+* `w` — toggle word wrap
+* Vim-style reading navigation: `j`/`k` (line), `d`/`u` (half-page), `g`/`G` (top/bottom)
+
+#### Auth Methods
+
+* `ctrl-a` from any view — lists all enabled auth methods with their mount path, type, and description
+
+#### Header info bar
+
+At startup vaul7y fetches and displays:
+* Vault address and version
+* Seal status and cluster name
+* Token TTL and attached policies
+
+#### Namespace support (Enterprise)
+
+* `ctrl-t` — switch between namespaces
+* `ctrl-d` — return to default namespace
+* `ctrl-w` — return to root namespace

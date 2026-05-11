@@ -4,8 +4,8 @@ package componentfakes
 import (
 	"sync"
 
-	"github.com/dkyanakiev/vaulty/tui/component"
-	"github.com/dkyanakiev/vaulty/tui/primitives"
+	"github.com/dkyanakiev/vaul7y/tui/component"
+	"github.com/dkyanakiev/vaul7y/tui/primitives"
 	"github.com/rivo/tview"
 )
 

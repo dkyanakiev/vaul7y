@@ -2,7 +2,6 @@ package config
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"os/signal"
 	"path/filepath"
@@ -31,47 +30,42 @@ func LoadConfig(cfgFile string) Config {
 	// Load the config from the YAML file
 	home, err := os.UserHomeDir()
 	if err != nil {
-		fmt.Println("Error getting user home directory")
+		fmt.Fprintln(os.Stderr, "Error getting user home directory")
 	}
 
 	var data []byte
 	if cfgFile == "" {
 		yamlFilePath := filepath.Join(home, ".vaul7y.yaml")
-		if _, err := os.Stat(yamlFilePath); os.IsNotExist(err) {
-			fmt.Printf("Config file does not exist: %s\n", yamlFilePath)
-		} else {
+		if _, err := os.Stat(yamlFilePath); !os.IsNotExist(err) {
 			data, err = os.ReadFile(yamlFilePath)
 			if err != nil {
-				fmt.Printf("Error reading YAML file: %v\n", err)
+				fmt.Fprintf(os.Stderr, "Error reading YAML file: %v\n", err)
 			}
 		}
 	} else {
-		fmt.Println("Using config file: ", cfgFile)
 		data, err = os.ReadFile(cfgFile)
 		if err != nil {
-			fmt.Printf("Error reading YAML file: %v\n", err)
+			fmt.Fprintf(os.Stderr, "Error reading YAML file: %v\n", err)
 		}
 	}
 
 	if data != nil {
 		err = yaml.Unmarshal(data, &config)
 		if err != nil {
-			fmt.Printf("Error parsing YAML file: %v\n", err)
+			fmt.Fprintf(os.Stderr, "Error parsing YAML file: %v\n", err)
 		}
 	}
 
 	// Check for vault cache
 	home, err = os.UserHomeDir()
 	if err != nil {
-		fmt.Println("Error getting user home directory")
+		fmt.Fprintln(os.Stderr, "Error getting user home directory")
 	} else {
 		vaultTokenPath := filepath.Join(home, ".vault-token")
-		if _, err := os.Stat(vaultTokenPath); os.IsNotExist(err) {
-			fmt.Printf("Vault token file does not exist: %s\n", vaultTokenPath)
-		} else {
+		if _, err := os.Stat(vaultTokenPath); err == nil {
 			data, err := os.ReadFile(vaultTokenPath)
 			if err != nil {
-				fmt.Printf("Error reading vault token file: %v\n", err)
+				fmt.Fprintf(os.Stderr, "Error reading vault token file: %v\n", err)
 			} else {
 				config.VaultToken = string(data)
 			}
@@ -106,7 +100,7 @@ func LoadConfig(cfgFile string) Config {
 	if vaultyRefreshRate := os.Getenv("VAULTY_REFRESH_RATE"); vaultyRefreshRate != "" {
 		vaultyRefreshRateInt, err := strconv.Atoi(vaultyRefreshRate)
 		if err != nil {
-			fmt.Printf("Error converting VAULTY_REFRESH_RATE to int: %v", err)
+			fmt.Fprintf(os.Stderr, "Error converting VAULTY_REFRESH_RATE to int: %v", err)
 		} else {
 			config.VaultyRefreshRate = vaultyRefreshRateInt
 		}
@@ -115,13 +109,13 @@ func LoadConfig(cfgFile string) Config {
 	if config.VaultToken == "" {
 		home, err := os.UserHomeDir()
 		if err != nil {
-			fmt.Println("Error getting user home directory")
+			fmt.Fprintln(os.Stderr, "Error getting user home directory")
 		} else {
 			vaultTokenPath := filepath.Join(home, ".vault-token")
 			if _, err := os.Stat(vaultTokenPath); err == nil {
 				data, err := os.ReadFile(vaultTokenPath)
 				if err != nil {
-					fmt.Printf("Error reading vault token file: %v\n", err)
+					fmt.Fprintf(os.Stderr, "Error reading vault token file: %v\n", err)
 				} else {
 					config.VaultToken = string(data)
 				}
@@ -130,12 +124,12 @@ func LoadConfig(cfgFile string) Config {
 	}
 
 	if config.VaultAddr == "" {
-		fmt.Println("VAULT_ADDR is not set. Please set it and try again.")
+		fmt.Fprintln(os.Stderr, "VAULT_ADDR is not set. Please set it and try again.")
 		os.Exit(1)
 	}
 
 	if config.VaultToken == "" {
-		fmt.Println("VAULT_TOKEN is not set. Please set it and try again.")
+		fmt.Fprintln(os.Stderr, "VAULT_TOKEN is not set. Please set it and try again.")
 		os.Exit(1)
 	}
 
@@ -149,13 +143,13 @@ func LoadConfig(cfgFile string) Config {
 			signal.Notify(ch, syscall.SIGTERM)
 
 			<-ch
-			fmt.Println("Dumping goroutines")
+			fmt.Fprintln(os.Stderr, "Dumping goroutines")
 			bufsize := int(10 * 1024 * 1024) // 10 MiB
 			buf := make([]byte, bufsize)
 			n := runtime.Stack(buf, true)
 			filename := fmt.Sprintf("%s.dump", config.VaultyLogFile)
 
-			ioutil.WriteFile(filename, buf[:n], 0644)
+			os.WriteFile(filename, buf[:n], 0644)
 			os.Exit(1)
 		}()
 

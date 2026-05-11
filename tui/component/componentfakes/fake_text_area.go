@@ -4,7 +4,7 @@ package componentfakes
 import (
 	"sync"
 
-	"github.com/dkyanakiev/vaulty/tui/component"
+	"github.com/dkyanakiev/vaul7y/tui/component"
 	tcell "github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 )
@@ -50,6 +50,17 @@ type FakeTextArea struct {
 		result1 *tview.TextArea
 	}
 	setTextReturnsOnCall map[int]struct {
+		result1 *tview.TextArea
+	}
+	SetChangedFuncStub        func(func()) *tview.TextArea
+	setChangedFuncMutex       sync.RWMutex
+	setChangedFuncArgsForCall []struct {
+		arg1 func()
+	}
+	setChangedFuncReturns struct {
+		result1 *tview.TextArea
+	}
+	setChangedFuncReturnsOnCall map[int]struct {
 		result1 *tview.TextArea
 	}
 	SetTitleStub        func(string)
@@ -306,6 +317,67 @@ func (fake *FakeTextArea) SetTitle(arg1 string) {
 	}
 }
 
+func (fake *FakeTextArea) SetChangedFunc(arg1 func()) *tview.TextArea {
+	fake.setChangedFuncMutex.Lock()
+	ret, specificReturn := fake.setChangedFuncReturnsOnCall[len(fake.setChangedFuncArgsForCall)]
+	fake.setChangedFuncArgsForCall = append(fake.setChangedFuncArgsForCall, struct {
+		arg1 func()
+	}{arg1})
+	stub := fake.SetChangedFuncStub
+	fakeReturns := fake.setChangedFuncReturns
+	fake.recordInvocation("SetChangedFunc", []interface{}{arg1})
+	fake.setChangedFuncMutex.Unlock()
+	if stub != nil {
+		return stub(arg1)
+	}
+	if specificReturn {
+		return ret.result1
+	}
+	return fakeReturns.result1
+}
+
+func (fake *FakeTextArea) SetChangedFuncCallCount() int {
+	fake.setChangedFuncMutex.RLock()
+	defer fake.setChangedFuncMutex.RUnlock()
+	return len(fake.setChangedFuncArgsForCall)
+}
+
+func (fake *FakeTextArea) SetChangedFuncCalls(stub func(func()) *tview.TextArea) {
+	fake.setChangedFuncMutex.Lock()
+	defer fake.setChangedFuncMutex.Unlock()
+	fake.SetChangedFuncStub = stub
+}
+
+func (fake *FakeTextArea) SetChangedFuncArgsForCall(i int) func() {
+	fake.setChangedFuncMutex.RLock()
+	defer fake.setChangedFuncMutex.RUnlock()
+	argsForCall := fake.setChangedFuncArgsForCall[i]
+	return argsForCall.arg1
+}
+
+func (fake *FakeTextArea) SetChangedFuncReturns(result1 *tview.TextArea) {
+	fake.setChangedFuncMutex.Lock()
+	defer fake.setChangedFuncMutex.Unlock()
+	fake.SetChangedFuncStub = nil
+	fake.setChangedFuncReturns = struct {
+		result1 *tview.TextArea
+	}{result1}
+}
+
+func (fake *FakeTextArea) SetChangedFuncReturnsOnCall(i int, result1 *tview.TextArea) {
+	fake.setChangedFuncMutex.Lock()
+	defer fake.setChangedFuncMutex.Unlock()
+	fake.SetChangedFuncStub = nil
+	if fake.setChangedFuncReturnsOnCall == nil {
+		fake.setChangedFuncReturnsOnCall = make(map[int]struct {
+			result1 *tview.TextArea
+		})
+	}
+	fake.setChangedFuncReturnsOnCall[i] = struct {
+		result1 *tview.TextArea
+	}{result1}
+}
+
 func (fake *FakeTextArea) SetTitleCallCount() int {
 	fake.setTitleMutex.RLock()
 	defer fake.setTitleMutex.RUnlock()
@@ -336,6 +408,8 @@ func (fake *FakeTextArea) Invocations() map[string][][]interface{} {
 	defer fake.setBorderMutex.RUnlock()
 	fake.setBorderColorMutex.RLock()
 	defer fake.setBorderColorMutex.RUnlock()
+	fake.setChangedFuncMutex.RLock()
+	defer fake.setChangedFuncMutex.RUnlock()
 	fake.setTextMutex.RLock()
 	defer fake.setTextMutex.RUnlock()
 	fake.setTitleMutex.RLock()

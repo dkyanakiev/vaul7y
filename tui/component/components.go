@@ -1,8 +1,8 @@
 package component
 
 import (
-	"github.com/dkyanakiev/vaulty/internal/models"
-	"github.com/dkyanakiev/vaulty/tui/primitives"
+	"github.com/dkyanakiev/vaul7y/internal/models"
+	"github.com/dkyanakiev/vaul7y/tui/primitives"
 
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
@@ -69,6 +69,7 @@ type Form interface {
 //go:generate counterfeiter . InputField
 type InputField interface {
 	Primitive
+	SetLabel(label string)
 	SetDoneFunc(handler func(k tcell.Key))
 	SetChangedFunc(handler func(text string))
 	SetAutocompleteFunc(callback func(currentText string) (entries []string))
@@ -99,6 +100,7 @@ type TextArea interface {
 	SetBorder(bool)
 	SetTitle(string)
 	SetBorderColor(tcell.Color)
+	SetChangedFunc(func()) *tview.TextArea
 }
 
 //go:generate counterfeiter . Box

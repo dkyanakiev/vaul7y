@@ -1,7 +1,8 @@
 package primitives
 
 import (
-	"github.com/dkyanakiev/vaulty/tui/styles"
+	"github.com/atotto/clipboard"
+	"github.com/dkyanakiev/vaul7y/tui/styles"
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 )
@@ -18,6 +19,16 @@ func NewTextArea() *TextArea {
 	t.Box.SetBorderColor(styles.TcellColorStandard)
 	t.Box.SetBorder(true)
 
+	// Wire Ctrl+Q (copy) and Ctrl+V (paste) to the system clipboard so that
+	// paste inserts the whole string at once instead of character by character.
+	t.SetClipboard(
+		func(text string) { clipboard.WriteAll(text) },
+		func() string {
+			text, _ := clipboard.ReadAll()
+			return text
+		},
+	)
+
 	return &TextArea{
 		primitive: t,
 	}
@@ -28,7 +39,11 @@ func (t *TextArea) Primitive() tview.Primitive {
 }
 
 func (t *TextArea) SetText(text string, cursorAtEnd bool) *tview.TextArea {
-	return t.primitive.SetText(text, true)
+	return t.primitive.SetText(text, cursorAtEnd)
+}
+
+func (t *TextArea) SetChangedFunc(handler func()) *tview.TextArea {
+	return t.primitive.SetChangedFunc(handler)
 }
 
 func (t *TextArea) SetBorder(wrap bool) {

@@ -4,9 +4,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/dkyanakiev/vaulty/internal/state"
-	"github.com/dkyanakiev/vaulty/internal/watcher"
-	"github.com/dkyanakiev/vaulty/internal/watcher/watcherfakes"
+	"github.com/dkyanakiev/vaul7y/internal/state"
+	"github.com/dkyanakiev/vaul7y/internal/watcher"
+	"github.com/dkyanakiev/vaul7y/internal/watcher/watcherfakes"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -23,5 +23,7 @@ func TestSubscribeToMounts(t *testing.T) {
 
 	fakeWatcher.SubscribeToMounts(notify)
 
-	assert.True(t, notifyCalled)
+	// notify is no longer called synchronously on subscribe; the view's direct
+	// update() call handles the initial render, avoiding a QueueUpdateDraw deadlock.
+	assert.False(t, notifyCalled)
 }

@@ -23,6 +23,10 @@ func NewInputField(label, placeholder string) *InputField {
 	return &InputField{i}
 }
 
+func (i *InputField) SetLabel(label string) {
+	i.primitive.SetLabel(label)
+}
+
 func (i *InputField) SetDoneFunc(handler func(k tcell.Key)) {
 	i.primitive.SetDoneFunc(handler)
 }

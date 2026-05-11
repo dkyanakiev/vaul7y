@@ -4,7 +4,7 @@ package watcherfakes
 import (
 	"sync"
 
-	"github.com/dkyanakiev/vaulty/internal/watcher"
+	"github.com/dkyanakiev/vaul7y/internal/watcher"
 )
 
 type FakeActivities struct {

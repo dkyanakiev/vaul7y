@@ -33,6 +33,11 @@ func (v *View) InputSecret(event *tcell.EventKey) *tcell.EventKey {
 	return v.inputSecret(event)
 }
 
+func (v *View) InputAuthMethods(event *tcell.EventKey) *tcell.EventKey {
+	event = v.InputMainCommands(event)
+	return v.inputAuthMethods(event)
+}
+
 func (v *View) InputMainCommands(event *tcell.EventKey) *tcell.EventKey {
 	if event == nil {
 		return event
@@ -45,20 +50,10 @@ func (v *View) InputMainCommands(event *tcell.EventKey) *tcell.EventKey {
 		v.Mounts()
 	case tcell.KeyCtrlP:
 		v.VPolicy()
-		// Needs editing
-		// case tcell.KeyCtrlJ:
-		// 	v.SecretObject()
 	case tcell.KeyCtrlT:
 		v.Namespaces()
-	case tcell.KeyRune:
-		r := event.Rune()
-
-		if (r == 's') && !v.components.SecretObjTable.Editable {
-			if !v.Layout.Footer.HasFocus() {
-				v.Layout.Container.SetFocus(v.state.Elements.DropDownNamespace)
-			}
-		}
-
+	case tcell.KeyCtrlA:
+		v.AuthMethods()
 	}
 
 	return event

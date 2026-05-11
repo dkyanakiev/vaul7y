@@ -2,8 +2,9 @@ package view
 
 import (
 	"regexp"
+	"time"
 
-	"github.com/dkyanakiev/vaulty/tui/component"
+	"github.com/dkyanakiev/vaul7y/tui/component"
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 )
@@ -19,21 +20,44 @@ func (v *View) VPolicy() {
 	//table := v.components.in
 
 	update := func() {
-		if v.state.Toggle.Search {
-			v.state.Filter.Policy = v.FilterText
+		v.state.RLock()
+		searching := v.state.Toggle.Search
+		v.state.RUnlock()
+
+		v.mutex.RLock()
+		filterText := v.FilterText
+		v.mutex.RUnlock()
+
+		if searching {
+			v.state.Lock()
+			v.state.Filter.Policy = filterText
+			v.state.Unlock()
 		}
-		v.components.PolicyTable.Props.Data = v.filterPolicies()
+
+		v.state.RLock()
+		data := v.filterPolicies()
+		v.state.RUnlock()
+
+		v.components.PolicyTable.Props.Data = data
 		v.components.PolicyTable.Render()
 		v.Draw()
 		v.components.PolicyTable.Table.ScrollToTop()
 	}
 
+	var debounce *time.Timer
 	search.Props.ChangedFunc = func(text string) {
+		v.mutex.Lock()
 		v.FilterText = text
-		update()
+		v.mutex.Unlock()
+		if debounce != nil {
+			debounce.Stop()
+		}
+		debounce = time.AfterFunc(150*time.Millisecond, func() {
+			v.Layout.Container.QueueUpdateDraw(update)
+		})
 	}
 
-	v.Watcher.SubscribeToPolicies(update)
+	v.Watcher.SubscribeToPolicies(func() { v.Layout.Container.QueueUpdateDraw(update) })
 	update()
 
 	v.state.Elements.TableMain = v.components.PolicyTable.Table.Primitive().(*tview.Table)
@@ -83,11 +107,13 @@ func (v *View) filterPolicies() []string {
 	data := v.state.PolicyList
 	filter := v.state.Filter.Policy
 	if filter != "" {
-		rx, _ := regexp.Compile(filter)
+		rx, err := regexp.Compile(filter)
+		if err != nil {
+			return data
+		}
 		result := []string{}
 		for _, p := range data {
-			switch true {
-			case rx.MatchString(p):
+			if rx.MatchString(p) {
 				result = append(result, p)
 			}
 		}

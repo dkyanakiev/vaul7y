@@ -4,8 +4,8 @@ package watcherfakes
 import (
 	"sync"
 
-	"github.com/dkyanakiev/vaulty/internal/models"
-	"github.com/dkyanakiev/vaulty/internal/watcher"
+	"github.com/dkyanakiev/vaul7y/internal/models"
+	"github.com/dkyanakiev/vaul7y/internal/watcher"
 	"github.com/hashicorp/vault/api"
 )
 
@@ -114,6 +114,57 @@ type FakeVault struct {
 	setNamespaceMutex       sync.RWMutex
 	setNamespaceArgsForCall []struct {
 		arg1 string
+	}
+	GetSecretDataStub        func(string, string) (*api.Secret, error)
+	getSecretDataMutex       sync.RWMutex
+	getSecretDataArgsForCall []struct {
+		arg1 string
+		arg2 string
+	}
+	getSecretDataReturns struct {
+		result1 *api.Secret
+		result2 error
+	}
+	getSecretDataReturnsOnCall map[int]struct {
+		result1 *api.Secret
+		result2 error
+	}
+	GetSecretMetadataStub        func(string, string) (*models.Metadata, error)
+	getSecretMetadataMutex       sync.RWMutex
+	getSecretMetadataArgsForCall []struct {
+		arg1 string
+		arg2 string
+	}
+	getSecretMetadataReturns struct {
+		result1 *models.Metadata
+		result2 error
+	}
+	getSecretMetadataReturnsOnCall map[int]struct {
+		result1 *models.Metadata
+		result2 error
+	}
+	ListAuthMethodsStub        func() (map[string]*models.AuthMethod, error)
+	listAuthMethodsMutex       sync.RWMutex
+	listAuthMethodsArgsForCall []struct{}
+	listAuthMethodsReturns     struct {
+		result1 map[string]*models.AuthMethod
+		result2 error
+	}
+	TokenInfoStub        func() (int64, []string, error)
+	tokenInfoMutex       sync.RWMutex
+	tokenInfoArgsForCall []struct{}
+	tokenInfoReturns     struct {
+		result1 int64
+		result2 []string
+		result3 error
+	}
+	SealStatusStub        func() (string, string, error)
+	sealStatusMutex       sync.RWMutex
+	sealStatusArgsForCall []struct{}
+	sealStatusReturns     struct {
+		result1 string
+		result2 string
+		result3 error
 	}
 	invocations      map[string][][]interface{}
 	invocationsMutex sync.RWMutex
@@ -630,6 +681,201 @@ func (fake *FakeVault) SetNamespaceArgsForCall(i int) string {
 	return argsForCall.arg1
 }
 
+func (fake *FakeVault) GetSecretData(arg1 string, arg2 string) (*api.Secret, error) {
+	fake.getSecretDataMutex.Lock()
+	ret, specificReturn := fake.getSecretDataReturnsOnCall[len(fake.getSecretDataArgsForCall)]
+	fake.getSecretDataArgsForCall = append(fake.getSecretDataArgsForCall, struct {
+		arg1 string
+		arg2 string
+	}{arg1, arg2})
+	stub := fake.GetSecretDataStub
+	fakeReturns := fake.getSecretDataReturns
+	fake.recordInvocation("GetSecretData", []interface{}{arg1, arg2})
+	fake.getSecretDataMutex.Unlock()
+	if stub != nil {
+		return stub(arg1, arg2)
+	}
+	if specificReturn {
+		return ret.result1, ret.result2
+	}
+	return fakeReturns.result1, fakeReturns.result2
+}
+
+func (fake *FakeVault) GetSecretDataCallCount() int {
+	fake.getSecretDataMutex.RLock()
+	defer fake.getSecretDataMutex.RUnlock()
+	return len(fake.getSecretDataArgsForCall)
+}
+
+func (fake *FakeVault) GetSecretDataCalls(stub func(string, string) (*api.Secret, error)) {
+	fake.getSecretDataMutex.Lock()
+	defer fake.getSecretDataMutex.Unlock()
+	fake.GetSecretDataStub = stub
+}
+
+func (fake *FakeVault) GetSecretDataArgsForCall(i int) (string, string) {
+	fake.getSecretDataMutex.RLock()
+	defer fake.getSecretDataMutex.RUnlock()
+	argsForCall := fake.getSecretDataArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2
+}
+
+func (fake *FakeVault) GetSecretDataReturns(result1 *api.Secret, result2 error) {
+	fake.getSecretDataMutex.Lock()
+	defer fake.getSecretDataMutex.Unlock()
+	fake.GetSecretDataStub = nil
+	fake.getSecretDataReturns = struct {
+		result1 *api.Secret
+		result2 error
+	}{result1, result2}
+}
+
+func (fake *FakeVault) GetSecretDataReturnsOnCall(i int, result1 *api.Secret, result2 error) {
+	fake.getSecretDataMutex.Lock()
+	defer fake.getSecretDataMutex.Unlock()
+	fake.GetSecretDataStub = nil
+	if fake.getSecretDataReturnsOnCall == nil {
+		fake.getSecretDataReturnsOnCall = make(map[int]struct {
+			result1 *api.Secret
+			result2 error
+		})
+	}
+	fake.getSecretDataReturnsOnCall[i] = struct {
+		result1 *api.Secret
+		result2 error
+	}{result1, result2}
+}
+
+func (fake *FakeVault) GetSecretMetadata(arg1 string, arg2 string) (*models.Metadata, error) {
+	fake.getSecretMetadataMutex.Lock()
+	ret, specificReturn := fake.getSecretMetadataReturnsOnCall[len(fake.getSecretMetadataArgsForCall)]
+	fake.getSecretMetadataArgsForCall = append(fake.getSecretMetadataArgsForCall, struct {
+		arg1 string
+		arg2 string
+	}{arg1, arg2})
+	stub := fake.GetSecretMetadataStub
+	fakeReturns := fake.getSecretMetadataReturns
+	fake.recordInvocation("GetSecretMetadata", []interface{}{arg1, arg2})
+	fake.getSecretMetadataMutex.Unlock()
+	if stub != nil {
+		return stub(arg1, arg2)
+	}
+	if specificReturn {
+		return ret.result1, ret.result2
+	}
+	return fakeReturns.result1, fakeReturns.result2
+}
+
+func (fake *FakeVault) GetSecretMetadataCallCount() int {
+	fake.getSecretMetadataMutex.RLock()
+	defer fake.getSecretMetadataMutex.RUnlock()
+	return len(fake.getSecretMetadataArgsForCall)
+}
+
+func (fake *FakeVault) GetSecretMetadataCalls(stub func(string, string) (*models.Metadata, error)) {
+	fake.getSecretMetadataMutex.Lock()
+	defer fake.getSecretMetadataMutex.Unlock()
+	fake.GetSecretMetadataStub = stub
+}
+
+func (fake *FakeVault) GetSecretMetadataArgsForCall(i int) (string, string) {
+	fake.getSecretMetadataMutex.RLock()
+	defer fake.getSecretMetadataMutex.RUnlock()
+	argsForCall := fake.getSecretMetadataArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2
+}
+
+func (fake *FakeVault) GetSecretMetadataReturns(result1 *models.Metadata, result2 error) {
+	fake.getSecretMetadataMutex.Lock()
+	defer fake.getSecretMetadataMutex.Unlock()
+	fake.GetSecretMetadataStub = nil
+	fake.getSecretMetadataReturns = struct {
+		result1 *models.Metadata
+		result2 error
+	}{result1, result2}
+}
+
+func (fake *FakeVault) GetSecretMetadataReturnsOnCall(i int, result1 *models.Metadata, result2 error) {
+	fake.getSecretMetadataMutex.Lock()
+	defer fake.getSecretMetadataMutex.Unlock()
+	fake.GetSecretMetadataStub = nil
+	if fake.getSecretMetadataReturnsOnCall == nil {
+		fake.getSecretMetadataReturnsOnCall = make(map[int]struct {
+			result1 *models.Metadata
+			result2 error
+		})
+	}
+	fake.getSecretMetadataReturnsOnCall[i] = struct {
+		result1 *models.Metadata
+		result2 error
+	}{result1, result2}
+}
+
+func (fake *FakeVault) ListAuthMethods() (map[string]*models.AuthMethod, error) {
+	fake.listAuthMethodsMutex.Lock()
+	fake.listAuthMethodsArgsForCall = append(fake.listAuthMethodsArgsForCall, struct{}{})
+	fake.recordInvocation("ListAuthMethods", []interface{}{})
+	fake.listAuthMethodsMutex.Unlock()
+	if fake.ListAuthMethodsStub != nil {
+		return fake.ListAuthMethodsStub()
+	}
+	return fake.listAuthMethodsReturns.result1, fake.listAuthMethodsReturns.result2
+}
+
+func (fake *FakeVault) ListAuthMethodsReturns(result1 map[string]*models.AuthMethod, result2 error) {
+	fake.listAuthMethodsMutex.Lock()
+	defer fake.listAuthMethodsMutex.Unlock()
+	fake.ListAuthMethodsStub = nil
+	fake.listAuthMethodsReturns = struct {
+		result1 map[string]*models.AuthMethod
+		result2 error
+	}{result1, result2}
+}
+
+func (fake *FakeVault) TokenInfo() (int64, []string, error) {
+	fake.tokenInfoMutex.Lock()
+	fake.tokenInfoArgsForCall = append(fake.tokenInfoArgsForCall, struct{}{})
+	fake.recordInvocation("TokenInfo", []interface{}{})
+	fake.tokenInfoMutex.Unlock()
+	if fake.TokenInfoStub != nil {
+		return fake.TokenInfoStub()
+	}
+	return fake.tokenInfoReturns.result1, fake.tokenInfoReturns.result2, fake.tokenInfoReturns.result3
+}
+
+func (fake *FakeVault) TokenInfoReturns(result1 int64, result2 []string, result3 error) {
+	fake.tokenInfoMutex.Lock()
+	defer fake.tokenInfoMutex.Unlock()
+	fake.TokenInfoStub = nil
+	fake.tokenInfoReturns = struct {
+		result1 int64
+		result2 []string
+		result3 error
+	}{result1, result2, result3}
+}
+
+func (fake *FakeVault) SealStatus() (string, string, error) {
+	fake.sealStatusMutex.Lock()
+	fake.sealStatusArgsForCall = append(fake.sealStatusArgsForCall, struct{}{})
+	fake.recordInvocation("SealStatus", []interface{}{})
+	fake.sealStatusMutex.Unlock()
+	if fake.SealStatusStub != nil {
+		return fake.SealStatusStub()
+	}
+	return fake.sealStatusReturns.result1, fake.sealStatusReturns.result2, fake.sealStatusReturns.result3
+}
+
+func (fake *FakeVault) SealStatusReturns(result1, result2 string, result3 error) {
+	fake.sealStatusMutex.Lock()
+	defer fake.sealStatusMutex.Unlock()
+	fake.SealStatusStub = nil
+	fake.sealStatusReturns = struct {
+		result1 string
+		result2 string
+		result3 error
+	}{result1, result2, result3}
+}
+
 func (fake *FakeVault) Invocations() map[string][][]interface{} {
 	fake.invocationsMutex.RLock()
 	defer fake.invocationsMutex.RUnlock()
@@ -651,6 +897,10 @@ func (fake *FakeVault) Invocations() map[string][][]interface{} {
 	defer fake.listSecretsMutex.RUnlock()
 	fake.setNamespaceMutex.RLock()
 	defer fake.setNamespaceMutex.RUnlock()
+	fake.getSecretDataMutex.RLock()
+	defer fake.getSecretDataMutex.RUnlock()
+	fake.getSecretMetadataMutex.RLock()
+	defer fake.getSecretMetadataMutex.RUnlock()
 	copiedInvocations := map[string][][]interface{}{}
 	for key, value := range fake.invocations {
 		copiedInvocations[key] = value

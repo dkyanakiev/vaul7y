@@ -3,12 +3,13 @@ package view
 import (
 	"sync"
 
-	"github.com/dkyanakiev/vaulty/internal/models"
-	"github.com/dkyanakiev/vaulty/internal/state"
-	"github.com/dkyanakiev/vaulty/tui/component"
-	"github.com/dkyanakiev/vaulty/tui/layout"
+	"github.com/dkyanakiev/vaul7y/internal/models"
+	"github.com/dkyanakiev/vaul7y/internal/state"
+	"github.com/dkyanakiev/vaul7y/tui/component"
+	"github.com/dkyanakiev/vaul7y/tui/layout"
 	"github.com/rs/zerolog"
 )
+
 
 const (
 	historySize = 15
@@ -19,6 +20,14 @@ type Client interface {
 	CreateNewSecret(mount string, path string) error
 	ListNamespaces() ([]string, error)
 	ChangeNamespace(ns string) []string
+	DeleteCurrentSecretVersion(mount, path string) error
+	DestroySecretVersions(mount, path string, versions []int) error
+	RollbackSecret(mount, path string, version int) error
+	UpdateSecretMetadata(mount, path string, opts map[string]interface{}) error
+	UpdatePolicy(name, rules string) error
+	ListAuthMethods() (map[string]*models.AuthMethod, error)
+	TokenInfo() (ttl int64, policies []string, err error)
+	SealStatus() (status string, clusterName string, err error)
 }
 
 type Watcher interface {
@@ -31,6 +40,7 @@ type Watcher interface {
 	SubscribeToNamespaces(notify func())
 	SubscribeToSecrets(selectedMount, selectedPath string, notify func())
 	SubscribeToSecret(selectedMount, selectedPath string, notify func())
+	SubscribeToAuthMethods(notify func())
 	UpdateMounts()
 }
 
@@ -43,11 +53,12 @@ type View struct {
 	state      *state.State
 	logger     *zerolog.Logger
 	components *Components
-	mutex      sync.Mutex
+	mutex      sync.RWMutex
 
 	FilterText string ""
 
-	draw chan struct{}
+	draw     chan struct{}
+	drawStop chan struct{}
 }
 
 type Components struct {
@@ -57,12 +68,14 @@ type Components struct {
 	SecretsTable   *component.SecretsTable
 	SecretObjTable *component.SecretObjTable
 	NamespaceTable *component.NamespaceTable
+	AuthTable      *component.AuthTable
 	Commands       *component.Commands
 	VaultInfo      *component.VaultInfo
 	Search         *component.SearchField
 	Error          *component.Error
 	Info           *component.Info
 	Failure        *component.Info
+	Confirm        *component.Confirm
 	TogglesInfo    *component.TogglesInfo
 	Selections     *component.Selections
 	JumpToPolicy   *component.JumpToPolicy
@@ -81,6 +94,7 @@ func New(components *Components, watcher Watcher, client Client, state *state.St
 		state:      state,
 		Layout:     layout.New(layout.Default, layout.EnableMouse),
 		draw:       make(chan struct{}, 1),
+		drawStop:   make(chan struct{}),
 		logger:     logger,
 		components: components,
 		history: &History{
@@ -91,7 +105,10 @@ func New(components *Components, watcher Watcher, client Client, state *state.St
 }
 
 func (v *View) Draw() {
-	v.draw <- struct{}{}
+	select {
+	case v.draw <- struct{}{}:
+	default:
+	}
 }
 
 // DrawLoop refreshes the screen when it receives a
@@ -108,6 +125,10 @@ func (v *View) DrawLoop(stop chan struct{}) {
 		}
 
 	}
+}
+
+func (v *View) Shutdown() {
+	close(v.drawStop)
 }
 
 func (v *View) GoBack() {
@@ -132,7 +153,9 @@ func (v *View) addToHistory(ns string, topic string, update func()) {
 }
 
 func (v *View) viewSwitch() {
+	v.Watcher.Unsubscribe()
 	v.resetSearch()
+	v.resetTextInput()
 }
 
 func (v *View) Search() {

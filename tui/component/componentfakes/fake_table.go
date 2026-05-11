@@ -4,7 +4,7 @@ package componentfakes
 import (
 	"sync"
 
-	"github.com/dkyanakiev/vaulty/tui/component"
+	"github.com/dkyanakiev/vaul7y/tui/component"
 	tcell "github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 )
@@ -85,6 +85,17 @@ type FakeTable struct {
 	setTitleArgsForCall []struct {
 		arg1 string
 		arg2 []interface{}
+	}
+	SetSelectableStub        func(bool, bool)
+	setSelectableMutex       sync.RWMutex
+	setSelectableArgsForCall []struct {
+		arg1 bool
+		arg2 bool
+	}
+	SetSelectedStyleStub        func(tcell.Style)
+	setSelectedStyleMutex       sync.RWMutex
+	setSelectedStyleArgsForCall []struct {
+		arg1 tcell.Style
 	}
 	invocations      map[string][][]interface{}
 	invocationsMutex sync.RWMutex
@@ -511,6 +522,71 @@ func (fake *FakeTable) SetTitleArgsForCall(i int) (string, []interface{}) {
 	return argsForCall.arg1, argsForCall.arg2
 }
 
+func (fake *FakeTable) SetSelectable(arg1 bool, arg2 bool) {
+	fake.setSelectableMutex.Lock()
+	fake.setSelectableArgsForCall = append(fake.setSelectableArgsForCall, struct {
+		arg1 bool
+		arg2 bool
+	}{arg1, arg2})
+	stub := fake.SetSelectableStub
+	fake.recordInvocation("SetSelectable", []interface{}{arg1, arg2})
+	fake.setSelectableMutex.Unlock()
+	if stub != nil {
+		fake.SetSelectableStub(arg1, arg2)
+	}
+}
+
+func (fake *FakeTable) SetSelectableCallCount() int {
+	fake.setSelectableMutex.RLock()
+	defer fake.setSelectableMutex.RUnlock()
+	return len(fake.setSelectableArgsForCall)
+}
+
+func (fake *FakeTable) SetSelectableCalls(stub func(bool, bool)) {
+	fake.setSelectableMutex.Lock()
+	defer fake.setSelectableMutex.Unlock()
+	fake.SetSelectableStub = stub
+}
+
+func (fake *FakeTable) SetSelectableArgsForCall(i int) (bool, bool) {
+	fake.setSelectableMutex.RLock()
+	defer fake.setSelectableMutex.RUnlock()
+	argsForCall := fake.setSelectableArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2
+}
+
+func (fake *FakeTable) SetSelectedStyle(arg1 tcell.Style) {
+	fake.setSelectedStyleMutex.Lock()
+	fake.setSelectedStyleArgsForCall = append(fake.setSelectedStyleArgsForCall, struct {
+		arg1 tcell.Style
+	}{arg1})
+	stub := fake.SetSelectedStyleStub
+	fake.recordInvocation("SetSelectedStyle", []interface{}{arg1})
+	fake.setSelectedStyleMutex.Unlock()
+	if stub != nil {
+		fake.SetSelectedStyleStub(arg1)
+	}
+}
+
+func (fake *FakeTable) SetSelectedStyleCallCount() int {
+	fake.setSelectedStyleMutex.RLock()
+	defer fake.setSelectedStyleMutex.RUnlock()
+	return len(fake.setSelectedStyleArgsForCall)
+}
+
+func (fake *FakeTable) SetSelectedStyleCalls(stub func(tcell.Style)) {
+	fake.setSelectedStyleMutex.Lock()
+	defer fake.setSelectedStyleMutex.Unlock()
+	fake.SetSelectedStyleStub = stub
+}
+
+func (fake *FakeTable) SetSelectedStyleArgsForCall(i int) tcell.Style {
+	fake.setSelectedStyleMutex.RLock()
+	defer fake.setSelectedStyleMutex.RUnlock()
+	argsForCall := fake.setSelectedStyleArgsForCall[i]
+	return argsForCall.arg1
+}
+
 func (fake *FakeTable) Invocations() map[string][][]interface{} {
 	fake.invocationsMutex.RLock()
 	defer fake.invocationsMutex.RUnlock()
@@ -534,6 +610,10 @@ func (fake *FakeTable) Invocations() map[string][][]interface{} {
 	defer fake.setSelectedFuncMutex.RUnlock()
 	fake.setTitleMutex.RLock()
 	defer fake.setTitleMutex.RUnlock()
+	fake.setSelectableMutex.RLock()
+	defer fake.setSelectableMutex.RUnlock()
+	fake.setSelectedStyleMutex.RLock()
+	defer fake.setSelectedStyleMutex.RUnlock()
 	copiedInvocations := map[string][][]interface{}{}
 	for key, value := range fake.invocations {
 		copiedInvocations[key] = value

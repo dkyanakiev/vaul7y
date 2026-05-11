@@ -4,18 +4,18 @@ import (
 	"log"
 	"time"
 
-	"github.com/dkyanakiev/vaulty/internal/models"
+	"github.com/dkyanakiev/vaul7y/internal/models"
 )
 
 func (w *Watcher) SubscribeToPoliciesACL(notify func()) {
 
 	w.readPolicy()
 	w.Subscribe(notify, "policyacl")
-	w.Notify("policyacl")
 	stop := make(chan struct{})
 	w.activities.Add(stop)
 	ticker := time.NewTicker(w.interval)
 	go func() {
+		defer ticker.Stop()
 		for {
 			select {
 			case <-ticker.C:
@@ -48,5 +48,7 @@ func (w *Watcher) readPolicy() {
 		log.Println(err)
 	}
 
+	w.state.Lock()
 	w.state.PolicyACL = policy
+	w.state.Unlock()
 }

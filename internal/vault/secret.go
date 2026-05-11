@@ -11,7 +11,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/dkyanakiev/vaulty/internal/models"
+	"github.com/dkyanakiev/vaul7y/internal/models"
 	"github.com/hashicorp/vault/api"
 	"github.com/mitchellh/mapstructure"
 )
@@ -36,8 +36,14 @@ func (v *Vault) ListSecrets(path string) (*api.Secret, error) {
 
 func (v *Vault) ListNestedSecrets(mount, path string) ([]models.SecretPath, error) {
 	var secretPaths []models.SecretPath
-	mountPath := fmt.Sprintf("%s/metadata/%s", mount, path)
-	mountPath = sanitizePath(mountPath)
+
+	var mountPath string
+	if v.kvVersionForMount(mount) == "1" {
+		mountPath = sanitizePath(fmt.Sprintf("%s/%s", mount, path))
+	} else {
+		mountPath = sanitizePath(fmt.Sprintf("%s/metadata/%s", mount, path))
+	}
+
 	secrets, err := v.vault.Logical().List(mountPath)
 
 	v.Logger.Debug().Msg(fmt.Sprintf("Listing secrets for path: %s", mountPath))
@@ -76,8 +82,15 @@ func (v *Vault) ListNestedSecrets(mount, path string) ([]models.SecretPath, erro
 }
 
 func (v *Vault) GetSecretData(mount, path string) (*api.Secret, error) {
-	secretPath := fmt.Sprintf("%s/data/%s", mount, path)
-	secretPath = sanitizePath(secretPath)
+	kvVer := v.kvVersionForMount(mount)
+
+	var secretPath string
+	if kvVer == "1" {
+		secretPath = sanitizePath(fmt.Sprintf("%s/%s", mount, path))
+	} else {
+		secretPath = sanitizePath(fmt.Sprintf("%s/data/%s", mount, path))
+	}
+
 	secretData, err := v.vault.Logical().Read(secretPath)
 	if err != nil {
 		v.Logger.Err(err).Msgf("failed to read secret: %s", err)
@@ -89,10 +102,25 @@ func (v *Vault) GetSecretData(mount, path string) (*api.Secret, error) {
 		return nil, fmt.Errorf("no data found at %s", secretPath)
 	}
 
+	// Normalize v1 response to match the v2 structure the UI expects:
+	// v1 returns {"key":"value"} at .Data; v2 returns {"data":{"key":"value"},...} at .Data.
+	if kvVer == "1" {
+		return &api.Secret{
+			Data: map[string]interface{}{
+				"data": secretData.Data,
+			},
+		}, nil
+	}
+
 	return secretData, nil
 }
 
 func (v *Vault) GetSecretMetadata(mount, path string) (*models.Metadata, error) {
+	// KV v1 has no metadata endpoint.
+	if v.kvVersionForMount(mount) == "1" {
+		return nil, nil
+	}
+
 	secretPath := fmt.Sprintf("%s/metadata/%s", mount, path)
 	secretPath = sanitizePath(secretPath)
 	var metadata models.Metadata
@@ -123,6 +151,21 @@ func (v *Vault) GetSecretMetadata(mount, path string) (*models.Metadata, error) 
 
 func (v *Vault) UpdateSecretObjectKV2(mount string, path string, patch bool, data map[string]interface{}) error {
 	ctx := context.Background()
+
+	// KV v1: write flat data directly — no versioning, no patch support.
+	if v.kvVersionForMount(mount) == "1" {
+		secretPath := sanitizePath(fmt.Sprintf("%s/%s", mount, path))
+		flatData := data
+		if d, ok := data["data"].(map[string]interface{}); ok {
+			flatData = d
+		}
+		_, err := v.vault.Logical().WriteWithContext(ctx, secretPath, flatData)
+		if err != nil {
+			return fmt.Errorf("failed to update v1 secret: %w", err)
+		}
+		v.Logger.Info().Msg("v1 secret updated successfully")
+		return nil
+	}
 
 	data = prepareDataForWrite(data)
 	v.Logger.Debug().Msg(fmt.Sprintf("Patch FLAG: %v", patch))
@@ -414,21 +457,78 @@ func (v *Vault) PatchWithoutWrap(ctx context.Context, mountPath string, secretPa
 	return kvs, nil
 }
 
-func (v *Vault) CreateNewSecret(mount string, path string) error {
-	secretPath := fmt.Sprintf("%s/data/%s", mount, path)
-	secretPath = sanitizePath(secretPath)
+func (v *Vault) DeleteCurrentSecretVersion(mount, path string) error {
+	if v.kvVersionForMount(mount) == "1" {
+		secretPath := sanitizePath(fmt.Sprintf("%s/%s", mount, path))
+		_, err := v.vault.Logical().Delete(secretPath)
+		return err
+	}
+	secretPath := sanitizePath(fmt.Sprintf("%s/data/%s", mount, path))
+	_, err := v.vault.Logical().Delete(secretPath)
+	return err
+}
 
-	data := map[string]interface{}{
-		"data": make(map[string]interface{}),
+func (v *Vault) DestroySecretVersions(mount, path string, versions []int) error {
+	destroyPath := sanitizePath(fmt.Sprintf("%s/destroy/%s", mount, path))
+	versionIfaces := make([]interface{}, len(versions))
+	for i, v := range versions {
+		versionIfaces[i] = v
+	}
+	_, err := v.vault.Logical().Write(destroyPath, map[string]interface{}{
+		"versions": versionIfaces,
+	})
+	return err
+}
+
+func (v *Vault) RollbackSecret(mount, path string, version int) error {
+	ctx := context.Background()
+	readPath := sanitizePath(fmt.Sprintf("%s/data/%s", mount, path))
+
+	secret, err := v.vault.Logical().ReadWithData(readPath, map[string][]string{
+		"version": {strconv.Itoa(version)},
+	})
+	if err != nil {
+		return fmt.Errorf("failed to read version %d: %w", version, err)
+	}
+	if secret == nil || secret.Data == nil {
+		return fmt.Errorf("version %d not found", version)
 	}
 
-	secret, err := v.vault.Logical().Write(secretPath, data)
+	dataMap, ok := secret.Data["data"].(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("unexpected data format for version %d", version)
+	}
+
+	_, err = v.vault.Logical().WriteWithContext(ctx, readPath, map[string]interface{}{
+		"data": dataMap,
+	})
+	return err
+}
+
+func (v *Vault) UpdateSecretMetadata(mount, path string, opts map[string]interface{}) error {
+	metaPath := sanitizePath(fmt.Sprintf("%s/metadata/%s", mount, path))
+	_, err := v.vault.Logical().Write(metaPath, opts)
+	return err
+}
+
+func (v *Vault) CreateNewSecret(mount string, path string) error {
+	var secretPath string
+	var data map[string]interface{}
+
+	if v.kvVersionForMount(mount) == "1" {
+		secretPath = sanitizePath(fmt.Sprintf("%s/%s", mount, path))
+		// KV v1 rejects an empty body; seed with a placeholder the user can overwrite.
+		data = map[string]interface{}{"placeholder": ""}
+	} else {
+		secretPath = sanitizePath(fmt.Sprintf("%s/data/%s", mount, path))
+		data = map[string]interface{}{
+			"data": make(map[string]interface{}),
+		}
+	}
+
+	_, err := v.vault.Logical().Write(secretPath, data)
 	if err != nil {
 		return fmt.Errorf("failed to create secret: %w", err)
-	}
-
-	if secret == nil {
-		return fmt.Errorf("no secret was written to %s", secretPath)
 	}
 
 	return nil

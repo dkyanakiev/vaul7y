@@ -3,8 +3,8 @@ package watcher
 import (
 	"time"
 
-	"github.com/dkyanakiev/vaulty/internal/models"
-	"github.com/dkyanakiev/vaulty/internal/state"
+	"github.com/dkyanakiev/vaul7y/internal/models"
+	"github.com/dkyanakiev/vaul7y/internal/state"
 	"github.com/hashicorp/vault/api"
 	"github.com/rs/zerolog"
 )
@@ -27,8 +27,9 @@ type Vault interface {
 	ListNamespaces() ([]string, error)
 	GetSecretData(string, string) (*api.Secret, error)
 	GetSecretMetadata(string, string) (*models.Metadata, error)
-	//GetPolicy(string) (string, error)
-	//ListPolicies() ([]string, error)
+	ListAuthMethods() (map[string]*models.AuthMethod, error)
+	TokenInfo() (ttl int64, policies []string, err error)
+	SealStatus() (status string, clusterName string, err error)
 }
 
 // Wather is used to track changes to the Vault instance and update the state.
@@ -50,6 +51,10 @@ type subscriber struct {
 }
 
 func NewWatcher(state *state.State, vault Vault, interval time.Duration, logger *zerolog.Logger) *Watcher {
+	if logger == nil {
+		nop := zerolog.Nop()
+		logger = &nop
+	}
 	return &Watcher{
 		state:      state,
 		vault:      vault,

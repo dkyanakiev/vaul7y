@@ -4,7 +4,7 @@ package componentfakes
 import (
 	"sync"
 
-	"github.com/dkyanakiev/vaulty/tui/component"
+	"github.com/dkyanakiev/vaul7y/tui/component"
 	tcell "github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 )
@@ -48,6 +48,11 @@ type FakeInputField struct {
 	SetTextStub        func(string)
 	setTextMutex       sync.RWMutex
 	setTextArgsForCall []struct {
+		arg1 string
+	}
+	SetLabelStub        func(string)
+	setLabelMutex       sync.RWMutex
+	setLabelArgsForCall []struct {
 		arg1 string
 	}
 	invocations      map[string][][]interface{}
@@ -286,6 +291,16 @@ func (fake *FakeInputField) SetTextArgsForCall(i int) string {
 	defer fake.setTextMutex.RUnlock()
 	argsForCall := fake.setTextArgsForCall[i]
 	return argsForCall.arg1
+}
+
+func (fake *FakeInputField) SetLabel(arg1 string) {
+	fake.setLabelMutex.Lock()
+	fake.setLabelArgsForCall = append(fake.setLabelArgsForCall, struct{ arg1 string }{arg1})
+	fake.recordInvocation("SetLabel", []interface{}{arg1})
+	fake.setLabelMutex.Unlock()
+	if fake.SetLabelStub != nil {
+		fake.SetLabelStub(arg1)
+	}
 }
 
 func (fake *FakeInputField) Invocations() map[string][][]interface{} {

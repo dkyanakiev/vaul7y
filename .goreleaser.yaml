@@ -7,7 +7,7 @@
 # vim: set ts=2 sw=2 tw=0 fo=cnqoj
 
 project_name: vaul7y
-version: 1
+version: 2
 
 before:
   hooks:
@@ -49,7 +49,7 @@ checksum:
   name_template: 'checksums.txt'
 
 snapshot:
-  name_template: "{{ incpatch .Version }}-next"
+  version_template: "{{ incpatch .Version }}-next"
 
 changelog:
   sort: asc
@@ -65,7 +65,7 @@ brews:
   - name: vaul7y
     homepage: https://github.com/dkyanakiev/vaul7y
     description: "A simple terminal application/TUI for interacting with HashiCorp Vault."
-    folder: Formula
+    directory: Formula
     commit_author:
       name: "Dimitar Yanakiev"
       email: "dkyanakiev@gmail.com"

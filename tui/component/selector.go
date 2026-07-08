@@ -2,6 +2,7 @@ package component
 
 import (
 	"github.com/dkyanakiev/vaul7y/tui/primitives"
+	"github.com/dkyanakiev/vaul7y/tui/styles"
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 )
@@ -51,7 +52,7 @@ func (s *SelectorModal) Render() error {
 	table.Clear()
 
 	for i, v := range s.Props.Items {
-		table.RenderRow([]string{v}, i, tcell.ColorWhite)
+		table.RenderRow([]string{v}, i, styles.NeutralColor())
 	}
 
 	s.Modal.GetTable().SetTitle("Select a Task (alloc: %s)", s.Props.AllocationID)

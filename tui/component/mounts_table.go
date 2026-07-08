@@ -140,19 +140,19 @@ func (m *MountsTable) renderRows() {
 }
 
 func (m *MountsTable) cellColor(mountType string) tcell.Color {
-	c := tcell.ColorWhite
+	c := styles.NeutralColor()
 	// Setup splits based on type
 	switch mountType {
 	case models.MountTypeSystem:
 		c = styles.TcellColorAttention
 	case models.MountTypeCubbyhole:
-		c = tcell.ColorYellow
+		c = styles.MountCubbyholeColor()
 	case models.MountTypeIdentity:
-		c = tcell.ColorRed
+		c = styles.MountIdentityColor()
 	case models.MountTypeKV:
-		c = tcell.ColorGreenYellow
+		c = styles.MountKVColor()
 	case models.MountTypePki:
-		c = tcell.ColorBlue
+		c = styles.MountPkiColor()
 	}
 
 	return c

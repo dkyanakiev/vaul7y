@@ -1,6 +1,7 @@
 package primitives
 
 import (
+	"github.com/dkyanakiev/vaul7y/tui/styles"
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 )
@@ -16,8 +17,8 @@ func NewInputField(label, placeholder string) *InputField {
 	i.SetAcceptanceFunc(tview.InputFieldMaxLength(40))
 	i.SetPlaceholder(placeholder)
 	i.SetBorder(true)
-	i.SetFieldBackgroundColor(tcell.NewRGBColor(40, 44, 48))
-	i.SetBackgroundColor(tcell.NewRGBColor(40, 44, 48))
+	i.SetFieldBackgroundColor(styles.TcellBackgroundColor)
+	i.SetBackgroundColor(styles.TcellBackgroundColor)
 	i.SetBorderAttributes(tcell.AttrDim)
 
 	return &InputField{i}

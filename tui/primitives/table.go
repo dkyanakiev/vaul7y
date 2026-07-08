@@ -24,6 +24,9 @@ func NewTable() *Table {
 	t.SetFixed(1, 1)
 	t.SetBorderPadding(0, 0, 1, 1)
 	t.SetBorderColor(styles.TcellColorStandard)
+	if selectedStyle, ok := styles.TableSelectedStyle(); ok {
+		t.SetSelectedStyle(selectedStyle)
+	}
 
 	return &Table{
 		primitive: t,
@@ -83,7 +86,7 @@ func (t *Table) ScrollToTop() *tview.Table {
 }
 
 func (t *Table) SetSelectedStyle(style tcell.Style) {
-	t.tviewTable.SetSelectedStyle(style)
+	t.primitive.SetSelectedStyle(style)
 }
 
 func (t *Table) SetSelectable(rows, columns bool) {

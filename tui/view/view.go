@@ -1,6 +1,7 @@
 package view
 
 import (
+	"context"
 	"sync"
 
 	"github.com/dkyanakiev/vaul7y/internal/models"
@@ -28,6 +29,7 @@ type Client interface {
 	ListAuthMethods() (map[string]*models.AuthMethod, error)
 	TokenInfo() (ttl int64, policies []string, err error)
 	SealStatus() (status string, clusterName string, err error)
+	SearchKV(ctx context.Context, opts models.SearchOptions, onMatch func(models.SearchMatch)) (models.SearchStats, error)
 }
 
 type Watcher interface {
@@ -57,16 +59,21 @@ type View struct {
 
 	FilterText string ""
 
+	// searchCancel stops a running recursive search; only touched from the
+	// UI event loop.
+	searchCancel context.CancelFunc
+
 	draw     chan struct{}
 	drawStop chan struct{}
 }
 
 type Components struct {
-	MountsTable    *component.MountsTable
-	PolicyTable    *component.PolicyTable
-	PolicyAclTable *component.PolicyAclTable
-	SecretsTable   *component.SecretsTable
-	SecretObjTable *component.SecretObjTable
+	MountsTable        *component.MountsTable
+	PolicyTable        *component.PolicyTable
+	PolicyAclTable     *component.PolicyAclTable
+	SecretsTable       *component.SecretsTable
+	SearchResultsTable *component.SearchResultsTable
+	SecretObjTable     *component.SecretObjTable
 	NamespaceTable *component.NamespaceTable
 	AuthTable      *component.AuthTable
 	Commands       *component.Commands
@@ -156,6 +163,14 @@ func (v *View) viewSwitch() {
 	v.Watcher.Unsubscribe()
 	v.resetSearch()
 	v.resetTextInput()
+	v.cancelRecursiveSearch()
+}
+
+func (v *View) cancelRecursiveSearch() {
+	if v.searchCancel != nil {
+		v.searchCancel()
+		v.searchCancel = nil
+	}
 }
 
 func (v *View) Search() {

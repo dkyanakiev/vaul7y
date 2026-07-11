@@ -28,6 +28,11 @@ func (v *View) InputSecrets(event *tcell.EventKey) *tcell.EventKey {
 	return v.inputSecrets(event)
 }
 
+func (v *View) InputSearchResults(event *tcell.EventKey) *tcell.EventKey {
+	event = v.InputMainCommands(event)
+	return v.inputSearchResults(event)
+}
+
 func (v *View) InputSecret(event *tcell.EventKey) *tcell.EventKey {
 	event = v.InputMainCommands(event)
 	return v.inputSecret(event)

@@ -51,6 +51,13 @@ var (
 		fmt.Sprintf("%sctrl-n%s to Create a new secret ", styles.HighlightPrimaryTag, styles.StandardColorTag),
 		fmt.Sprintf("%sJ%s to jump to a specific path", styles.HighlightPrimaryTag, styles.StandardColorTag),
 		fmt.Sprintf("%s/%s Filter objects ", styles.HighlightPrimaryTag, styles.StandardColorTag),
+		fmt.Sprintf("%sctrl-f%s recursive search from current path", styles.HighlightPrimaryTag, styles.StandardColorTag),
+	}
+	SearchResultsCommands = []string{
+		fmt.Sprintf("\n%s Search Results Commands:", styles.HighlightSecondaryTag),
+		fmt.Sprintf("%se or enter%s to open the selected secret", styles.HighlightPrimaryTag, styles.StandardColorTag),
+		fmt.Sprintf("%sv%s toggle matching secret values (re-runs search)", styles.HighlightPrimaryTag, styles.StandardColorTag),
+		fmt.Sprintf("%sb or esc%s to go back to the secrets browser", styles.HighlightPrimaryTag, styles.StandardColorTag),
 	}
 	SecretObjectCommands = []string{
 		fmt.Sprintf("\n%s Secret Commands:", styles.HighlightSecondaryTag),

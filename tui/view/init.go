@@ -52,6 +52,10 @@ func (v *View) Init(version string) {
 	v.components.SecretsTable.Bind(v.Layout.Body)
 	v.components.SecretsTable.Props.HandleNoResources = v.handleNoResources
 
+	// SearchResultsView
+	v.components.SearchResultsTable.Bind(v.Layout.Body)
+	v.components.SearchResultsTable.Props.HandleNoResources = v.handleNoResources
+
 	// SecretObjectView
 	v.components.SecretObjTable.Bind(v.Layout.Body)
 	v.components.SecretObjTable.Props.HandleNoResources = v.handleNoResources
@@ -128,11 +132,19 @@ func (v *View) Init(version string) {
 
 		v.state.Lock()
 		jumpToPath := v.state.Toggle.JumpToPath
+		recursiveSearch := v.state.Toggle.RecursiveSearch
 		v.state.Toggle.TextInput = false
 		v.state.Toggle.JumpToPath = false
+		v.state.Toggle.RecursiveSearch = false
 		v.state.Unlock()
 
-		if jumpToPath {
+		if recursiveSearch {
+			// Restore the label for the ctrl-n / J flows that share this input.
+			v.components.TextInfoInput.InputField.SetLabel("name: ")
+			if key == tcell.KeyEnter && inputText != "" {
+				v.startRecursiveSearch(inputText)
+			}
+		} else if jumpToPath {
 			v.state.Lock()
 			v.state.SelectedPath = inputText
 			v.state.Unlock()

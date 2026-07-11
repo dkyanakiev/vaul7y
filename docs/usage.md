@@ -92,6 +92,17 @@ Variables will be loaded in the following order, with the next superseding the p
 * Filter paths and secrets with `/`
 * Jump directly to a path with `J`
 * Create new secrets with `ctrl-n` — choose JSON editor or Key-Value form
+* Recursive search with `ctrl-f` — searches secret names and key names in all nested paths below the current one
+
+#### Recursive search results
+
+`ctrl-f` prompts for a term and recursively walks every path under the current one, matching secret names and key names (case-insensitive). Folders you cannot list and secrets you cannot read are skipped and reported in the title bar — a token with partial access still gets results for everything it can see.
+
+| Key | Action |
+|-----|--------|
+| `e` / `enter` | Open the selected secret |
+| `v` | Toggle matching secret *values* too (re-runs the search) |
+| `b` / `esc` | Back to the secrets browser |
 
 #### Secret Object view
 

@@ -22,6 +22,19 @@ type FakeLogical struct {
 		result1 *api.Secret
 		result2 error
 	}
+	ReadStub        func(string) (*api.Secret, error)
+	readMutex       sync.RWMutex
+	readArgsForCall []struct {
+		arg1 string
+	}
+	readReturns struct {
+		result1 *api.Secret
+		result2 error
+	}
+	readReturnsOnCall map[int]struct {
+		result1 *api.Secret
+		result2 error
+	}
 	invocations      map[string][][]interface{}
 	invocationsMutex sync.RWMutex
 }
@@ -90,11 +103,77 @@ func (fake *FakeLogical) ListReturnsOnCall(i int, result1 *api.Secret, result2 e
 	}{result1, result2}
 }
 
+func (fake *FakeLogical) Read(arg1 string) (*api.Secret, error) {
+	fake.readMutex.Lock()
+	ret, specificReturn := fake.readReturnsOnCall[len(fake.readArgsForCall)]
+	fake.readArgsForCall = append(fake.readArgsForCall, struct {
+		arg1 string
+	}{arg1})
+	stub := fake.ReadStub
+	fakeReturns := fake.readReturns
+	fake.recordInvocation("Read", []interface{}{arg1})
+	fake.readMutex.Unlock()
+	if stub != nil {
+		return stub(arg1)
+	}
+	if specificReturn {
+		return ret.result1, ret.result2
+	}
+	return fakeReturns.result1, fakeReturns.result2
+}
+
+func (fake *FakeLogical) ReadCallCount() int {
+	fake.readMutex.RLock()
+	defer fake.readMutex.RUnlock()
+	return len(fake.readArgsForCall)
+}
+
+func (fake *FakeLogical) ReadCalls(stub func(string) (*api.Secret, error)) {
+	fake.readMutex.Lock()
+	defer fake.readMutex.Unlock()
+	fake.ReadStub = stub
+}
+
+func (fake *FakeLogical) ReadArgsForCall(i int) string {
+	fake.readMutex.RLock()
+	defer fake.readMutex.RUnlock()
+	argsForCall := fake.readArgsForCall[i]
+	return argsForCall.arg1
+}
+
+func (fake *FakeLogical) ReadReturns(result1 *api.Secret, result2 error) {
+	fake.readMutex.Lock()
+	defer fake.readMutex.Unlock()
+	fake.ReadStub = nil
+	fake.readReturns = struct {
+		result1 *api.Secret
+		result2 error
+	}{result1, result2}
+}
+
+func (fake *FakeLogical) ReadReturnsOnCall(i int, result1 *api.Secret, result2 error) {
+	fake.readMutex.Lock()
+	defer fake.readMutex.Unlock()
+	fake.ReadStub = nil
+	if fake.readReturnsOnCall == nil {
+		fake.readReturnsOnCall = make(map[int]struct {
+			result1 *api.Secret
+			result2 error
+		})
+	}
+	fake.readReturnsOnCall[i] = struct {
+		result1 *api.Secret
+		result2 error
+	}{result1, result2}
+}
+
 func (fake *FakeLogical) Invocations() map[string][][]interface{} {
 	fake.invocationsMutex.RLock()
 	defer fake.invocationsMutex.RUnlock()
 	fake.listMutex.RLock()
 	defer fake.listMutex.RUnlock()
+	fake.readMutex.RLock()
+	defer fake.readMutex.RUnlock()
 	copiedInvocations := map[string][][]interface{}{}
 	for key, value := range fake.invocations {
 		copiedInvocations[key] = value

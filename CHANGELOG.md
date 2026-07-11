@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+
+- **Recursive search** (`ctrl-f` in the secrets browser, [#30](https://github.com/dkyanakiev/vaul7y/issues/30)) — recursively walks all nested paths below the current one and matches secret names and key names (case-insensitive substring). In the results view, `v` re-runs the search matching secret *values* too, and `enter` jumps straight to a matching secret. Paths the token cannot list and secrets it cannot read are skipped and counted in the title bar instead of failing the search. Results stream in live, are capped at 200 matches, and requests are bounded to 5 concurrent calls to avoid hammering the Vault server.
+
 ## [0.2.0] - 2026-05-11
 
 ### Added

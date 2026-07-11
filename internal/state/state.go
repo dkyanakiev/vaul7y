@@ -38,6 +38,14 @@ type State struct {
 	SealStatus    string
 	ClusterName   string
 
+	SearchResults       []models.SearchMatch
+	SearchStats         models.SearchStats
+	SearchTerm          string
+	SearchRunning       bool
+	SearchIncludeValues bool
+	// SearchBasePath is the path the search was started from, restored on esc.
+	SearchBasePath string
+
 	Elements *Elements
 	Toggle   *Toggle
 	Filter   *Filter
@@ -45,10 +53,11 @@ type State struct {
 }
 
 type Toggle struct {
-	Search       bool
-	JumpToPolicy bool
-	JumpToPath   bool
-	TextInput    bool
+	Search          bool
+	JumpToPolicy    bool
+	JumpToPath      bool
+	TextInput       bool
+	RecursiveSearch bool
 }
 
 type Filter struct {

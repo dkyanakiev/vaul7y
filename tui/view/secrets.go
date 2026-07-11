@@ -114,6 +114,24 @@ func (v *View) inputSecrets(event *tcell.EventKey) *tcell.EventKey {
 			}
 			return nil
 		}
+	case tcell.KeyCtrlF:
+		if !v.Layout.Footer.HasFocus() {
+			v.state.RLock()
+			textInput := v.state.Toggle.TextInput
+			v.state.RUnlock()
+			if !textInput {
+				v.state.Lock()
+				v.state.Toggle.TextInput = true
+				v.state.Toggle.RecursiveSearch = true
+				v.state.Unlock()
+				v.components.TextInfoInput.InputField.SetLabel("search: ")
+				v.components.TextInfoInput.InputField.SetText("")
+				v.TextInput()
+			} else {
+				v.Layout.Container.SetFocus(v.components.TextInfoInput.InputField.Primitive())
+			}
+			return nil
+		}
 	case tcell.KeyCtrlN:
 		v.logger.Debug().Msgf("Running New Secret view with : %v", v.state.SelectedPath)
 		if !v.Layout.Footer.HasFocus() {

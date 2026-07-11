@@ -12,4 +12,7 @@ const (
 	MountVersion     = "Version"
 	SecretPath       = "Path"
 	SecretObject     = "Secret Object"
+	SearchMatchPath  = "Path"
+	SearchMatchKey   = "Matched Key"
+	SearchMatchType  = "Matched On"
 )

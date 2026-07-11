@@ -64,6 +64,7 @@ func (v *Vault) kvVersionForMount(mount string) string {
 //go:generate counterfeiter . Logical
 type Logical interface {
 	List(path string) (*api.Secret, error)
+	Read(path string) (*api.Secret, error)
 }
 
 type Secret interface {

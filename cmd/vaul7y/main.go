@@ -71,6 +71,7 @@ func main() {
 	policies := component.NewPolicyTable()
 	policyAcl := component.NewPolicyAclTable()
 	secrets := component.NewSecretsTable()
+	searchResults := component.NewSearchResultsTable()
 	secretObj := component.NewSecretObjTable()
 	logo := component.NewLogo(version)
 	info := component.NewInfo()
@@ -86,8 +87,9 @@ func main() {
 		MountsTable:    mounts,
 		PolicyTable:    policies,
 		PolicyAclTable: policyAcl,
-		SecretsTable:   secrets,
-		SecretObjTable: secretObj,
+		SecretsTable:       secrets,
+		SearchResultsTable: searchResults,
+		SecretObjTable:     secretObj,
 		AuthTable:      authTable,
 		Info:           info,
 		Error:          errorComp,

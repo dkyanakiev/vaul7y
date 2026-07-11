@@ -14,15 +14,28 @@ import (
 )
 
 type Config struct {
-	VaultAddr         string `yaml:"vault_addr"`
-	VaultNamespace    string `yaml:"vault_namespace"`
-	VaultToken        string `yaml:"vault_token"`
-	VaultCaCert       string `yaml:"vault_cacert"`
-	VaultClientCert   string `yaml:"vault_client_cert"`
-	VaultClientKey    string `yaml:"vault_client_key"`
-	VaultyLogFile     string `yaml:"vaulty_log_file"`
-	VaultyLogLevel    string `yaml:"vaulty_log_level"`
-	VaultyRefreshRate int    `yaml:"vaulty_refresh_rate"`
+	VaultAddr         string      `yaml:"vault_addr"`
+	VaultNamespace    string      `yaml:"vault_namespace"`
+	VaultToken        string      `yaml:"vault_token"`
+	VaultCaCert       string      `yaml:"vault_cacert"`
+	VaultClientCert   string      `yaml:"vault_client_cert"`
+	VaultClientKey    string      `yaml:"vault_client_key"`
+	VaultyLogFile     string      `yaml:"vaulty_log_file"`
+	VaultyLogLevel    string      `yaml:"vaulty_log_level"`
+	VaultyRefreshRate int         `yaml:"vaulty_refresh_rate"`
+	Theme             ThemeConfig `yaml:"theme"`
+}
+
+type ThemeConfig struct {
+	Background         string `yaml:"background"`
+	HighlightPrimary   string `yaml:"highlight_primary"`
+	HighlightSecondary string `yaml:"highlight_secondary"`
+	Standard           string `yaml:"standard"`
+	Active             string `yaml:"active"`
+	White              string `yaml:"white"`
+	LightGrey          string `yaml:"light_grey"`
+	ModalInfo          string `yaml:"modal_info"`
+	Attention          string `yaml:"attention"`
 }
 
 func LoadConfig(cfgFile string) Config {

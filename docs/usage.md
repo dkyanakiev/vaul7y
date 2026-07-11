@@ -67,6 +67,8 @@ Example: [`~/myuser/.vaul7y.yaml`](./examples/vaul7y.yaml)
 Or alternatively pass a config file as an argument using `-c <path/file.yaml>`  
 Example: `vaul7y -c ./new-env.yml`
 
+The config file also supports optional `theme` settings.
+
 #### Authentication and variables priority
 Variables will be loaded in the following order, with the next superseding the previous ones:
 

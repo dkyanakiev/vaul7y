@@ -6,7 +6,6 @@ import (
 	"github.com/dkyanakiev/vaul7y/internal/models"
 	primitive "github.com/dkyanakiev/vaul7y/tui/primitives"
 	"github.com/dkyanakiev/vaul7y/tui/styles"
-	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 )
 
@@ -72,6 +71,6 @@ func (a *AuthTable) renderRows() {
 	for i, k := range keys {
 		m := a.Props.Data[k]
 		row := []string{k, m.Type, m.Description}
-		a.Table.RenderRow(row, i+1, tcell.ColorWhite)
+		a.Table.RenderRow(row, i+1, styles.NeutralColor())
 	}
 }

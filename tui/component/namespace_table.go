@@ -1,13 +1,11 @@
 package component
 
 import (
-	"github.com/gdamore/tcell/v2"
-	"github.com/rivo/tview"
-	"github.com/rs/zerolog"
-
 	"github.com/dkyanakiev/vaul7y/internal/models"
 	primitive "github.com/dkyanakiev/vaul7y/tui/primitives"
 	"github.com/dkyanakiev/vaul7y/tui/styles"
+	"github.com/rivo/tview"
+	"github.com/rs/zerolog"
 )
 
 const TableTitleNamespaces = "Namespaces"
@@ -91,7 +89,7 @@ func (n *NamespaceTable) renderRows() {
 		}
 
 		index = i + 1
-		n.Table.RenderRow(row, index, tcell.ColorWhite)
+		n.Table.RenderRow(row, index, styles.NeutralColor())
 	}
 }
 

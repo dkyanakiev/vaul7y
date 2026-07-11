@@ -12,8 +12,8 @@ import (
 	"github.com/dkyanakiev/vaul7y/internal/vault"
 	"github.com/dkyanakiev/vaul7y/internal/watcher"
 	"github.com/dkyanakiev/vaul7y/tui/component"
+	"github.com/dkyanakiev/vaul7y/tui/styles"
 	"github.com/dkyanakiev/vaul7y/tui/view"
-	"github.com/gdamore/tcell/v2"
 	"github.com/jessevdk/go-flags"
 	"github.com/rivo/tview"
 )
@@ -49,7 +49,8 @@ func main() {
 		}
 		_ = logFile.Close()
 	}()
-	tview.Styles.PrimitiveBackgroundColor = tcell.NewRGBColor(40, 44, 48)
+	styles.ApplyTheme(cfg.Theme)
+	tview.Styles.PrimitiveBackgroundColor = styles.GetBackgroundColor()
 
 	vaultClient, err := vault.New(func(v *vault.Vault) error {
 		return vault.Default(v, logger, cfg)

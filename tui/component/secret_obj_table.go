@@ -11,7 +11,6 @@ import (
 	"github.com/dkyanakiev/vaul7y/internal/models"
 	primitive "github.com/dkyanakiev/vaul7y/tui/primitives"
 	"github.com/dkyanakiev/vaul7y/tui/styles"
-	"github.com/gdamore/tcell/v2"
 	"github.com/hashicorp/vault/api"
 	"github.com/rivo/tview"
 	"github.com/rs/zerolog"
@@ -266,13 +265,13 @@ func (s *SecretObjTable) renderMetadata() error {
 	}
 
 	s.MetadataTable.SetTitle("Secret Metadata")
-	s.MetadataTable.RenderRow([]string{"Updated Time", ConvertTimeFormat(s.Props.Metadata.UpdatedTime)}, 0, tcell.ColorYellow)
-	s.MetadataTable.RenderRow([]string{"Created Time", ConvertTimeFormat(s.Props.Metadata.CreatedTime)}, 1, tcell.ColorYellow)
-	s.MetadataTable.RenderRow([]string{"Current Version", strconv.Itoa(s.Props.Metadata.CurrentVersion)}, 2, tcell.ColorYellow)
-	s.MetadataTable.RenderRow([]string{"Oldest Version", strconv.Itoa(s.Props.Metadata.OldestVersion)}, 3, tcell.ColorYellow)
-	s.MetadataTable.RenderRow([]string{"Max Versions", strconv.Itoa(s.Props.Metadata.MaxVersions)}, 4, tcell.ColorYellow)
-	s.MetadataTable.RenderRow([]string{"CAS Required", strconv.FormatBool(s.Props.Metadata.CasRequired)}, 5, tcell.ColorYellow)
-	s.MetadataTable.RenderRow([]string{"Delete Version After", deleteAfter}, 6, tcell.ColorYellow)
+	s.MetadataTable.RenderRow([]string{"Updated Time", ConvertTimeFormat(s.Props.Metadata.UpdatedTime)}, 0, styles.RowColor())
+	s.MetadataTable.RenderRow([]string{"Created Time", ConvertTimeFormat(s.Props.Metadata.CreatedTime)}, 1, styles.RowColor())
+	s.MetadataTable.RenderRow([]string{"Current Version", strconv.Itoa(s.Props.Metadata.CurrentVersion)}, 2, styles.RowColor())
+	s.MetadataTable.RenderRow([]string{"Oldest Version", strconv.Itoa(s.Props.Metadata.OldestVersion)}, 3, styles.RowColor())
+	s.MetadataTable.RenderRow([]string{"Max Versions", strconv.Itoa(s.Props.Metadata.MaxVersions)}, 4, styles.RowColor())
+	s.MetadataTable.RenderRow([]string{"CAS Required", strconv.FormatBool(s.Props.Metadata.CasRequired)}, 5, styles.RowColor())
+	s.MetadataTable.RenderRow([]string{"Delete Version After", deleteAfter}, 6, styles.RowColor())
 
 	s.CustomMetadataTable.SetTitle("Custom Metadata")
 	i := 0
@@ -281,7 +280,7 @@ func (s *SecretObjTable) renderMetadata() error {
 		if !ok {
 			continue
 		}
-		s.CustomMetadataTable.RenderRow([]string{k, value}, i, tcell.ColorYellow)
+		s.CustomMetadataTable.RenderRow([]string{k, value}, i, styles.RowColor())
 		i++
 	}
 
@@ -310,16 +309,16 @@ func (s *SecretObjTable) renderVersionHistory() {
 
 	for i, e := range entries {
 		status := "active"
-		color := tcell.ColorWhite
+		color := styles.NeutralColor()
 		if e.num == s.Props.Metadata.CurrentVersion {
 			status = "current"
-			color = tcell.ColorGreen
+			color = styles.SuccessColor()
 		} else if e.v.Destroyed {
 			status = "destroyed"
-			color = tcell.ColorRed
+			color = styles.ErrorColor()
 		} else if e.v.DeletionTime != "" {
 			status = "deleted"
-			color = tcell.ColorOrange
+			color = styles.WarningColor()
 		}
 		s.VersionHistoryTable.RenderRow([]string{
 			fmt.Sprintf("v%d", e.num),
@@ -352,7 +351,7 @@ func (s *SecretObjTable) renderRows() {
 			strValue,
 		}
 		index := i + 1
-		c := tcell.ColorYellow
+		c := styles.RowColor()
 
 		s.Table.RenderRow(row, index, c)
 	}
@@ -381,9 +380,9 @@ func (s *SecretObjTable) renderEditArea() {
 	s.TextArea.SetChangedFunc(func() {
 		var d map[string]interface{}
 		if jsonErr := json.Unmarshal([]byte(s.TextArea.GetText()), &d); jsonErr != nil {
-			s.TextArea.SetBorderColor(tcell.ColorRed)
+			s.TextArea.SetBorderColor(styles.ErrorColor())
 		} else {
-			s.TextArea.SetBorderColor(tcell.ColorGreen)
+			s.TextArea.SetBorderColor(styles.SuccessColor())
 			s.SetEditStatus("")
 		}
 	})
@@ -393,7 +392,7 @@ func (s *SecretObjTable) renderEditArea() {
 // message. An empty msg resets both to their default state.
 func (s *SecretObjTable) SetEditStatus(msg string) {
 	if msg != "" {
-		s.TextArea.SetBorderColor(tcell.ColorRed)
+		s.TextArea.SetBorderColor(styles.ErrorColor())
 		s.TextArea.SetTitle(msg)
 	} else {
 		s.TextArea.SetBorderColor(styles.TcellColorStandard)

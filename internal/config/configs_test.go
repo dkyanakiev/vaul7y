@@ -29,6 +29,8 @@ func TestLoadConfig_YAML(t *testing.T) {
 	t.Run("non-auth fields parsed from yaml", func(t *testing.T) {
 		// Use env var for VAULT_TOKEN so the ~/.vault-token file on disk
 		// (if present) cannot override what we assert on for other fields.
+		t.Setenv("VAULT_ADDR", "")
+		t.Setenv("VAULT_NAMESPACE", "")
 		t.Setenv("VAULT_TOKEN", "env-token")
 
 		cfg := config.LoadConfig(writeConfig(t, `
@@ -38,12 +40,31 @@ vault_namespace: yaml-ns
 vaulty_log_file: /tmp/vaul7y.log
 vaulty_log_level: info
 vaulty_refresh_rate: 45
+theme:
+  background: "#202428"
+  highlight_primary: "#111111"
+  highlight_secondary: "#222222"
+  standard: "#333333"
+  active: "#444444"
+  white: "#555555"
+  light_grey: "#666666"
+  modal_info: "#777777"
+  attention: "#888888"
 `))
 		assert.Equal(t, "https://yaml.vault.example.com", cfg.VaultAddr)
 		assert.Equal(t, "yaml-ns", cfg.VaultNamespace)
 		assert.Equal(t, "/tmp/vaul7y.log", cfg.VaultyLogFile)
 		assert.Equal(t, "info", cfg.VaultyLogLevel)
 		assert.Equal(t, 45, cfg.VaultyRefreshRate)
+		assert.Equal(t, "#202428", cfg.Theme.Background)
+		assert.Equal(t, "#111111", cfg.Theme.HighlightPrimary)
+		assert.Equal(t, "#222222", cfg.Theme.HighlightSecondary)
+		assert.Equal(t, "#333333", cfg.Theme.Standard)
+		assert.Equal(t, "#444444", cfg.Theme.Active)
+		assert.Equal(t, "#555555", cfg.Theme.White)
+		assert.Equal(t, "#666666", cfg.Theme.LightGrey)
+		assert.Equal(t, "#777777", cfg.Theme.ModalInfo)
+		assert.Equal(t, "#888888", cfg.Theme.Attention)
 		// Token was overridden by env, so we only check it came from env.
 		assert.Equal(t, "env-token", cfg.VaultToken)
 	})

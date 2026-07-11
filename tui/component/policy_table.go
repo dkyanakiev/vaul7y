@@ -4,7 +4,6 @@ import (
 	"github.com/dkyanakiev/vaul7y/internal/models"
 	primitive "github.com/dkyanakiev/vaul7y/tui/primitives"
 	"github.com/dkyanakiev/vaul7y/tui/styles"
-	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 )
 
@@ -96,7 +95,7 @@ func (p *PolicyTable) renderRows() {
 			policy,
 		}
 		index := i + 1
-		c := tcell.ColorYellow
+		c := styles.RowColor()
 
 		p.Table.RenderRow(row, index, c)
 	}

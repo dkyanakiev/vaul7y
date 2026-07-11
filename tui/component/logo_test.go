@@ -8,6 +8,7 @@ import (
 
 	"github.com/dkyanakiev/vaul7y/tui/component"
 	"github.com/dkyanakiev/vaul7y/tui/component/componentfakes"
+	"github.com/dkyanakiev/vaul7y/tui/styles"
 	"github.com/rivo/tview"
 	"github.com/stretchr/testify/require"
 )
@@ -25,9 +26,9 @@ func TestLogo_Pass(t *testing.T) {
 	r.NoError(err)
 
 	text := textView.SetTextArgsForCall(0)
-	versionText := fmt.Sprintf("[#26ffe6]version: %s", "0.0.0")
+	versionText := fmt.Sprintf("%sversion: %s", styles.HighlightPrimaryTag, "0.0.0")
 	expectedLogo := strings.Join(component.LogoASCII, "\n")
-	expectedLogo = fmt.Sprintf("%s\n%s", expectedLogo, versionText)
+	expectedLogo = fmt.Sprintf("%s%s\n%s", styles.StandardColorTag, expectedLogo, versionText)
 	r.Equal(text, expectedLogo)
 }
 
